@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ProtosInterface.SaveWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Сохранение" Height="200" Width="350"
+        Title="Сохранение" Height="250" Width="350"
         WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <Style TargetType="TextBlock">
@@ -34,13 +34,38 @@
                 <ColumnDefinition Width="5*"/>
                 <ColumnDefinition Width="5*"/>
             </Grid.ColumnDefinitions>
-            <Button Content="Сохранить как новый" 
-                    Click="SaveAsNew_Click" 
-                    Grid.Column="0"/>
+            <Button Content="Сохранить как новый">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <TextBlock Text="{TemplateBinding Content}" 
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"
+                                       Margin="5"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
 
-            <Button Content="Сохранить изменения" 
+            </Button>
+
+            <Button Content="Обновить текущий" 
                     Click="SaveChanges_Click"
-                    Grid.Column="1"/>
+                    Grid.Column="1">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+                            <TextBlock Text="{TemplateBinding Content}" 
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       Margin="5"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </Grid>
         
         <Button Content="Отмена" 

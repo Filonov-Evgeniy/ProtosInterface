@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
-        Title="SearchList" Height="450" Width="600">
+        Title="SearchList" Height="400" Width="350">
     <Grid>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -17,11 +17,12 @@
                     <DataTemplate>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" VerticalAlignment="Center"
-                                       Text="{Binding Key.Title}"/>
+                                       
+                                       Margin="0,0,100,0"/>
                             <TextBlock Grid.Column="1" VerticalAlignment="Center"
                                        Text="{Binding Value}"/>
                         </Grid>

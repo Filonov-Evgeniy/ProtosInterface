@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace ProtosInterface
 {
-    public class ScreenSizeToTextSize : IValueConverter
+    public class ScreenSizeChanged : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

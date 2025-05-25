@@ -7,47 +7,72 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" WindowStartupLocation="Manual" Top="300" Left="500">
     <Window.Resources>
-        <local:ScreenSizeToTextSize x:Key="ScreenSizeToTextSize"/>
+        <local:ScreenSizeChanged x:Key="ScreenSizeToTextSize"/>
         <Style TargetType="Button">
-            <Setter Property="FontSize" Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
+            <Setter Property="FontSize" 
+                    Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
+            <Setter Property="Background" 
+                    Value="#b1faf7"/>
         </Style>
         <Style TargetType="Border">
-            <Setter Property="BorderBrush" Value="#FF464646"/>
-            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" 
+                    Value="#FF464646"/>
+            <Setter Property="BorderThickness" 
+                    Value="1"/>
         </Style>
-        <Style TargetType="TextBlock" x:Key="ScaledTextBlockStyle">
-            <Setter Property="FontSize" Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
+        <Style TargetType="TextBlock" 
+               x:Key="ScaledTextBlockStyle">
+            <Setter Property="FontSize" 
+                    Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
         </Style>
         <Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
+            <Setter Property="FontSize" 
+                    Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
         </Style>
         <Style TargetType="ListBox">
-            <Setter Property="FontSize" Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
+            <Setter Property="FontSize" 
+                    Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="FontSize" 
+                    Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
         </Style>
     </Window.Resources>
     <Grid>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="7*"/>
         </Grid.ColumnDefinitions>
-        <Border BorderThickness="0,0,1,0">
-            <Grid Grid.Column="0">
+        
+        <Border BorderThickness="0,0,0,0">
+            
+            <Grid Grid.Column="0" 
+                  Background="#e3e3e3">
+                
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="5.5*"/>
                     <RowDefinition Height="3.5*"/>
                 </Grid.RowDefinitions>
-                <ToolBar Width="25" HorizontalAlignment="Left" Margin="5,5,5,5">
-                    <Button x:Name="SaveEdition" Click="SaveEdition_Click"  Content="Сохранить изменения"></Button>
-                    <Button x:Name="SaveAsNewItem" Content="Сохранить как новый объект"></Button>
-                </ToolBar>
-                <ComboBox x:Name="productsComboBox" HorizontalAlignment="Right" Width="200" SelectionChanged="productsComboBox_SelectionChanged" Margin="5,5,5,5"/>
-                <Border Grid.Row="1" Margin="5,0,5,5">
-                    <TreeView Name="trvMenu" SelectedItemChanged="trvMenu_SelectedItemChanged">
+                
+                <ComboBox x:Name="productsComboBox" 
+                          SelectionChanged="productsComboBox_SelectionChanged" 
+                          Margin="5,5,5,5" 
+                          Grid.Row="0" 
+                          MaxDropDownHeight="150" 
+                          VerticalContentAlignment="Center"/>
+                
+                <Border Grid.Row="1" 
+                        Margin="5,0,5,5">
+                    
+                    <TreeView Name="trvMenu" 
+                              SelectedItemChanged="trvMenu_SelectedItemChanged">
                         <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate DataType="{x:Type MenuItem}" ItemsSource="{Binding Items}">
+                            <HierarchicalDataTemplate DataType="{x:Type MenuItem}" 
+                                                      ItemsSource="{Binding Items}">
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox x:Name="test" Margin="0,3,5,0" IsChecked="{Binding IsSelected}"/>
+                                    <!--<CheckBox x:Name="test" Margin="0,3,5,0" IsChecked="{Binding IsSelected}"/>-->
                                     <TextBlock Style="{StaticResource ScaledTextBlockStyle}">
                                         <Run Text="{Binding Title}"/>
                                     </TextBlock>
@@ -55,49 +80,179 @@
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
+                    
                 </Border>
-                <Border Grid.Row="2" Margin="5,0,5,5">
+                <Border Grid.Row="2" 
+                        Margin="5,0,5,5">
                     <Grid>
+                        
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="8*"/>
                         </Grid.RowDefinitions>
-                        <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-                            <Image x:Name="SearchPic" Source="Resources/Lupa.png" Grid.Column="1"/>
-                            <TextBox x:Name="SearchTreeItem" Text="Поиск" Foreground="Gray" GotFocus="SearchText_GotFocus" LostFocus="SearchText_LostFocus" TextChanged="SearchText_Changed" Grid.Column="0"/>
+                        
+                        <Border>
+                            
+                            <Grid Grid.Row="0">
+                                
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border BorderThickness="0" 
+                                        CornerRadius="4" 
+                                        Margin="1" 
+                                        Grid.Column="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="BorderBrush" 
+                                                    Value="Transparent"/>
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect ShadowDepth="0" 
+                                                                      BlurRadius="10" 
+                                                                      Color="Black"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" 
+                                                         Value="True">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect ShadowDepth="3" 
+                                                                              BlurRadius="40" 
+                                                                              Color="Aqua" 
+                                                                              Opacity="0.8"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Image x:Name="SearchPic" 
+                                           Source="Resources/Lupa.png"
+                                           MouseDown="SearchPic_MouseDown"/>
+                                </Border>
+                                
+                                <TextBox x:Name="SearchTreeItem" 
+                                         Text="Поиск" 
+                                         Foreground="Gray" 
+                                         GotFocus="SearchText_GotFocus" 
+                                         LostFocus="SearchText_LostFocus" 
+                                         Grid.Column="0"/>
+                            </Grid>
+                            
+                        </Border>
+                        
+                        <Grid Grid.Row="1">
+                            
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="CopyTreeItemButton" 
+                                        Content="Копировать" 
+                                        Click="CopyTreeItemButton_Click" 
+                                        Grid.Column="0" 
+                                        Margin="5,2.5,2.5,2.5"/>
+                                
+                                <Button x:Name="InsertTreeItemButton" 
+                                        Content="Вставить" 
+                                        Click="InsertTreeItemButton_Click" 
+                                        Grid.Column="1" 
+                                        Margin="2.5,2.5,5,2.5"/>
+                            </Grid>
+                            
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="AddNewTreeItemButton" 
+                                        Content="Добавить" 
+                                        Click="AddNewTreeItemButton_Click" 
+                                        Grid.Column="0" 
+                                        Margin="5,5,2.5,2.5"/>
+                                
+                                <Button x:Name="DeleteTreeItemButton" 
+                                        Content="Удалить" 
+                                        Click="DeleteTreeItemButton_Click" 
+                                        Grid.Column="1" 
+                                        Margin="2.5,5,5,2.5"/>
+                            </Grid>
+                            
+                            <Grid Grid.Row="2">
+                                <Button x:Name="SaveEdition" 
+                                        Click="SaveEdition_Click" 
+                                        Content="Сохранить" 
+                                        Margin="5,2.5,5,5"/>
+                            </Grid>
+                            
                         </Grid>
-                        <Button x:Name="CopyTreeItemButton" Content="Копировать" Click="CopyTreeItemButton_Click" Grid.Row="2"/>
-                        <Button x:Name="InsertTreeItemButton" Content="Вставить" Click="InsertTreeItemButton_Click" Grid.Row="3"/>
-                        <Button x:Name="AddNewTreeItemButton" Content="Добавить элемент" Click="AddNewTreeItemButton_Click" Grid.Row="4"/>
-                        <Button x:Name="DeleteTreeItemButton" Content="Удалить элемент" Click="DeleteTreeItemButton_Click" Grid.Row="5"/>
-                        <Button Click="Button_Click" Content="Поиск" Grid.Row="1"/>
                     </Grid>
                 </Border>
             </Grid>
         </Border>
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" 
+              Background="#e3e3e3">
+            
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="4.5*"/>
                 <RowDefinition Height="4.5*"/>
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Margin="5,5,5,5">
-                <TextBox x:Name="FullName" IsEnabled="False"/>
+            
+            <Border Grid.Row="0" 
+                    Margin="5,5,5,5">
+                <TextBox x:Name="FullName" 
+                         IsEnabled="False" 
+                         VerticalContentAlignment="Center"/>
             </Border>
-            <Border Grid.Row="1" Margin="5,0,5,5">
-                <ListBox x:Name="OperationList" Margin="5,5,5,5" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" SelectionChanged="OperationList_SelectionChanged"/>
+            
+            <Border Grid.Row="1" 
+                    Margin="5,0,5,5">
+                <ListBox x:Name="OperationList" 
+                         Margin="5,5,5,5" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                         ScrollViewer.CanContentScroll="True" 
+                         SelectionChanged="OperationList_SelectionChanged">
+                    <!--<ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" 
+                                           VerticalAlignment="Center"
+                                           
+                                           Margin="0,0,100,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           VerticalAlignment="Center"
+                                           />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>-->
+                </ListBox>
+                
             </Border>
-            <Border Grid.Row="2" Margin="5,5,5,5">
-                <ListBox x:Name="EquipmentList" Margin="5,5,5,5" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+
+            <Border Grid.Row="2" 
+                    Margin="5,5,5,5">
+                <ListBox x:Name="EquipmentList"
+                         Margin="5,5,5,5" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                         ScrollViewer.CanContentScroll="True"/>
             </Border>
+            
         </Grid>
     </Grid>
 </Window>

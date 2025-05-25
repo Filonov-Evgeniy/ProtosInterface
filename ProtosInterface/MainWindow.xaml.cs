@@ -45,10 +45,37 @@ public partial class MainWindow : Window
         SaveWindow message = new SaveWindow();
         message.Owner = this;
         message.ShowDialog();
+        AppDbContext _context = new AppDbContext();
+        MenuItem item = new MenuItem();
         switch (message.Result)
         {
             case SaveWindow.SaveOption.SaveAsNew:
-                MessageBox.Show("сохранил");
+                foreach (MenuItem menuItem in trvMenu.Items)
+                {
+                    item = menuItem;
+                }
+                _context.ProductLinks
+                    .Where(p => p.ParentProductId == item.itemId)
+                    .ExecuteDelete();
+                List<ProductLink> links = new List<ProductLink>();
+                foreach (MenuItem product in item.Items)
+                {
+                    Product productParent = _context.Products.Find(item.itemId);
+                    Product includedProduct = _context.Products.Find(product.itemId);
+                    links.Add(new ProductLink
+                    {
+                        ParentProductId = item.itemId,
+                        ParentProduct = productParent,
+
+                        IncludedProductId = product.itemId,
+                        IncludedProduct = includedProduct,
+
+                        Amount = product.Amount
+                    });
+                }
+                _context.ProductLinks.AddRange(links);
+                _context.SaveChanges();
+                MessageBox.Show("Сохранение завершено!");
                 break;
             case SaveWindow.SaveOption.SaveChanges:
                 // Логика "Сохранить изменения"
@@ -57,34 +84,6 @@ public partial class MainWindow : Window
                 // Действие при отмене
                 break;
         }
-        AppDbContext _context = new AppDbContext();
-        MenuItem item = new MenuItem();
-        foreach (MenuItem menuItem in trvMenu.Items)
-        {
-            item = menuItem;
-        }
-        _context.ProductLinks
-            .Where(p => p.ParentProductId == item.itemId)
-            .ExecuteDelete();
-        List<ProductLink> links = new List<ProductLink>();
-        foreach (MenuItem product in item.Items)
-        {
-            Product productParent = _context.Products.Find(item.itemId);
-            Product includedProduct = _context.Products.Find(product.itemId);
-            links.Add(new ProductLink
-            {
-                ParentProductId = item.itemId,
-                ParentProduct = productParent,
-
-                IncludedProductId = product.itemId,
-                IncludedProduct = includedProduct,
-
-                Amount = product.Amount
-            });
-        }
-        _context.ProductLinks.AddRange(links);
-        _context.SaveChanges();
-        MessageBox.Show("Сохранение завершено!");
     }
 
     private void CopyTreeItemButton_Click(object sender, RoutedEventArgs e)
@@ -165,66 +164,8 @@ public partial class MainWindow : Window
         }
     }
 
-    private void SearchText_Changed(object sender, TextChangedEventArgs e)
-    {
-        //TextBox search = sender as TextBox;
-        //if (search.Text.Length > 2)
-        //{
-        //    try
-        //    {
-        //        var root = trvMenu.Items[0] as MenuItem;
-
-        //        string text = TreeMenu.MenuItemSearch(root, search.Text, "");
-
-        //        MessageBox.Show(text);
-        //    }
-        //    catch { }
-        //}
-    }
-
-    private TreeViewItem GetNextTreeViewItem(TreeViewItem item)
-    {
-        TreeViewItem nextItem = null;
-        item.IsExpanded = true;
-        item.UpdateLayout();
-
-        if (item != null)
-        {
-            if (item.Items.Count > 0)
-            {
-                nextItem = (TreeViewItem)trvMenu.ItemContainerGenerator.ContainerFromIndex(0);
-            }
-            else
-            {
-                TreeViewItem parentItem = GetParentTreeViewItem(item);
-                if (parentItem != null)
-                {
-                    int index = parentItem.ItemContainerGenerator.IndexFromContainer(item);
-                    if (index < parentItem.Items.Count - 1)
-                    {
-                        nextItem = (TreeViewItem)parentItem.ItemContainerGenerator.ContainerFromIndex(index + 1);
-                    }
-                }
-            }
-        }
-
-        return nextItem;
-    }
-
-    private TreeViewItem GetParentTreeViewItem(TreeViewItem item)
-    {
-        return item?.Parent as TreeViewItem;
-    }
-
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        //TreeViewItem nextItem = GetNextTreeViewItem();
-
-        //if (nextItem != null)
-        //{
-        //    nextItem.IsSelected = true;
-        //    nextItem.Focus();
-        //}
         TextBox search = SearchTreeItem;
         if (search.Text.Length > 0 && !search.Text.Contains("Поиск"))
         {
@@ -327,6 +268,34 @@ public partial class MainWindow : Window
                 EquipmentList.ItemsSource = list.OperationEquipment(request);
                 EquipmentList.DisplayMemberPath = "Title";
                 break;
+        }
+    }
+
+    private void SearchPic_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+        TextBox search = SearchTreeItem;
+        if (search.Text.Length > 0 && !search.Text.Contains("Поиск"))
+        {
+            try
+            {
+                MenuItem root = trvMenu.Items[0] as MenuItem;
+
+                var searchingItems = TreeMenu.MenuItemSearch(root, search.Text, "");
+                SearchList searchItems = new SearchList(searchingItems, searchingItem);
+                if (searchItems.ShowDialog() == true)
+                {
+                    var container = GetTreeViewItem(trvMenu, searchingItem[0]);
+                    if (container != null)
+                    {
+                        container.IsSelected = true;
+                        container.BringIntoView();
+                    }
+                }
+            }
+            finally
+            {
+                searchingItem.Clear();
+            }
         }
     }
 }
