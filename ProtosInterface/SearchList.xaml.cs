@@ -27,15 +27,19 @@ namespace ProtosInterface
             this.searchingItems = searchingItems;
             ItemListBox.ItemsSource = searchingItems;
             this.searchingItem = searchingItem;
+            ItemListBox.SelectedIndex = 0;
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            int itemIndex = ItemListBox.SelectedIndex;
-            List<MenuItem> items = new List<MenuItem>(searchingItems.Keys);
-            MenuItem item = items[itemIndex];
-            searchingItem.Add(item);
-            this.DialogResult = true;
+            if (ItemListBox.SelectedIndex != -1)
+            {
+                int itemIndex = ItemListBox.SelectedIndex;
+                List<MenuItem> items = new List<MenuItem>(searchingItems.Keys);
+                MenuItem item = items[itemIndex];
+                searchingItem.Add(item);
+                this.DialogResult = true;
+            }
         }
     }
 }
