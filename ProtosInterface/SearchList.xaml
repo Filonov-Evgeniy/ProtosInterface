@@ -1,0 +1,34 @@
+﻿<Window x:Class="ProtosInterface.SearchList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProtosInterface"
+        mc:Ignorable="d"
+        Title="SearchList" Height="450" Width="600">
+    <Grid>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="ItemListBox" Grid.Row="0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center"
+                                       Text="{Binding Key.Title}"/>
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                       Text="{Binding Value}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button x:Name="AddButton" Grid.Row="1" Content="Найти" Click="SearchButton_Click"/>
+        </Grid>
+    </Grid>
+</Window>
