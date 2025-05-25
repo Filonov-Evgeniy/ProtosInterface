@@ -42,6 +42,21 @@ public partial class MainWindow : Window
 
     private void SaveEdition_Click(object sender, RoutedEventArgs e)
     {
+        SaveWindow message = new SaveWindow();
+        message.Owner = this;
+        message.ShowDialog();
+        switch (message.Result)
+        {
+            case SaveWindow.SaveOption.SaveAsNew:
+                MessageBox.Show("сохранил");
+                break;
+            case SaveWindow.SaveOption.SaveChanges:
+                // Логика "Сохранить изменения"
+                break;
+            case SaveWindow.SaveOption.Cancel:
+                // Действие при отмене
+                break;
+        }
         AppDbContext _context = new AppDbContext();
         MenuItem item = new MenuItem();
         foreach (MenuItem menuItem in trvMenu.Items)
