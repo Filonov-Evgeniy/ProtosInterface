@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProtosInterface.Models;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ public partial class MainWindow : Window
     List<MenuItem> searchingItem = new List<MenuItem>();
     List<MenuItem> productsList = new List<MenuItem>();
     dbDataLoader dbLoader = new dbDataLoader();
+    public Dictionary<MenuItem, string> EquipmentLsit { get; } = new Dictionary<MenuItem, string>();
     int itemid = -1;
     public MainWindow()
     {
@@ -164,34 +166,6 @@ public partial class MainWindow : Window
         }
     }
 
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        TextBox search = SearchTreeItem;
-        if (search.Text.Length > 0 && !search.Text.Contains("Поиск"))
-        {
-            try
-            {
-                MenuItem root = trvMenu.Items[0] as MenuItem;
-
-                var searchingItems = TreeMenu.MenuItemSearch(root, search.Text, "");
-                SearchList searchItems = new SearchList(searchingItems, searchingItem);
-                if (searchItems.ShowDialog() == true)
-                {
-                    var container = GetTreeViewItem(trvMenu, searchingItem[0]);
-                    if (container != null)
-                    {
-                        container.IsSelected = true;
-                        container.BringIntoView();
-                    }
-                }
-            }
-            finally
-            {
-                searchingItem.Clear();
-            }
-        }
-    }
-
     public static TreeViewItem GetTreeViewItem(ItemsControl parent, object item)
     {
         // 1. Проверка на null (защита от ошибок)
@@ -265,10 +239,20 @@ public partial class MainWindow : Window
                 OperationList.DisplayMemberPath = "Title";
                 break;
             case "Equipment":
+                
+                //EquipmentList.DisplayMemberPath = "Title";
+                OnPropertyChanged(nameof(EquipmentList));
                 EquipmentList.ItemsSource = list.OperationEquipment(request);
-                EquipmentList.DisplayMemberPath = "Title";
                 break;
+
         }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     private void SearchPic_MouseDown(object sender, MouseButtonEventArgs e)

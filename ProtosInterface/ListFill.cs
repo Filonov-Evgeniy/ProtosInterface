@@ -29,9 +29,9 @@ namespace ProtosInterface
             return result;
         }
 
-        public List<MenuItem> OperationEquipment(int opId)
+        public Dictionary<MenuItem, string> OperationEquipment(int opId)
         {
-            List<MenuItem> result = new List<MenuItem>();
+            Dictionary<MenuItem, string> result = new Dictionary<MenuItem, string>();
 
             var equipments = _context.Equipment
                 .Join(
@@ -49,7 +49,8 @@ namespace ProtosInterface
                 .Where(x => x.OV.OperationId == opId)
                 .Select(x => new{
                     x.Equipment.Id,
-                    x.Equipment.Name
+                    x.Equipment.Name,
+                    x.OV.Duration,
                 })
                 .Distinct()
                 .ToList();
@@ -58,7 +59,7 @@ namespace ProtosInterface
             {
                 if (equipment.Id != null)
                 {
-                    result.Add(new MenuItem { Title = equipment.Name, Id = equipment.Id });
+                    result.Add(new MenuItem { Title = equipment.Name, Id = equipment.Id }, equipment.Duration.ToString());
                 }
             }
             return result;

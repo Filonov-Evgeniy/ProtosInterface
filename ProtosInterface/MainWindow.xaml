@@ -250,7 +250,31 @@
                 <ListBox x:Name="EquipmentList"
                          Margin="5,5,5,5" 
                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                         ScrollViewer.CanContentScroll="True"/>
+                         ScrollViewer.CanContentScroll="True">
+                    <ListBox.ItemsSource>
+                        <CompositeCollection>
+                            <!-- Заголовки -->
+                            <ListBoxItem IsEnabled="False" FontWeight="Bold">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Станок" Width="150"/>
+                                    <TextBlock Text="Время выполнения" Width="150"/>
+                                </StackPanel>
+                            </ListBoxItem>
+
+                            <!-- Основные данные -->
+                            <CollectionContainer Collection="{Binding EquipmentList}"/>
+                        </CompositeCollection>
+                    </ListBox.ItemsSource>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Key.Title}" Width="150"/>
+                                <TextBlock Text="{Binding Value}" Width="150"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Border>
             
         </Grid>
