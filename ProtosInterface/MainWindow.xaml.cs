@@ -271,8 +271,9 @@ public partial class MainWindow : Window
                     var container = GetTreeViewItem(trvMenu, searchingItem[0]);
                     if (container != null)
                     {
-                        container.IsSelected = true;
+                        container.IsExpanded = true;
                         container.BringIntoView();
+                        container.IsSelected = true;
                     }
                 }
             }
