@@ -34,10 +34,13 @@
                 <ColumnDefinition Width="5*"/>
                 <ColumnDefinition Width="5*"/>
             </Grid.ColumnDefinitions>
-            <Button Content="Сохранить как новый">
+            <Button Content="Сохранить как новый"
+                    Grid.Column="0"
+                    Click="SaveAsNew_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <TextBlock Text="{TemplateBinding Content}" 
@@ -45,6 +48,24 @@
                                        TextAlignment="Center"
                                        Margin="5"/>
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Эффект при наведении -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFBEE6FD"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF3C7FB1"/>
+                            </Trigger>
+
+                            <!-- Эффект при нажатии -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFC4E5F6"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF2C628B"/>
+                            </Trigger>
+
+                            <!-- Эффект когда кнопка отключена -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Button.Template>
 
@@ -55,14 +76,33 @@
                     Grid.Column="1">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
                             <TextBlock Text="{TemplateBinding Content}" 
-                       TextWrapping="Wrap"
-                       TextAlignment="Center"
-                       Margin="5"/>
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"
+                                       Margin="5"/>
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Эффект при наведении -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFBEE6FD"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF3C7FB1"/>
+                            </Trigger>
+
+                            <!-- Эффект при нажатии -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFC4E5F6"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#FF2C628B"/>
+                            </Trigger>
+
+                            <!-- Эффект когда кнопка отключена -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Button.Template>
             </Button>

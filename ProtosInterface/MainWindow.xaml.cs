@@ -30,9 +30,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         productsList = dbLoader.getProductData();
-        productsComboBox.ItemsSource = productsList;
-        productsComboBox.DisplayMemberPath = "Title";
-        productsComboBox.SelectedIndex = 0;
+        ComboBoxUpdate(productsList);
     }
 
     static public MenuItem Menu_Create(int id)
@@ -42,6 +40,13 @@ public partial class MainWindow : Window
         return item;
     }
 
+    private void ComboBoxUpdate(List<MenuItem> source)
+    {
+        productsComboBox.ItemsSource = productsList;
+        productsComboBox.DisplayMemberPath = "Title";
+        //productsComboBox.SelectedIndex = 0;
+    }
+
     private void SaveEdition_Click(object sender, RoutedEventArgs e)
     {
         SaveWindow message = new SaveWindow();
@@ -49,17 +54,88 @@ public partial class MainWindow : Window
         message.ShowDialog();
         AppDbContext _context = new AppDbContext();
         MenuItem item = new MenuItem();
+        List<ProductLink> links = new List<ProductLink>();
         switch (message.Result)
         {
             case SaveWindow.SaveOption.SaveAsNew:
-                foreach (MenuItem menuItem in trvMenu.Items)
+                item = trvMenu.Items[0] as MenuItem;
+
+                var lastItem = _context.Products
+                                       .OrderByDescending(x => x.Id)
+                                       .FirstOrDefault();
+
+                int newID = lastItem.Id;
+
+                if (lastItem != null)
                 {
-                    item = menuItem;
+                    bool isNextItemExists = true;
+
+                    while (isNextItemExists)
+                    {
+                        newID++;
+                        isNextItemExists = _context.Products.Any(x => x.Id == newID);
+                    }
                 }
+
+                var oldItem = _context.Products
+                                      .FirstOrDefault(x => x.Id == item.Id);
+
+                int count;
+                if (oldItem.Name.Split().Length > 1)
+                {
+                    count = _context.Products
+                                    .Count(p => EF.Functions.Like(p.Name, $"%{oldItem.Name.Split()[1]}%") ||
+                                                EF.Functions.Like(p.Name, $"%(%) {oldItem.Name.Split()[1]}%"));
+                }
+                else
+                {
+                    count = _context.Products
+                                    .Count(p => EF.Functions.Like(p.Name, $"%{oldItem.Name.Split()[0]}%"));
+                }
+
+                
+
+                var newProduct = new Product
+                {
+                    Id = newID,
+                    Name = $"({count}) " + item.Title,
+                    TypeId = oldItem.TypeId,
+                    CoopStatusId = oldItem.CoopStatusId,
+                    Description = oldItem.Description,
+                };
+
+                _context.Products.Add(newProduct);
+
+                foreach (MenuItem product in item.Items)
+                {
+                    Product productParent = _context.Products.Find(item.itemId);
+                    Product includedProduct = _context.Products.Find(product.itemId);
+
+                    if (includedProduct != null)
+                    {
+                        links.Add(new ProductLink
+                        {
+                            ParentProductId = newProduct.Id,
+                            ParentProduct = productParent,
+                            IncludedProductId = product.itemId,
+                            IncludedProduct = includedProduct,
+                            Amount = product.Amount
+                        });
+                    }
+                }
+
+                _context.ProductLinks.AddRange(links);
+                _context.SaveChanges();
+                ComboBoxUpdate(dbLoader.getProductData());
+                MessageBox.Show("Элемент был добавлен в таблицу");
+                break;
+            case SaveWindow.SaveOption.SaveChanges:
+                item = trvMenu.Items[0] as MenuItem;
+  
                 _context.ProductLinks
                     .Where(p => p.ParentProductId == item.itemId)
                     .ExecuteDelete();
-                List<ProductLink> links = new List<ProductLink>();
+
                 foreach (MenuItem product in item.Items)
                 {
                     Product productParent = _context.Products.Find(item.itemId);
@@ -75,15 +151,12 @@ public partial class MainWindow : Window
                         Amount = product.Amount
                     });
                 }
+
                 _context.ProductLinks.AddRange(links);
                 _context.SaveChanges();
                 MessageBox.Show("Сохранение завершено!");
                 break;
-            case SaveWindow.SaveOption.SaveChanges:
-                // Логика "Сохранить изменения"
-                break;
             case SaveWindow.SaveOption.Cancel:
-                // Действие при отмене
                 break;
         }
     }
@@ -91,26 +164,31 @@ public partial class MainWindow : Window
     private void CopyTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
         var selectedItem = trvMenu.SelectedItem as MenuItem;
+
         TreeMenu.copyMenuItem(selectedItem);
     }
 
     private void InsertTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
         var selectedItem = trvMenu.Items[0] as MenuItem;
+
         if (selectedItem != null)
         {
             var insertedItem = TreeMenu.InsertMenuItem();
+
             if (insertedItem.Id == selectedItem.Id)
             {
                 MessageBox.Show("Нельзя копировать элемент в себя");
             }
             else
             {
+
                 if (insertedItem != null)
                 {
                     insertedItem.Parent = selectedItem;
                     selectedItem.Items.Add(insertedItem);
                 }
+
             }
         }
         else
@@ -122,13 +200,16 @@ public partial class MainWindow : Window
     private void AddNewTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
         ItemList list = new ItemList(itemsToAdd);
+
         if (list.ShowDialog() == true)
         {
             var selectedItem = trvMenu.SelectedItem as MenuItem;
+
             foreach (MenuItem item in itemsToAdd)
             {
                 selectedItem.Items.Add(item);
             }
+
             MessageBox.Show("Элементы добавлены");
         }
     }
@@ -136,6 +217,7 @@ public partial class MainWindow : Window
     private void DeleteTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
         var selectedItem = trvMenu.SelectedItem as MenuItem;
+
         if (selectedItem == null)
         {
             MessageBox.Show("Не выбран элемент для удаления");
@@ -149,6 +231,7 @@ public partial class MainWindow : Window
     private void SearchText_LostFocus(object sender, RoutedEventArgs e)
     {
         TextBox textBox = SearchTreeItem;
+
         if (string.IsNullOrWhiteSpace(textBox.Text))
         {
             textBox.Text = "Поиск";
@@ -159,6 +242,7 @@ public partial class MainWindow : Window
     private void SearchText_GotFocus(object sender, RoutedEventArgs e)
     {
         TextBox textBox = SearchTreeItem;
+
         if (textBox.Text == "Поиск")
         {
             textBox.Text = "";
@@ -178,6 +262,7 @@ public partial class MainWindow : Window
         var container = parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
         if (container != null)
         {
+            container.IsExpanded = true;
             return container;
         }
 
@@ -185,13 +270,19 @@ public partial class MainWindow : Window
         foreach (var childItem in parent.Items)
         {
             var childContainer = parent.ItemContainerGenerator.ContainerFromItem(childItem) as ItemsControl;
+
             if (childContainer == null)
+            {
                 continue;
+            }
 
             // 4. Рекурсивный вызов для проверки вложенных узлов
             container = GetTreeViewItem(childContainer, item);
+
             if (container != null)
+            {
                 return container;
+            }
         }
 
         return null;
@@ -211,12 +302,18 @@ public partial class MainWindow : Window
     private void productsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         MenuItem item = productsComboBox.SelectedItem as MenuItem;
-        trvMenu.Items.Clear();
-        trvMenu.Items.Add(Menu_Create(item.Id));
-        FullName.Text = ((MenuItem)productsComboBox.SelectedItem).Title.ToString() + " полное название";
-        itemid = item.Id;
-        this.FillListItems("Operation", (trvMenu.Items[0] as MenuItem).itemId);
-        this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
+
+        if (item != null)
+        {
+            trvMenu.Items.Clear();
+            trvMenu.Items.Add(Menu_Create(item.Id));
+            FullName.Text = ((MenuItem)productsComboBox.SelectedItem).Title.ToString() + " полное название";
+            itemid = item.Id;
+
+            this.FillListItems("Operation", (trvMenu.Items[0] as MenuItem).itemId);
+            this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
+        }
+        
     }
 
     private void OperationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -225,6 +322,7 @@ public partial class MainWindow : Window
         {
             EquipmentList.ItemsSource = null;
             var selectedItem = OperationList.SelectedItem as MenuItem;
+
             this.FillListItems("Equipment", selectedItem.Id);            
         }
     }
@@ -239,7 +337,6 @@ public partial class MainWindow : Window
                 OperationList.DisplayMemberPath = "Title";
                 break;
             case "Equipment":
-                
                 //EquipmentList.DisplayMemberPath = "Title";
                 OnPropertyChanged(nameof(EquipmentList));
                 EquipmentList.ItemsSource = list.OperationEquipment(request);
@@ -258,6 +355,7 @@ public partial class MainWindow : Window
     private void SearchPic_MouseDown(object sender, MouseButtonEventArgs e)
     {
         TextBox search = SearchTreeItem;
+
         if (search.Text.Length > 0 && !search.Text.Contains("Поиск"))
         {
             try
@@ -266,9 +364,11 @@ public partial class MainWindow : Window
 
                 var searchingItems = TreeMenu.MenuItemSearch(root, search.Text, "");
                 SearchList searchItems = new SearchList(searchingItems, searchingItem);
+
                 if (searchItems.ShowDialog() == true)
                 {
                     var container = GetTreeViewItem(trvMenu, searchingItem[0]);
+
                     if (container != null)
                     {
                         container.IsExpanded = true;
