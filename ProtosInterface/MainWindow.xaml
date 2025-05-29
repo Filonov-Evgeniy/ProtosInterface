@@ -12,7 +12,7 @@
             <Setter Property="FontSize" 
                     Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
             <Setter Property="Background" 
-                    Value="#b1faf7"/>
+                    Value="#c7f9f7"/>
         </Style>
         <Style TargetType="Border">
             <Setter Property="BorderBrush" 
@@ -45,246 +45,270 @@
         </Style>
     </Window.Resources>
     <Grid>
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="7*"/>
-        </Grid.ColumnDefinitions>
-        
-        <Border BorderThickness="0,0,0,0">
-            
-            <Grid Grid.Column="0" 
-                  Background="#e3e3e3">
-                
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="5.5*"/>
-                    <RowDefinition Height="3.5*"/>
-                </Grid.RowDefinitions>
 
-                <ComboBox x:Name="productsComboBox" 
-                          SelectionChanged="productsComboBox_SelectionChanged" 
-                          Margin="5,5,5,5" 
-                          Grid.Row="0" 
-                          MaxDropDownHeight="150" 
-                          VerticalContentAlignment="Center"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-                <Border Grid.Row="1" 
-                        Margin="5,0,5,5">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="8*"/>
-                            <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                    
-                        <TreeView Name="trvMenu" 
-                                  SelectedItemChanged="trvMenu_SelectedItemChanged">
-                                  Grid.Row="1"
-                            <TreeView.ItemTemplate>
-                                <HierarchicalDataTemplate DataType="{x:Type MenuItem}" 
-                                                          ItemsSource="{Binding Items}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <!--<CheckBox x:Name="test" Margin="0,3,5,0" IsChecked="{Binding IsSelected}"/>-->
-                                        <TextBlock Style="{StaticResource ScaledTextBlockStyle}">
-                                            <Run Text="{Binding Title}"/>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </HierarchicalDataTemplate>
-                            </TreeView.ItemTemplate>
-                        </TreeView>
+        <TabControl Grid.Row="0" Grid.ColumnSpan="2">
+            <TabItem Header="Дерево">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="7*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border BorderThickness="0,0,0,0" 
+                            Grid.Row="1">
 
-                        <Grid Grid.Row="1">
+                        <Grid Grid.Column="0" 
+                              Background="#e3e3e3">
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Border BorderThickness="0" 
-                                    CornerRadius="4" 
-                                    Margin="1" 
-                                    Grid.Column="1">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="BorderBrush" 
-                                                Value="Transparent"/>
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <DropShadowEffect ShadowDepth="0" 
-                                                                  BlurRadius="10" 
-                                                                  Color="Black"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" 
-                                                     Value="True">
-                                                <Setter Property="Effect">
-                                                    <Setter.Value>
-                                                        <DropShadowEffect ShadowDepth="3" 
-                                                      BlurRadius="40" 
-                                                      Color="Aqua" 
-                                                      Opacity="0.8"/>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <Image x:Name="SearchPic" 
-                                       Source="Resources/Lupa.png"
-                                       MouseDown="SearchPic_MouseDown"/>
-                            </Border>
-
-                            <TextBox x:Name="SearchTreeItem" 
-                                     Text="Поиск" 
-                                     Foreground="Gray" 
-                                     GotFocus="SearchText_GotFocus" 
-                                     LostFocus="SearchText_LostFocus" 
-                                     Grid.Column="0"/>
-                        </Grid>
-                    </Grid>
-                </Border>
-                <Border Grid.Row="2" 
-                        Margin="5,0,5,5">
-                    <Grid>
-                        
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2*"/>
-                            <RowDefinition Height="8*"/>
-                        </Grid.RowDefinitions>
-                        
-                        <Border>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" 
-                                            Orientation="Horizontal">
-                                    <RadioButton Content="Изделие" VerticalAlignment="Center" GroupName="EditOption" IsChecked="True"/>                                    
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" 
-                                            Orientation="Horizontal">
-                                    <RadioButton Content="Операции" VerticalAlignment="Center" GroupName="EditOption"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                        
-                        <Grid Grid.Row="1">
-                            
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="5.5*"/>
+                                <RowDefinition Height="3.5*"/>
                             </Grid.RowDefinitions>
-                            
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button x:Name="CopyTreeItemButton" 
-                                        Content="Копировать" 
-                                        Click="CopyTreeItemButton_Click" 
-                                        Grid.Column="0" 
-                                        Margin="5,2.5,2.5,2.5"/>
-                                
-                                <Button x:Name="InsertTreeItemButton" 
-                                        Content="Вставить" 
-                                        Click="InsertTreeItemButton_Click" 
-                                        Grid.Column="1" 
-                                        Margin="2.5,2.5,5,2.5"/>
-                            </Grid>
-                            
-                            <Grid Grid.Row="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button x:Name="AddNewTreeItemButton" 
-                                        Content="Добавить" 
-                                        Click="AddNewTreeItemButton_Click" 
-                                        Grid.Column="0" 
-                                        Margin="5,5,2.5,2.5"/>
-                                
-                                <Button x:Name="DeleteTreeItemButton" 
-                                        Content="Удалить" 
-                                        Click="DeleteTreeItemButton_Click" 
-                                        Grid.Column="1" 
-                                        Margin="2.5,5,5,2.5"/>
-                            </Grid>
-                            
-                            <Grid Grid.Row="2">
-                                <Button x:Name="SaveEdition" 
-                                        Click="SaveEdition_Click" 
-                                        Content="Сохранить" 
-                                        Margin="5,2.5,5,5"/>
-                            </Grid>
-                            
+
+                            <ComboBox x:Name="productsComboBox" 
+                                      SelectionChanged="productsComboBox_SelectionChanged" 
+                                      Margin="5,5,5,5" 
+                                      Grid.Row="0" 
+                                      MaxDropDownHeight="150" 
+                                      VerticalContentAlignment="Center"/>
+
+                            <Border Grid.Row="1" 
+                                    Margin="5,0,5,5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="8*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TreeView Name="trvMenu" 
+                                              SelectedItemChanged="trvMenu_SelectedItemChanged">
+                                        Grid.Row="1"
+                                        <TreeView.ItemTemplate>
+                                            <HierarchicalDataTemplate DataType="{x:Type MenuItem}" 
+                                                                      ItemsSource="{Binding Items}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <!--<CheckBox x:Name="test" Margin="0,3,5,0" IsChecked="{Binding IsSelected}"/>-->
+                                                    <TextBlock Style="{StaticResource ScaledTextBlockStyle}">
+                                                        <Run Text="{Binding Title}"/>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </HierarchicalDataTemplate>
+                                        </TreeView.ItemTemplate>
+                                    </TreeView>
+
+                                    <Grid Grid.Row="1">
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="9*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border BorderThickness="0" 
+                                                CornerRadius="4" 
+                                                Margin="1" 
+                                                Grid.Column="1">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="BorderBrush" 
+                                                            Value="Transparent"/>
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect ShadowDepth="0" 
+                                                                              BlurRadius="10" 
+                                                                              Color="Black"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" 
+                                                                 Value="True">
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect ShadowDepth="3" 
+                                                                                      BlurRadius="40" 
+                                                                                      Color="Aqua" 
+                                                                                      Opacity="0.8"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <Image x:Name="SearchPic" 
+                                                   Source="Resources/Lupa.png"
+                                                   MouseDown="SearchPic_MouseDown"/>
+                                        </Border>
+
+                                        <TextBox x:Name="SearchTreeItem" 
+                                                 Text="Поиск" 
+                                                 Foreground="Gray" 
+                                                 GotFocus="SearchText_GotFocus" 
+                                                 LostFocus="SearchText_LostFocus" 
+                                                 Grid.Column="0"
+                                                 VerticalContentAlignment="Center"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Row="2" 
+                                    Margin="5,0,5,5">
+                                <Grid>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="2*"/>
+                                        <RowDefinition Height="8*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Border>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" 
+                                                        Orientation="Horizontal">
+                                                <RadioButton Content="Изделие" 
+                                                             VerticalContentAlignment="Center" 
+                                                             GroupName="EditOption" 
+                                                             IsChecked="True"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" 
+                                                        Orientation="Horizontal">
+                                                <RadioButton Content="Операции" 
+                                                            VerticalContentAlignment="Center"
+                                                             GroupName="EditOption"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <Grid Grid.Row="1">
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid Grid.Row="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Button x:Name="CopyTreeItemButton" 
+                                                    Content="Копировать" 
+                                                    Click="CopyTreeItemButton_Click" 
+                                                    Grid.Column="0" 
+                                                    Margin="5,2.5,2.5,2.5"/>
+
+                                            <Button x:Name="InsertTreeItemButton" 
+                                                    Content="Вставить" 
+                                                    Click="InsertTreeItemButton_Click" 
+                                                    Grid.Column="1" 
+                                                    Margin="2.5,2.5,5,2.5"/>
+                                        </Grid>
+
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Button x:Name="AddNewTreeItemButton" 
+                                                    Content="Добавить" 
+                                                    Click="AddNewTreeItemButton_Click" 
+                                                    Grid.Column="0" 
+                                                    Margin="5,5,2.5,2.5"/>
+
+                                            <Button x:Name="DeleteTreeItemButton" 
+                                                    Content="Удалить" 
+                                                    Click="DeleteTreeItemButton_Click" 
+                                                    Grid.Column="1" 
+                                                    Margin="2.5,5,5,2.5"/>
+                                        </Grid>
+
+                                        <Grid Grid.Row="2">
+                                            <Button x:Name="SaveEdition" 
+                                                    Click="SaveEdition_Click" 
+                                                    Content="Сохранить" 
+                                                    Margin="5,2.5,5,5"/>
+                                        </Grid>
+
+                                    </Grid>
+                                </Grid>
+                            </Border>
                         </Grid>
+                    </Border>
+                    <Grid Grid.Column="1"  
+                          Background="#e3e3e3"
+                          Grid.Row="1">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="4.5*"/>
+                            <RowDefinition Height="4.5*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" 
+                                Margin="5,5,5,5">
+                            <TextBox x:Name="FullName" 
+                                     IsEnabled="False" 
+                                     VerticalContentAlignment="Center"/>
+                        </Border>
+
+                        <Border Grid.Row="1" 
+                                Margin="5,0,5,5">
+                            <ListBox x:Name="OperationList" 
+                                     Margin="5,5,5,5" 
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                     ScrollViewer.CanContentScroll="True" 
+                                     SelectionChanged="OperationList_SelectionChanged">
+                            </ListBox>
+
+                        </Border>
+
+                        <Border Grid.Row="2" 
+                                Margin="5,5,5,5">
+                            <ListBox x:Name="EquipmentList"
+                                     Margin="5,5,5,5" 
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                     ScrollViewer.CanContentScroll="True">
+                                <ListBox.ItemsSource>
+                                    <CompositeCollection>
+                                        <!-- Заголовки -->
+                                        <ListBoxItem IsEnabled="False" 
+                                                     FontWeight="Bold">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Станок" 
+                                                           Width="150"/>
+                                                <TextBlock Text="Время выполнения" 
+                                                           Width="150"/>
+                                            </StackPanel>
+                                        </ListBoxItem>
+
+                                        <!-- Основные данные -->
+                                        <CollectionContainer Collection="{Binding EquipmentList}"/>
+                                    </CompositeCollection>
+                                </ListBox.ItemsSource>
+
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Key.Title}" 
+                                                       Width="150"/>
+                                            <TextBlock Text="{Binding Value}" 
+                                                       Width="150"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Border>
                     </Grid>
-                </Border>
-            </Grid>
-        </Border>
-        <Grid Grid.Column="1" 
-              Background="#e3e3e3">
-            
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="4.5*"/>
-                <RowDefinition Height="4.5*"/>
-            </Grid.RowDefinitions>
-            
-            <Border Grid.Row="0" 
-                    Margin="5,5,5,5">
-                <TextBox x:Name="FullName" 
-                         IsEnabled="False" 
-                         VerticalContentAlignment="Center"/>
-            </Border>
-            
-            <Border Grid.Row="1" 
-                    Margin="5,0,5,5">
-                <ListBox x:Name="OperationList" 
-                         Margin="5,5,5,5" 
-                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                         ScrollViewer.CanContentScroll="True" 
-                         SelectionChanged="OperationList_SelectionChanged">
-                </ListBox>
-                
-            </Border>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Гант">
 
-            <Border Grid.Row="2" 
-                    Margin="5,5,5,5">
-                <ListBox x:Name="EquipmentList"
-                         Margin="5,5,5,5" 
-                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                         ScrollViewer.CanContentScroll="True">
-                    <ListBox.ItemsSource>
-                        <CompositeCollection>
-                            <!-- Заголовки -->
-                            <ListBoxItem IsEnabled="False" FontWeight="Bold">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Станок" Width="150"/>
-                                    <TextBlock Text="Время выполнения" Width="150"/>
-                                </StackPanel>
-                            </ListBoxItem>
-
-                            <!-- Основные данные -->
-                            <CollectionContainer Collection="{Binding EquipmentList}"/>
-                        </CompositeCollection>
-                    </ListBox.ItemsSource>
-
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Key.Title}" Width="150"/>
-                                <TextBlock Text="{Binding Value}" Width="150"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Border>
-            
-        </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
