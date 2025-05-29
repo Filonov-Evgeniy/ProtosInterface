@@ -1,0 +1,27 @@
+﻿<Window x:Class="NetworkGraph.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Сетевой график" Height="600" Width="800">
+    <Grid>
+        <DataGrid x:Name="OperationsDataGrid" AutoGenerateColumns="False" Margin="10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код" Binding="{Binding Operation.Code}" Width="100"/>
+                <DataGridTextColumn Header="Описание" Binding="{Binding Operation.Description}" Width="*"/>
+                <DataGridTextColumn Header="Продукт" Binding="{Binding Operation.Product.Name}" Width="150"/>
+                <DataGridTextColumn Header="Раннее начало" Binding="{Binding EarlyStart}" Width="100"/>
+                <DataGridTextColumn Header="Раннее окончание" Binding="{Binding EarlyFinish}" Width="100"/>
+                <DataGridTextColumn Header="Позднее начало" Binding="{Binding LateStart}" Width="100"/>
+                <DataGridTextColumn Header="Позднее окончание" Binding="{Binding LateFinish}" Width="100"/>
+                <!-- Заменяем CheckBox на TextBlock для read-only свойства -->
+                <DataGridTextColumn Header="Критическая" Binding="{Binding IsCritical}" Width="80">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="Text" Value="{Binding IsCritical, Converter={StaticResource BoolToYesNoConverter}}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

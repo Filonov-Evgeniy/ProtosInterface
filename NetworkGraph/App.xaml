@@ -1,0 +1,9 @@
+﻿<Application x:Class="NetworkGraph.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:NetworkGraph"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <local:BoolToYesNoConverter x:Key="BoolToYesNoConverter"/>
+    </Application.Resources>
+</Application>
