@@ -30,7 +30,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         productsList = dbLoader.getProductData();
-        ComboBoxUpdate(productsList);
+        this.ComboBoxUpdate(productsList);
     }
 
     static public MenuItem Menu_Create(int id)
@@ -55,32 +55,33 @@ public partial class MainWindow : Window
         AppDbContext _context = new AppDbContext();
         MenuItem item = new MenuItem();
         List<ProductLink> links = new List<ProductLink>();
+        List<Operation> operations = new List<Operation>();
         switch (message.Result)
         {
             case SaveWindow.SaveOption.SaveAsNew:
                 item = trvMenu.Items[0] as MenuItem;
 
-                var lastItem = _context.Products
-                                       .OrderByDescending(x => x.Id)
-                                       .FirstOrDefault();
+                string lastItem = _context.Products
+                                          .OrderByDescending(x => x.Id)
+                                          .Select(x => x.Id!.ToString())
+                                          .FirstOrDefault()!;
 
-                int newID = lastItem.Id;
+                int newID = int.Parse(lastItem);
 
-                if (lastItem != null)
+                bool isNextItemExists = true;
+
+                while (isNextItemExists)
                 {
-                    bool isNextItemExists = true;
-
-                    while (isNextItemExists)
-                    {
-                        newID++;
-                        isNextItemExists = _context.Products.Any(x => x.Id == newID);
-                    }
+                    newID++;
+                    isNextItemExists = _context.Products.Any(x => x.Id == newID);
                 }
+
 
                 var oldItem = _context.Products
                                       .FirstOrDefault(x => x.Id == item.Id);
 
                 int count;
+
                 if (oldItem.Name.Split().Length > 1)
                 {
                     count = _context.Products
@@ -92,8 +93,6 @@ public partial class MainWindow : Window
                     count = _context.Products
                                     .Count(p => EF.Functions.Like(p.Name, $"%{oldItem.Name.Split()[0]}%"));
                 }
-
-                
 
                 var newProduct = new Product
                 {
@@ -108,8 +107,8 @@ public partial class MainWindow : Window
 
                 foreach (MenuItem product in item.Items)
                 {
-                    Product productParent = _context.Products.Find(item.itemId);
-                    Product includedProduct = _context.Products.Find(product.itemId);
+                    Product productParent = _context.Products.Find(item.itemId)!;
+                    Product includedProduct = _context.Products.Find(product.itemId)!;
 
                     if (includedProduct != null)
                     {
@@ -125,8 +124,54 @@ public partial class MainWindow : Window
                 }
 
                 _context.ProductLinks.AddRange(links);
+
+                lastItem = _context.Operations
+                                   .OrderByDescending(x => x.Id)
+                                   .Select(x => x.Id!.ToString())
+                                   .FirstOrDefault()!;
+
+                var oldOperationList = _context.Operations.Where(o => o.ProductId == oldItem.Id).ToList();
+
+                count = 0;
+
+                foreach (MenuItem operation in OperationList.Items)
+                {
+                    int code = int.Parse(operation.Title.Split('|')[0].Trim());
+                    
+                    if (code == oldOperationList[count].Code)
+                    {                     
+                        Operation oldOperation = _context.Operations.FirstOrDefault(x => x.Id == operation.Id)!;   
+                        
+                        if (oldOperation.TypeId == oldOperationList[count].TypeId)
+                        {
+                            operations.Add(new Operation
+                            {
+                                Id = int.Parse(lastItem),
+                                Code = oldOperation.Code,
+                                TypeId = oldOperation.TypeId,
+                                ProductId = newProduct.Id,
+                                CoopStatusId = oldOperation.CoopStatusId,
+                                Description = oldOperation.Description,
+                            });
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        if (code % 5 != 0)
+                        {
+
+                        }
+                    }
+                    
+                    count++;
+                }
+
                 _context.SaveChanges();
-                ComboBoxUpdate(dbLoader.getProductData());
+                this.ComboBoxUpdate(dbLoader.getProductData());
                 MessageBox.Show("Элемент был добавлен в таблицу");
                 break;
             case SaveWindow.SaveOption.SaveChanges:
@@ -138,8 +183,8 @@ public partial class MainWindow : Window
 
                 foreach (MenuItem product in item.Items)
                 {
-                    Product productParent = _context.Products.Find(item.itemId);
-                    Product includedProduct = _context.Products.Find(product.itemId);
+                    Product productParent = _context.Products.Find(item.itemId)!;
+                    Product includedProduct = _context.Products.Find(product.itemId)!;
                     links.Add(new ProductLink
                     {
                         ParentProductId = item.itemId,
