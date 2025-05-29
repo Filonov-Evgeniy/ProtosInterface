@@ -14,6 +14,7 @@ namespace ProtosInterface
         {
             double screenSize = System.Convert.ToDouble(value);
             double textSize;
+
             if (screenSize <= 450)
             {
                 textSize = 14;
@@ -22,6 +23,7 @@ namespace ProtosInterface
             {
                 textSize = Math.Round(14 + (screenSize - 450) / 75, 2);
             }
+            
             return textSize;
         }
 

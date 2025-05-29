@@ -5,15 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
-            Title="ItemList" Height="450" Width="300">
+        Title="ItemList" 
+        Height="450" 
+        Width="300">
     <Grid>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="8*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
-            <ListBox x:Name="ItemListBox" Grid.Row="0"/>
-            <Button x:Name="AddButton" Grid.Row="1" Content="Добавить" Click="AddButton_Click"/>
+            <ListBox x:Name="ItemListBox" 
+                     Grid.Row="0"/>
+            <Button x:Name="AddButton" 
+                    Grid.Row="1" 
+                    Content="Добавить" 
+                    Click="AddButton_Click"/>
         </Grid>
     </Grid>
 </Window>

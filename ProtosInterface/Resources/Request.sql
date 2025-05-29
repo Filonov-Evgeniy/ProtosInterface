@@ -1,16 +1,16 @@
 ﻿CREATE TABLE [dbo].[Product] (
     [id]             INT           NOT NULL,
-    [name]           VARCHAR (250) NOT NULL,
+    [name]           NVARCHAR (250) NOT NULL,
     [type_id]        INT           NOT NULL,
     [coop_status_id] INT           NOT NULL,
-    [description]    VARCHAR (MAX) NULL,
+    [description]    NVARCHAR (MAX) NULL,
     PRIMARY KEY CLUSTERED ([id] ASC)
 );
 
 CREATE TABLE [dbo].[Product_Link] (
     [parent_product_id]   INT        NOT NULL,
     [included_product_id] INT        NOT NULL,
-    [amount]              FLOAT (53) NOT NULL,
+    [amount]              FLOAT      NOT NULL,
     PRIMARY KEY CLUSTERED ([parent_product_id] ASC, [included_product_id] ASC),
     FOREIGN KEY ([parent_product_id]) REFERENCES [dbo].[Product] ([id]),
     FOREIGN KEY ([included_product_id]) REFERENCES [dbo].[Product] ([id])
@@ -53,8 +53,8 @@ INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount
 
 CREATE TABLE [dbo].[Operation_Type] (
     [id]          INT           NOT NULL,
-    [name]        VARCHAR (100) NOT NULL,
-    [description] VARCHAR (MAX) NULL,
+    [name]        NVARCHAR (100) NOT NULL,
+    [description] NVARCHAR (MAX) NULL,
     PRIMARY KEY CLUSTERED ([id] ASC)
 );
 
@@ -64,7 +64,7 @@ CREATE TABLE [dbo].[Operation] (
     [type_id]        INT           NOT NULL,
     [product_id]     INT           NOT NULL,
     [coop_status_id] INT           NOT NULL,
-    [description]    VARCHAR (MAX) NULL,
+    [description]    NVARCHAR (MAX) NULL,
     PRIMARY KEY CLUSTERED ([id] ASC),
     FOREIGN KEY ([product_id]) REFERENCES [dbo].[Product] ([id]),
     FOREIGN KEY ([type_id]) REFERENCES [dbo].[Operation_Type] ([id])
@@ -143,7 +143,7 @@ CREATE TABLE [dbo].[Operation_Variant] (
     [id]           INT           NOT NULL,
     [operation_id] INT           NOT NULL,
     [duration]     INT           NOT NULL,
-    [description]  VARCHAR (MAX) NULL,
+    [description]  NVARCHAR (MAX) NULL,
     PRIMARY KEY CLUSTERED ([id] ASC),
     FOREIGN KEY ([operation_id]) REFERENCES [dbo].[Operation] ([id])
 );
@@ -151,19 +151,19 @@ CREATE TABLE [dbo].[Operation_Variant] (
 CREATE TABLE [dbo].[Equipment_Type]
 (
 	[id] INT NOT NULL PRIMARY KEY,
-	[name] varchar(30) not null,
-	[description] varchar(max) null
+	[name] nvarchar(30) not null,
+	[description] nvarchar(max) null
 )
 
 CREATE TABLE [dbo].[Equipment] (
     [id]               INT           NOT NULL,
     [inventory_number] INT           NOT NULL,
-    [name]             VARCHAR (10)  NOT NULL,
-    [area_id]          VARCHAR (30)  NOT NULL,
+    [name]             NVARCHAR (10)  NOT NULL,
+    [area_id]          NVARCHAR (30)  NOT NULL,
     [type_id]          INT           NOT NULL,
     [load_factor]      INT           NOT NULL,
-    [description]      VARCHAR (MAX) NULL,
-    [short_name]       VARCHAR (10)  NULL,
+    [description]      NVARCHAR (MAX) NULL,
+    [short_name]       NVARCHAR (10)  NULL,
     FOREIGN KEY ([type_id]) REFERENCES [dbo].[Equipment_Type] ([id]),
     PRIMARY KEY CLUSTERED ([id] ASC)
 );

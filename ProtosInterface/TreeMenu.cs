@@ -27,10 +27,12 @@ namespace ProtosInterface
                 Title = loader.getProductName(productId),
                 itemId = productId
             };
+
             if (loader.isHasChildren(productId))
             {
                 loader.buildMenuItems(productId, ref root);
             }
+            
             return root;
         }
 
@@ -71,6 +73,7 @@ namespace ProtosInterface
                 if (item.Items.Count > 0)
                 {
                     var newResults = MenuItemSearch(item, search, path);
+
                     foreach (var newResult in newResults)
                     {
                         searchingItems.Add(newResult.Key, newResult.Value);

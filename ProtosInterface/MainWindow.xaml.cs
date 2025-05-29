@@ -29,7 +29,6 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        productsList = dbLoader.getProductData();
         this.ComboBoxUpdate(productsList);
     }
 
@@ -42,6 +41,7 @@ public partial class MainWindow : Window
 
     private void ComboBoxUpdate(List<MenuItem> source)
     {
+        productsList = dbLoader.getProductData();
         productsComboBox.ItemsSource = productsList;
         productsComboBox.DisplayMemberPath = "Title";
         //productsComboBox.SelectedIndex = 0;
