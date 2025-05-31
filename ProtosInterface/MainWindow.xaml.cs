@@ -30,7 +30,6 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        this.ComboBoxUpdate(productsList);
     }
 
     static public MenuItem Menu_Create(int id)
@@ -38,14 +37,6 @@ public partial class MainWindow : Window
         TreeMenu menu = new TreeMenu(id);
         MenuItem item = menu.createMenu();
         return item;
-    }
-
-    private void ComboBoxUpdate(List<MenuItem> source)
-    {
-        productsList = dbLoader.getProductData();
-        productsComboBox.ItemsSource = productsList;
-        productsComboBox.DisplayMemberPath = "Title";
-        //productsComboBox.SelectedIndex = 0;
     }
 
     private void SaveEdition_Click(object sender, RoutedEventArgs e)
@@ -172,7 +163,6 @@ public partial class MainWindow : Window
                 }
 
                 _context.SaveChanges();
-                this.ComboBoxUpdate(dbLoader.getProductData());
                 MessageBox.Show("Элемент был добавлен в таблицу");
                 break;
             case SaveWindow.SaveOption.SaveChanges:
@@ -249,7 +239,7 @@ public partial class MainWindow : Window
     {
         if (productsRadioButton.IsChecked == true)
         {
-            ItemList list = new ItemList(itemsToAdd);
+            ItemList list = new ItemList(itemsToAdd, true);
 
             if (list.ShowDialog() == true)
             {
@@ -377,23 +367,6 @@ public partial class MainWindow : Window
         }
     }
 
-    private void productsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        MenuItem item = productsComboBox.SelectedItem as MenuItem;
-
-        if (item != null)
-        {
-            trvMenu.Items.Clear();
-            trvMenu.Items.Add(Menu_Create(item.Id));
-            FullName.Text = ((MenuItem)productsComboBox.SelectedItem).Title.ToString() + " полное название";
-            itemid = item.Id;
-
-            this.FillListItems("Operation", (trvMenu.Items[0] as MenuItem).itemId);
-            this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
-        }
-        
-    }
-
     private void OperationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if(OperationList.SelectedItem != null)
@@ -424,7 +397,6 @@ public partial class MainWindow : Window
                 OnPropertyChanged(nameof(EquipmentList));
                 EquipmentList.ItemsSource = list.OperationEquipment(request);
                 break;
-
         }
     }
 
@@ -485,6 +457,27 @@ public partial class MainWindow : Window
                 {
                     ExpandAllTreeViewItems(container, expand);
                 }
+            }
+        }
+    }
+
+    private void productSelect_Click(object sender, RoutedEventArgs e)
+    {
+        ItemList list = new ItemList(itemsToAdd, false);
+
+        if (list.ShowDialog() == true)
+        {
+            MenuItem item = itemsToAdd[0];
+
+            if (item != null)
+            {
+                trvMenu.Items.Clear();
+                trvMenu.Items.Add(Menu_Create(item.Id));
+                FullName.Text = ((MenuItem)trvMenu.Items[0]).Title.ToString() + " полное название";
+                itemid = item.Id;
+
+                this.FillListItems("Operation", (trvMenu.Items[0] as MenuItem).itemId);
+                this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
             }
         }
     }

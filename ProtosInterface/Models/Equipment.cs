@@ -15,7 +15,7 @@ namespace ProtosInterface.Models
 
         public int InventoryNumber { get; set; }
 
-        [MaxLength(10)]
+        [MaxLength(30)]
         public string Name { get; set; }
 
         [MaxLength(30)]

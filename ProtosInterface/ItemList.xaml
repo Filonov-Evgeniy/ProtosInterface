@@ -7,19 +7,46 @@
         mc:Ignorable="d"
         Title="ItemList" 
         Height="450" 
-        Width="300">
+        Width="320"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="8*"/>
+                <RowDefinition Height="1*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
             <ListBox x:Name="ItemListBox" 
                      Grid.Row="0"/>
-            <Button x:Name="AddButton" 
-                    Grid.Row="1" 
-                    Content="Добавить" 
-                    Click="AddButton_Click"/>
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="1"
+                        VerticalAlignment="Center">
+                <CheckBox x:Name="Product"
+                          Content="Изделие"
+                          VerticalAlignment="Center"
+                          Margin="10,0,5,0"
+                          IsChecked="{Binding IsFilter1Enabled, UpdateSourceTrigger=PropertyChanged}"
+                          />
+                <CheckBox x:Name="Assembly_uint"
+                          Content="Сборная единица"
+                          VerticalAlignment="Center"
+                          Margin="10,0,10,0"
+                          IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}"
+                          />
+                <CheckBox x:Name="Detail"
+                          Content="Деталь"
+                          VerticalAlignment="Center"
+                          Margin="5,0,0,0"
+                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"
+                          />
+            </StackPanel>
+            <Button x:Name="SelectButton" 
+                    Grid.Row="2" 
+                    Content="" 
+                    Click="SelectButton_Click"
+                    Visibility="Visible"
+                    Background="#c7f9f7"/>
         </Grid>
     </Grid>
 </Window>

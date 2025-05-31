@@ -9,7 +9,7 @@ using static System.Net.WebRequestMethods;
 
 namespace ProtosInterface
 {
-    class AppDbContext: DbContext
+    class AppDbContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductLink> ProductLinks { get; set; }
@@ -214,7 +214,7 @@ namespace ProtosInterface
         {
             DBConnection connect = new DBConnection();
             optionsBuilder.UseSqlServer(connect.ConnectionString);
-            
+
         }
     }
 }

@@ -4,6 +4,7 @@
     [type_id]        INT           NOT NULL,
     [coop_status_id] INT           NOT NULL,
     [description]    NVARCHAR (MAX) NULL,
+    FOREIGN KEY ([type_id]) REFERENCES [dbo].[Product_Type] ([id]),
     PRIMARY KEY CLUSTERED ([id] ASC)
 );
 
@@ -14,6 +15,14 @@ CREATE TABLE [dbo].[Product_Link] (
     PRIMARY KEY CLUSTERED ([parent_product_id] ASC, [included_product_id] ASC),
     FOREIGN KEY ([parent_product_id]) REFERENCES [dbo].[Product] ([id]),
     FOREIGN KEY ([included_product_id]) REFERENCES [dbo].[Product] ([id])
+);
+
+CREATE TABLE [Product_Type]
+(
+	[id] int NOT NULL,
+	[name] nvarchar(100) NOT NULL,
+	[description] nvarchar(max) NULL
+	PRIMARY KEY CLUSTERED ([id] ASC)
 );
 
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1, N'Дет1', 1, 1, NULL)
@@ -50,6 +59,12 @@ INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (12, 8, 1)
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (12, 205, 0.2)
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (12, 206, 0.2)
+
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (-1, N'Default', N'')
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (0, N'Изделие', N'')
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (1, N'Деталь', N'')
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (2, N'Стандартное', N'')
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (3, N'Остальное', N'')
 
 CREATE TABLE [dbo].[Operation_Type] (
     [id]          INT           NOT NULL,

@@ -69,12 +69,11 @@
                                 <RowDefinition Height="3.5*"/>
                             </Grid.RowDefinitions>
 
-                            <ComboBox x:Name="productsComboBox" 
-                                      SelectionChanged="productsComboBox_SelectionChanged" 
-                                      Margin="5,5,5,5" 
-                                      Grid.Row="0" 
-                                      MaxDropDownHeight="150" 
-                                      VerticalContentAlignment="Center"/>
+                            <Button x:Name="productSelect"
+                                    Content="Выбрать изделие"
+                                    Margin="5,5,5,5"
+                                    Grid.Row="0"
+                                    Click="productSelect_Click"/>
 
                             <Border Grid.Row="1" 
                                     Margin="5,0,5,5">
