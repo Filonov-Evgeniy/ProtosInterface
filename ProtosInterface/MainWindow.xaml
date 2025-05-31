@@ -8,7 +8,8 @@
         Title="MainWindow" Height="450" Width="800" WindowStartupLocation="Manual" Top="300" Left="500">
     <Window.Resources>
         <local:ScreenSizeChanged x:Key="ScreenSizeToTextSize"/>
-        <Style TargetType="Button">
+        <Style TargetType="Button"
+               x:Key="ButtonStyle">
             <Setter Property="FontSize" 
                     Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
             <Setter Property="Background" 
@@ -73,7 +74,8 @@
                                     Content="Выбрать изделие"
                                     Margin="5,5,5,5"
                                     Grid.Row="0"
-                                    Click="productSelect_Click"/>
+                                    Click="productSelect_Click"
+                                    Style="{DynamicResource ButtonStyle}"/>
 
                             <Border Grid.Row="1" 
                                     Margin="5,0,5,5">
@@ -160,30 +162,6 @@
                                         <RowDefinition Height="8*"/>
                                     </Grid.RowDefinitions>
 
-                                    <Border BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0" 
-                                                        Orientation="Horizontal">
-                                                <RadioButton Content="Изделие" 
-                                                             VerticalContentAlignment="Center" 
-                                                             GroupName="EditOption" 
-                                                             IsChecked="True"
-                                                             x:Name="productsRadioButton"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="1" 
-                                                        Orientation="Horizontal">
-                                                <RadioButton Content="Операции" 
-                                                            VerticalContentAlignment="Center"
-                                                             GroupName="EditOption"
-                                                             x:Name="operationsRadioButton"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Border>
-
                                     <Grid Grid.Row="1">
 
                                         <Grid.RowDefinitions>
@@ -201,12 +179,14 @@
                                                     Content="Копировать" 
                                                     Click="CopyTreeItemButton_Click" 
                                                     Grid.Column="0" 
+                                                    Style="{DynamicResource ButtonStyle}"
                                                     Margin="5,2.5,2.5,2.5"/>
 
                                             <Button x:Name="InsertTreeItemButton" 
                                                     Content="Вставить" 
                                                     Click="InsertTreeItemButton_Click" 
                                                     Grid.Column="1" 
+                                                    Style="{DynamicResource ButtonStyle}"
                                                     Margin="2.5,2.5,5,2.5"/>
                                         </Grid>
 
@@ -219,12 +199,14 @@
                                                     Content="Добавить" 
                                                     Click="AddNewTreeItemButton_Click" 
                                                     Grid.Column="0" 
+                                                    Style="{DynamicResource ButtonStyle}"
                                                     Margin="5,5,2.5,2.5"/>
 
                                             <Button x:Name="DeleteTreeItemButton" 
                                                     Content="Удалить" 
                                                     Click="DeleteTreeItemButton_Click" 
                                                     Grid.Column="1" 
+                                                    Style="{DynamicResource ButtonStyle}"
                                                     Margin="2.5,5,5,2.5"/>
                                         </Grid>
 
@@ -232,10 +214,39 @@
                                             <Button x:Name="SaveEdition" 
                                                     Click="SaveEdition_Click" 
                                                     Content="Сохранить" 
+                                                    Style="{DynamicResource ButtonStyle}"
                                                     Margin="5,2.5,5,5"/>
                                         </Grid>
 
                                     </Grid>
+
+                                    <Border BorderThickness="0,0,0,1">
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" 
+                                                        Orientation="Horizontal">
+                                                <RadioButton Content="Изделие" 
+                                                             VerticalContentAlignment="Center" 
+                                                             GroupName="EditOption" 
+                                                             IsChecked="True"
+                                                             x:Name="productsRadioButton"
+                                                             Checked="EditRadioButton_Checked"
+                                                             Tag="Product"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" 
+                                                        Orientation="Horizontal">
+                                                <RadioButton Content="Операции" 
+                                                             VerticalContentAlignment="Center"
+                                                             GroupName="EditOption"
+                                                             x:Name="operationsRadioButton"
+                                                             Checked="EditRadioButton_Checked"
+                                                             Tag="Operation"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
                                 </Grid>
                             </Border>
                         </Grid>

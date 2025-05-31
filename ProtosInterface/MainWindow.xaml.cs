@@ -386,10 +386,12 @@ public partial class MainWindow : Window
             case "Operation":
                 var newList = list.ItemOperations(request);
                 OperationList.Items.Clear();
+
                 foreach (MenuItem item in newList)
                 {
                     OperationList.Items.Add(item as MenuItem);
                 }
+
                 OperationList.DisplayMemberPath = "Title";
                 break;
             case "Equipment":
@@ -481,4 +483,53 @@ public partial class MainWindow : Window
             }
         }
     }
+
+    private void EditRadioButton_Checked(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton radioButton && radioButton.IsChecked == true && radioButton.Tag != null)
+        {
+            string colorString;
+            if(radioButton.Tag?.ToString() == "Product")
+            {
+                colorString = "#c7f9f7";
+                productSelect.IsEnabled = true;
+                CopyTreeItemButton.IsEnabled = true;
+                InsertTreeItemButton.IsEnabled = true;
+            }
+            else
+            {
+                colorString = "#ccf6d4";
+                productSelect.IsEnabled = false;
+                CopyTreeItemButton.IsEnabled = false;
+                InsertTreeItemButton.IsEnabled = false;
+            }
+            if (!string.IsNullOrEmpty(colorString))
+            {
+                ColorChange(colorString);
+            }
+        }
+    }
+
+    public void ColorChange(string hexColor)
+    {
+        // Создаем кисть из HEX-строки
+        var brush = (SolidColorBrush)new BrushConverter().ConvertFromString(hexColor);
+
+        // Получаем текущий стиль
+        var oldStyle = this.Resources["ButtonStyle"] as Style;
+
+        if (oldStyle != null)
+        {
+            // Создаем новый стиль на основе старого
+            var newStyle = new Style(typeof(Button), oldStyle);
+
+            // Удаляем старый Background (если есть)
+            newStyle.Setters.Add(new Setter(Control.BackgroundProperty, brush));
+
+            // Обновляем ресурс (используем DynamicResource для автоматического обновления)
+            this.Resources["ButtonStyle"] = newStyle;
+        }
+    }
+
+
 }
