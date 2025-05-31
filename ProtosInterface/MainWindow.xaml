@@ -172,13 +172,15 @@
                                                 <RadioButton Content="Изделие" 
                                                              VerticalContentAlignment="Center" 
                                                              GroupName="EditOption" 
-                                                             IsChecked="True"/>
+                                                             IsChecked="True"
+                                                             x:Name="productsRadioButton"/>
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" 
                                                         Orientation="Horizontal">
                                                 <RadioButton Content="Операции" 
                                                             VerticalContentAlignment="Center"
-                                                             GroupName="EditOption"/>
+                                                             GroupName="EditOption"
+                                                             x:Name="operationsRadioButton"/>
                                             </StackPanel>
                                         </Grid>
                                     </Border>
