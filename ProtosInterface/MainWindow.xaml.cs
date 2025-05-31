@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -297,13 +298,11 @@ public partial class MainWindow : Window
 
     public static TreeViewItem GetTreeViewItem(ItemsControl parent, object item)
     {
-        // 1. Проверка на null (защита от ошибок)
         if (parent == null || item == null)
         {
             return null;
         }
 
-        // 2. Пытаемся получить контейнер напрямую
         var container = parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
         if (container != null)
         {
@@ -311,7 +310,6 @@ public partial class MainWindow : Window
             return container;
         }
 
-        // 3. Рекурсивный поиск по дочерним элементам
         foreach (var childItem in parent.Items)
         {
             var childContainer = parent.ItemContainerGenerator.ContainerFromItem(childItem) as ItemsControl;
@@ -321,7 +319,6 @@ public partial class MainWindow : Window
                 continue;
             }
 
-            // 4. Рекурсивный вызов для проверки вложенных узлов
             container = GetTreeViewItem(childContainer, item);
 
             if (container != null)
@@ -406,25 +403,47 @@ public partial class MainWindow : Window
             try
             {
                 MenuItem root = trvMenu.Items[0] as MenuItem;
-
+                ExpandAllTreeViewItems(trvMenu, true);
+                ExpandAllTreeViewItems(trvMenu, false);
                 var searchingItems = TreeMenu.MenuItemSearch(root, search.Text, "");
                 SearchList searchItems = new SearchList(searchingItems, searchingItem);
 
                 if (searchItems.ShowDialog() == true)
                 {
                     var container = GetTreeViewItem(trvMenu, searchingItem[0]);
-
                     if (container != null)
                     {
                         container.IsExpanded = true;
                         container.BringIntoView();
                         container.IsSelected = true;
+                        container.Focus();
                     }
                 }
             }
             finally
             {
                 searchingItem.Clear();
+            }
+        }
+    }
+
+    private void ExpandAllTreeViewItems(ItemsControl parent, bool expand)
+    {
+        if (parent == null) return;
+
+        parent.UpdateLayout();
+        
+
+        foreach (var item in parent.Items)
+        {
+            if (parent.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem container)
+            {
+                container.IsExpanded = expand;
+
+                if (container.Items.Count > 0)
+                {
+                    ExpandAllTreeViewItems(container, expand);
+                }
             }
         }
     }
