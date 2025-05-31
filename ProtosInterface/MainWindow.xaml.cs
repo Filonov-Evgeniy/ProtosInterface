@@ -216,6 +216,7 @@ public partial class MainWindow : Window
 
     private void InsertTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
+        
         var selectedItem = trvMenu.Items[0] as MenuItem;
 
         if (selectedItem != null)
@@ -241,36 +242,71 @@ public partial class MainWindow : Window
         {
             MessageBox.Show("Выберите элемент для вставки");
         }
+        
     }
 
     private void AddNewTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
-        ItemList list = new ItemList(itemsToAdd);
-
-        if (list.ShowDialog() == true)
+        if (productsRadioButton.IsChecked == true)
         {
-            var selectedItem = trvMenu.SelectedItem as MenuItem;
+            ItemList list = new ItemList(itemsToAdd);
 
-            foreach (MenuItem item in itemsToAdd)
+            if (list.ShowDialog() == true)
             {
-                selectedItem.Items.Add(item);
-            }
+                var selectedItem = trvMenu.SelectedItem as MenuItem;
 
-            MessageBox.Show("Элементы добавлены");
+                foreach (MenuItem item in itemsToAdd)
+                {
+                    selectedItem.Items.Add(item);
+                }
+
+                MessageBox.Show("Элементы добавлены");
+            }
+        }
+        else
+        {
+            dbDataLoader dbloader = new dbDataLoader();
+            List<MenuItem> operationList = new List<MenuItem>();
+            OperationList operations = new OperationList(operationList);
+
+            if (operations.ShowDialog() == true)
+            {
+                foreach (MenuItem item in operationList)
+                {
+                    OperationList.Items.Add(item);
+                }
+
+                MessageBox.Show("Элементы добавлены");
+            }
         }
     }
 
     private void DeleteTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
-        var selectedItem = trvMenu.SelectedItem as MenuItem;
-
-        if (selectedItem == null)
+        if (productsRadioButton.IsChecked == true)
         {
-            MessageBox.Show("Не выбран элемент для удаления");
+            var selectedItem = trvMenu.SelectedItem as MenuItem;
+
+            if (selectedItem == null)
+            {
+                MessageBox.Show("Не выбран элемент для удаления");
+            }
+            else
+            {
+                selectedItem.Parent.Items.Remove(selectedItem);
+            }
         }
         else
         {
-            selectedItem.Parent.Items.Remove(selectedItem);
+            var selectedItem = OperationList.SelectedItem as MenuItem;
+            if (selectedItem == null)
+            {
+                MessageBox.Show("Не выбран элемент для удаления");
+            }
+            else
+            {
+                OperationList.Items.Remove(selectedItem);
+            }
         }
     }
 
@@ -375,7 +411,12 @@ public partial class MainWindow : Window
         switch (type)
         {
             case "Operation":
-                OperationList.ItemsSource = list.ItemOperations(request);
+                var newList = list.ItemOperations(request);
+                OperationList.Items.Clear();
+                foreach (MenuItem item in newList)
+                {
+                    OperationList.Items.Add(item as MenuItem);
+                }
                 OperationList.DisplayMemberPath = "Title";
                 break;
             case "Equipment":
