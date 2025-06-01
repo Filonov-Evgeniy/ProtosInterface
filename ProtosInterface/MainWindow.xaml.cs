@@ -243,14 +243,20 @@ public partial class MainWindow : Window
 
             if (list.ShowDialog() == true)
             {
-                var selectedItem = trvMenu.SelectedItem as MenuItem;
-
-                foreach (MenuItem item in itemsToAdd)
+                var selectedItem = trvMenu.Items[0] as MenuItem;
+                if (selectedItem != null)
                 {
-                    selectedItem.Items.Add(item);
-                }
+                    foreach (MenuItem item in itemsToAdd)
+                    {
+                        selectedItem.Items.Add(item);
+                    }
 
-                MessageBox.Show("Элементы добавлены");
+                    MessageBox.Show("Элементы добавлены");
+                }
+                else
+                {
+                    MessageBox.Show("Необходимо выбрать элемент, перед тем как что-то в него добавить");
+                }
             }
         }
         else
