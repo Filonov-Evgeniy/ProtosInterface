@@ -17,12 +17,15 @@ namespace ProtosInterface.Models
 
         public int TypeId { get; set; }
 
+        // Навигационное свойство для связи с ProductType
+        public ProductType ProductType { get; set; } // <- Добавляем это!
+
         public int CoopStatusId { get; set; }
         [MaxLength(4000)]
         public string? Description { get; set; }
 
         // Навигационные свойства для связей
-        public ICollection<ProductLink> ParentLinks { get; set; } // Где этот продукт является родителем
+        public ICollection<ProductLink> ParentLinks { get; set; }
         public ICollection<ProductLink> ChildLinks { get; set; }
     }
 }

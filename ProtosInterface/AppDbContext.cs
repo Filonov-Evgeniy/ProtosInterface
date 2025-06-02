@@ -17,6 +17,7 @@ namespace ProtosInterface
         public DbSet<Operation> Operations { get; set; }
         public DbSet<OperationVariant> OperationVariants { get; set; }
         public DbSet<Equipment> Equipment { get; set; }
+        public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<OperationVariantComponent> OperationVariantComponents { get; set; }
 
 
@@ -42,6 +43,11 @@ namespace ProtosInterface
                 entity.Property(p => p.Description)
                       .HasMaxLength(4000)
                       .HasColumnName("description");
+
+                entity.HasOne(p => p.ProductType) // Навигационное свойство в Product (его нужно добавить!)
+                      .WithMany(pt => pt.Products) // Навигационное свойство в ProductType
+                      .HasForeignKey(p => p.TypeId) // Внешний ключ в Product
+                      .OnDelete(DeleteBehavior.Restrict); // Или Cascade, если нужно
             });
 
             // Конфигурация ProductLink
@@ -207,6 +213,21 @@ namespace ProtosInterface
                 entity.HasOne(ovc => ovc.Equipment)
                       .WithMany()
                       .HasForeignKey(ovc => ovc.EquipmentId);
+            });
+
+            modelBuilder.Entity<ProductType>(entity =>
+            {
+                entity.ToTable("Product_Type");
+                entity.HasKey(pt => pt.Id);
+
+                entity.Property(pt => pt.Name)
+                      .IsRequired()
+                      .HasMaxLength(100)
+                      .HasColumnName("name");
+
+                entity.Property(pt => pt.Description)
+                      .HasMaxLength(4000)
+                      .HasColumnName("description");
             });
         }
 

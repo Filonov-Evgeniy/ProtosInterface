@@ -10,7 +10,21 @@
         Width="320"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Icon="/Lupa.png">
+        Icon="Resources/Lupa.png">
+    <Window.Resources>
+        <Style TargetType="Button"
+               x:Key="ButtonStyle">
+            <Setter Property="Background" 
+                    Value="#c7f9f7"/>
+            <Setter Property="FontSize"
+                    Value="18"/>
+        </Style>
+        <Style TargetType="ProgressBar"
+               x:Key="ProgressStyle">
+            <Setter Property="Foreground"
+                    Value="#FF96FF96"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -21,53 +35,47 @@
             </Grid.RowDefinitions>
             <ListBox x:Name="ItemListBox" 
                      Grid.Row="0"
-                     Grid.RowSpan="2"/>
+                     Grid.RowSpan="2"
+                     BorderThickness="0,0,0,0"/>
             <StackPanel Orientation="Horizontal"
                         Grid.Row="2"
-                        VerticalAlignment="Center">
+                        VerticalAlignment="Center"
+                        x:Name="FilterField">
                 <CheckBox x:Name="Product"
                           Content="Изделие"
                           VerticalAlignment="Center"
                           Margin="10,0,5,0"
-                          IsChecked="{Binding IsFilter1Enabled, UpdateSourceTrigger=PropertyChanged}"
-                          />
+                          IsChecked="{Binding IsFilter1Enabled, UpdateSourceTrigger=PropertyChanged}"/>
                 <CheckBox x:Name="Assembly_uint"
                           Content="Сборная единица"
                           VerticalAlignment="Center"
                           Margin="10,0,10,0"
-                          IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}"
-                          />
+                          IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}"/>
                 <CheckBox x:Name="Detail"
                           Content="Деталь"
                           VerticalAlignment="Center"
                           Margin="5,0,0,0"
-                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"
-                          />
+                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
             <Button x:Name="SelectButton" 
                     Grid.Row="3" 
                     Content="" 
                     Click="SelectButton_Click"
                     Visibility="Visible"
-                    Background="#c7f9f7"/>
-            <Border x:Name="LoadingIndicator" 
-                    Visibility="Collapsed"
-                    Background="White"
-                    Panel.ZIndex="100"
-                    Grid.Row="1">
-                <StackPanel HorizontalAlignment="Center" 
-                            VerticalAlignment="Center"
-                            Background="White">
-                    <TextBlock Text="Загрузка данных..." 
-                               HorizontalAlignment="Center"
-                               Foreground="Black" 
-                               Margin="0"/>
-                    <ProgressBar IsIndeterminate="True" 
-                                 Width="200" Height="20"
-                                 Foreground="#FF9696FF"/>
-                    
-                </StackPanel>
-            </Border>
+                    Style="{DynamicResource ButtonStyle}"/>
+            <StackPanel HorizontalAlignment="Center" 
+                        VerticalAlignment="Center"
+                        Background="White"
+                        Grid.Row="1"
+                        x:Name="LoadingIndicator">
+                <TextBlock Text="Загрузка данных..." 
+                           HorizontalAlignment="Center"
+                           Foreground="Black" 
+                           Margin="0"/>
+                <ProgressBar IsIndeterminate="True" 
+                             Width="200" Height="20"
+                             Style="{DynamicResource ProgressStyle}"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

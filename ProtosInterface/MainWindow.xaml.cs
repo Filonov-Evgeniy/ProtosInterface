@@ -68,7 +68,6 @@ public partial class MainWindow : Window
                     isNextItemExists = _context.Products.Any(x => x.Id == newID);
                 }
 
-
                 var oldItem = _context.Products
                                       .FirstOrDefault(x => x.Id == item.Id);
 
@@ -77,8 +76,7 @@ public partial class MainWindow : Window
                 if (oldItem.Name.Split().Length > 1)
                 {
                     count = _context.Products
-                                    .Count(p => EF.Functions.Like(p.Name, $"%{oldItem.Name.Split()[1]}%") ||
-                                                EF.Functions.Like(p.Name, $"%(%) {oldItem.Name.Split()[1]}%"));
+                                    .Count(p => EF.Functions.Like(p.Name, $"%{oldItem.Name.Split()[1]}%"));
                 }
                 else
                 {
@@ -99,7 +97,7 @@ public partial class MainWindow : Window
 
                 foreach (MenuItem product in item.Items)
                 {
-                    Product productParent = _context.Products.Find(item.itemId)!;
+                    Product productParent = _context.Products.Find(newProduct.Id)!;
                     Product includedProduct = _context.Products.Find(product.itemId)!;
 
                     if (includedProduct != null)
@@ -232,14 +230,13 @@ public partial class MainWindow : Window
         {
             MessageBox.Show("Выберите элемент для вставки");
         }
-        
     }
 
     private void AddNewTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
         if (productsRadioButton.IsChecked == true)
         {
-            ItemList list = new ItemList(itemsToAdd, true);
+            ItemList list = new ItemList(itemsToAdd, true, true);
 
             if (list.ShowDialog() == true)
             {
@@ -251,6 +248,7 @@ public partial class MainWindow : Window
                         selectedItem.Items.Add(item);
                     }
 
+                    
                     MessageBox.Show("Элементы добавлены");
                 }
                 else
@@ -261,20 +259,19 @@ public partial class MainWindow : Window
         }
         else
         {
-            dbDataLoader dbloader = new dbDataLoader();
-            List<MenuItem> operationList = new List<MenuItem>();
-            OperationList operations = new OperationList(operationList);
+            ItemList list = new ItemList(itemsToAdd, true, false);
 
-            if (operations.ShowDialog() == true)
+            if (list.ShowDialog() == true)
             {
-                foreach (MenuItem item in operationList)
+                foreach (MenuItem item in itemsToAdd)
                 {
                     OperationList.Items.Add(item);
                 }
 
-                MessageBox.Show("Элементы добавлены");
+                MessageBox.Show("Операции добавлены");
             }
         }
+        itemsToAdd.Clear();
     }
 
     private void DeleteTreeItemButton_Click(object sender, RoutedEventArgs e)
@@ -471,7 +468,7 @@ public partial class MainWindow : Window
 
     private void productSelect_Click(object sender, RoutedEventArgs e)
     {
-        ItemList list = new ItemList(itemsToAdd, false);
+        ItemList list = new ItemList(itemsToAdd, false, productsRadioButton.IsChecked!.Value);
 
         if (list.ShowDialog() == true && itemsToAdd.Count != 0)
         {
@@ -530,6 +527,4 @@ public partial class MainWindow : Window
             this.Resources["ButtonStyle"] = newStyle;
         }
     }
-
-
 }

@@ -23,22 +23,35 @@ namespace ProtosInterface
     /// </summary>
     public partial class ItemList : Window
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        private ObservableCollection<MenuItem> AllItems { get; } = new ObservableCollection<MenuItem>();
+
+        private event PropertyChangedEventHandler? PropertyChanged;
         List<MenuItem> itemList;
         private AppDbContext _context;
-        public ItemList(List<MenuItem> itemList, bool operation)
+        bool type;
+
+        public ItemList(List<MenuItem> itemList, bool operation, bool type)
         {
             InitializeComponent();
             ItemListBox.Visibility = Visibility.Collapsed;
             Detail.IsChecked = true;
             Assembly_uint.IsChecked = true;
             Product.IsChecked = true;
+            this.type = type;
             SelectButton.Content = operation ? "Добавить" : "Выбрать";
+            
+            if (type == true)
+            {
+                ColorChange("#c7f9f7", "ButtonStyle");
+                ColorChange("#FF9696FF", "ProgressStyle");
+            }
+            else
+            {
+                ColorChange("#ccf6d4", "ButtonStyle");
+                ColorChange("#FF96FF96", "ProgressStyle");
+            }
+            
             LoadDataAsync();
-            //dbDataLoader loader = new dbDataLoader();
-            //List<MenuItem> dataList = loader.getProductData();
-            //ItemListBox.ItemsSource = dataList;
-            //ItemListBox.DisplayMemberPath = "Title";
             this.itemList = itemList;
             itemList.Clear();
 
@@ -47,7 +60,7 @@ namespace ProtosInterface
             //    AllItems.Add(item);
             //}
 
-            //// Настраиваем фильтрацию
+            // Настраиваем фильтрацию
             //FilteredItems = CollectionViewSource.GetDefaultView(AllItems);
             //FilteredItems.Filter = FilterItems;
         }
@@ -57,10 +70,17 @@ namespace ProtosInterface
             try
             {
                 LoadingIndicator.Visibility = Visibility.Visible;
-
+                List<MenuItem> dataList = new List<MenuItem>();
                 dbDataLoader loader = new dbDataLoader();
-                List<MenuItem> dataList = await loader.GetProductDataAsync();
-
+                if (type == true)
+                {
+                    dataList = await loader.GetProductDataAsync();
+                }
+                else
+                {
+                    FilterField.Visibility = Visibility.Collapsed;
+                    dataList = await loader.GetOperationDataAsync();
+                }
                 ItemListBox.ItemsSource = dataList;
                 ItemListBox.DisplayMemberPath = "Title";
 
@@ -91,8 +111,6 @@ namespace ProtosInterface
             itemList.AddRange(itemsToAdd);
             this.DialogResult = true;
         }
-
-        public ObservableCollection<MenuItem> AllItems { get; } = new ObservableCollection<MenuItem>();
 
         // Отфильтрованная коллекция (привязана к ListBox)
         public ICollectionView FilteredItems { get; private set; }
@@ -144,11 +162,11 @@ namespace ProtosInterface
             if (!IsFilter1Enabled && !IsFilter2Enabled && !IsFilter3Enabled)
                 return true;
 
-            //IQueryable product = _context.Products.Include(p => p.ProductType).Where(p => p.Id == item.Id);
+            IQueryable product = _context.Products.Include(p => p.ProductType).Where(p => p.Id == item.Id);
 
-            // Проверяем условия фильтрации
+            //Проверяем условия фильтрации
 
-            //bool passesFilter1 = IsFilter1Enabled && item.;
+            //bool passesFilter1 = IsFilter1Enabled && product.;
             //bool passesFilter2 = IsFilter2Enabled && item.Category == "Категория 2";
             //bool passesFilter3 = IsFilter3Enabled && item.Name.Contains("3");
 
@@ -158,5 +176,29 @@ namespace ProtosInterface
 
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private void ColorChange(string hexColor, string resource)
+        {
+            var brush = (SolidColorBrush)new BrushConverter().ConvertFromString(hexColor)!;
+
+            var oldStyle = this.Resources[resource] as Style;
+
+            if (oldStyle != null)
+            {
+                Style newStyle;
+                if(resource == "ButtonStyle")
+                {
+                    newStyle = new Style(typeof(Button), oldStyle);
+                    newStyle.Setters.Add(new Setter(BackgroundProperty, brush));
+                }
+                else
+                {
+                    newStyle = new Style(typeof(ProgressBar), oldStyle);
+                    newStyle.Setters.Add(new Setter(ForegroundProperty, brush));
+                }
+
+                this.Resources[resource] = newStyle;
+            }
+        }
     }
 }

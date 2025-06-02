@@ -22,46 +22,19 @@ namespace ProtosInterface
 
         public List<MenuItem> getOperationData()
         {
-            IQueryable operations = _context.Operations.Include(o => o.OperationType);
+            IQueryable operations = _context.OperationTypes;
 
             List<MenuItem> items = new List<MenuItem>();
-            foreach (Models.Operation operation in operations)
+            foreach (Models.OperationType operation in operations)
             {
                 int id = operation.Id;
-                int code = operation.Code;
-                string name = operation.OperationType.Name;
-                name = code + " | " + name;
+                string name = operation.Name;
                 items.Add(new MenuItem(id, name));
             }
 
             return items;
         }
-
-        public List<MenuItem> getProductData()
-        {
-            IQueryable products = _context.Products;
-
-            List<MenuItem> items = new List<MenuItem>();
-            foreach (Models.Product product in products)
-            {
-                int id = product.Id;
-                string name = product.Name;
-                items.Add(new MenuItem(id, name));
-            }
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                if (isHasChildren(items[i].itemId))
-                {
-                    MenuItem item = items[i];
-                    buildMenuItems(items[i].itemId, ref item);
-                    items[i] = item;
-                }
-            }
-
-            return items;
-        }
-        //
+        
         public async Task<List<MenuItem>> GetProductDataAsync()
         {
             return await Task.Run(async () =>
@@ -75,25 +48,26 @@ namespace ProtosInterface
                     items.AddRange(products.Select(p => new MenuItem(p.Id, p.Name)));
                 }
 
-                // Параллельная обработка с отдельными контекстами
-                Parallel.For(0, items.Count, i =>
+                return items;
+            });
+        }
+
+        public async Task<List<MenuItem>> GetOperationDataAsync()
+        {
+            return await Task.Run(async () =>
+            {
+                List<MenuItem> items = new List<MenuItem>();
+
+                // Главный контекст для загрузки продуктов
+                using (var mainContext = new AppDbContext())
                 {
-                    // Создаем новый контекст для каждого потока
-                    using (var threadContext = new AppDbContext())
-                    {
-                        if (IsHasChildren(threadContext, items[i].itemId))
-                        {
-                            var item = items[i];
-                            BuildMenuItems(threadContext, items[i].itemId, ref item);
-                            items[i] = item;
-                        }
-                    }
-                });
+                    var operations = mainContext.OperationTypes.AsNoTracking().ToList();
+                    items.AddRange(operations.Select(p => new MenuItem(p.Id, p.Name)));
+                }
 
                 return items;
             });
         }
-        //
 
         private bool IsHasChildren(AppDbContext context, int productId)
         {
@@ -106,8 +80,6 @@ namespace ProtosInterface
             var productIdList = sqlToDictionary(products);
             foreach (KeyValuePair<int, double> id in productIdList)
             {
-                //for (int i = 0; i < id.Value; i++)
-                //{
                 MenuItem doughterItem = new MenuItem() { Title = getProductName(context, id.Key), Amount = id.Value };
                 doughterItem.Parent = item;
                 doughterItem.itemId = id.Key;
@@ -116,7 +88,6 @@ namespace ProtosInterface
                 {
                     BuildMenuItems(context, id.Key, ref doughterItem);
                 }
-                //}
             }
         }
 
@@ -126,17 +97,14 @@ namespace ProtosInterface
             var productIdList = sqlToDictionary(products);
             foreach (KeyValuePair<int, double> id in productIdList)
             {
-                //for (int i = 0; i < id.Value; i++)
-                //{
-                    MenuItem doughterItem = new MenuItem() { Title = getProductName(id.Key), Amount = id.Value };
-                    doughterItem.Parent = item;
-                    doughterItem.itemId = id.Key;
-                    item.Items.Add(doughterItem);
-                    if (isHasChildren(id.Key))
-                    {
-                        buildMenuItems(id.Key, ref doughterItem);
-                    }
-                //}
+                MenuItem doughterItem = new MenuItem() { Title = getProductName(id.Key), Amount = id.Value };
+                doughterItem.Parent = item;
+                doughterItem.itemId = id.Key;
+                item.Items.Add(doughterItem);
+                if (isHasChildren(id.Key))
+                {
+                    buildMenuItems(id.Key, ref doughterItem);
+                }
             }
         }
 
