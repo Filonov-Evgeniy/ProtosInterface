@@ -29,33 +29,60 @@ namespace ProtosInterface
         public ItemList(List<MenuItem> itemList, bool operation)
         {
             InitializeComponent();
+            ItemListBox.Visibility = Visibility.Collapsed;
             Detail.IsChecked = true;
             Assembly_uint.IsChecked = true;
             Product.IsChecked = true;
-            if (operation == true)
-            {
-                SelectButton.Content = "Добавить";
-            }
-            else
-            {
-                SelectButton.Content = "Выбрать";
-            }
-            dbDataLoader loader = new dbDataLoader();
-            List<MenuItem> dataList = loader.getProductData();
-            ItemListBox.ItemsSource = dataList;
-            ItemListBox.DisplayMemberPath = "Title";
+            SelectButton.Content = operation ? "Добавить" : "Выбрать";
+            LoadDataAsync();
+            //dbDataLoader loader = new dbDataLoader();
+            //List<MenuItem> dataList = loader.getProductData();
+            //ItemListBox.ItemsSource = dataList;
+            //ItemListBox.DisplayMemberPath = "Title";
             this.itemList = itemList;
             itemList.Clear();
 
-            foreach (MenuItem item in dataList)
-            {
-                AllItems.Add(item);
-            }
+            //foreach (MenuItem item in dataList)
+            //{
+            //    AllItems.Add(item);
+            //}
 
-            // Настраиваем фильтрацию
-            FilteredItems = CollectionViewSource.GetDefaultView(AllItems);
-            FilteredItems.Filter = FilterItems;
-        }       
+            //// Настраиваем фильтрацию
+            //FilteredItems = CollectionViewSource.GetDefaultView(AllItems);
+            //FilteredItems.Filter = FilterItems;
+        }
+
+        private async void LoadDataAsync()
+        {
+            try
+            {
+                LoadingIndicator.Visibility = Visibility.Visible;
+
+                dbDataLoader loader = new dbDataLoader();
+                List<MenuItem> dataList = await loader.GetProductDataAsync();
+
+                ItemListBox.ItemsSource = dataList;
+                ItemListBox.DisplayMemberPath = "Title";
+
+                AllItems.Clear();
+                foreach (MenuItem item in dataList)
+                {
+                    AllItems.Add(item);
+                }
+
+                FilteredItems = CollectionViewSource.GetDefaultView(AllItems);
+                FilteredItems.Filter = FilterItems;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
+            }
+            finally
+            {
+                LoadingIndicator.Visibility = Visibility.Collapsed;
+                ItemListBox.Visibility = Visibility.Visible;
+            }
+        }
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
@@ -68,7 +95,7 @@ namespace ProtosInterface
         public ObservableCollection<MenuItem> AllItems { get; } = new ObservableCollection<MenuItem>();
 
         // Отфильтрованная коллекция (привязана к ListBox)
-        public ICollectionView FilteredItems { get; }
+        public ICollectionView FilteredItems { get; private set; }
 
         // Свойства для CheckBox
         private bool _isFilter1Enabled;

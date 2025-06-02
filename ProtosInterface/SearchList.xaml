@@ -37,7 +37,8 @@
             <Button x:Name="AddButton" 
                     Grid.Row="1" 
                     Content="Найти" 
-                    Click="SearchButton_Click"/>
+                    Click="SearchButton_Click"
+                    Background="#c7f9f7"/>
         </Grid>
     </Grid>
 </Window>

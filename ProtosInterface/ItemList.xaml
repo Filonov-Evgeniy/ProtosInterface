@@ -5,22 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
-        Title="ItemList" 
+        Title="Список Изделий" 
         Height="450" 
         Width="320"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Icon="/Lupa.png">
     <Grid>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="8*"/>
+                <RowDefinition Height="7*"/>
+                <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
             <ListBox x:Name="ItemListBox" 
-                     Grid.Row="0"/>
+                     Grid.Row="0"
+                     Grid.RowSpan="2"/>
             <StackPanel Orientation="Horizontal"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         VerticalAlignment="Center">
                 <CheckBox x:Name="Product"
                           Content="Изделие"
@@ -42,11 +45,29 @@
                           />
             </StackPanel>
             <Button x:Name="SelectButton" 
-                    Grid.Row="2" 
+                    Grid.Row="3" 
                     Content="" 
                     Click="SelectButton_Click"
                     Visibility="Visible"
                     Background="#c7f9f7"/>
+            <Border x:Name="LoadingIndicator" 
+                    Visibility="Collapsed"
+                    Background="White"
+                    Panel.ZIndex="100"
+                    Grid.Row="1">
+                <StackPanel HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"
+                            Background="White">
+                    <TextBlock Text="Загрузка данных..." 
+                               HorizontalAlignment="Center"
+                               Foreground="Black" 
+                               Margin="0"/>
+                    <ProgressBar IsIndeterminate="True" 
+                                 Width="200" Height="20"
+                                 Foreground="#FF9696FF"/>
+                    
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </Window>

@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
-        Title="OperationList" Height="450" Width="400">
+        Title="OperationList" Height="450" Width="400"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -13,11 +14,12 @@
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
             <ListBox x:Name="OperationListBox" 
-                 Grid.Row="0"/>
+                    Grid.Row="0"/>
             <Button x:Name="AddButton" 
-                Grid.Row="1" 
-                Content="Добавить" 
-                Click="AddButton_Click"/>
+                    Grid.Row="1" 
+                    Content="Добавить" 
+                    Click="AddButton_Click"
+                    Background="#ccf6d4"/>
         </Grid>
     </Grid>
 </Window>

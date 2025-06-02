@@ -369,7 +369,8 @@ public partial class MainWindow : Window
             OperationList.ItemsSource = null;
             var selectedItem = trvMenu.SelectedItem as MenuItem;
             this.FillListItems("Operation", selectedItem.itemId);
-            this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);          
+            this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
+            FullName.Text = ((MenuItem)trvMenu.SelectedItem).Title.ToString() + " полное название";
         }
     }
 
@@ -454,7 +455,6 @@ public partial class MainWindow : Window
 
         parent.UpdateLayout();
         
-
         foreach (var item in parent.Items)
         {
             if (parent.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem container)
@@ -473,7 +473,7 @@ public partial class MainWindow : Window
     {
         ItemList list = new ItemList(itemsToAdd, false);
 
-        if (list.ShowDialog() == true)
+        if (list.ShowDialog() == true && itemsToAdd.Count != 0)
         {
             MenuItem item = itemsToAdd[0];
 
@@ -481,9 +481,8 @@ public partial class MainWindow : Window
             {
                 trvMenu.Items.Clear();
                 trvMenu.Items.Add(Menu_Create(item.Id));
-                FullName.Text = ((MenuItem)trvMenu.Items[0]).Title.ToString() + " полное название";
                 itemid = item.Id;
-
+                FullName.Text = ((MenuItem)trvMenu.Items[0]).Title.ToString() + " полное название";
                 this.FillListItems("Operation", (trvMenu.Items[0] as MenuItem).itemId);
                 this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
             }
@@ -518,21 +517,16 @@ public partial class MainWindow : Window
 
     public void ColorChange(string hexColor)
     {
-        // Создаем кисть из HEX-строки
         var brush = (SolidColorBrush)new BrushConverter().ConvertFromString(hexColor);
 
-        // Получаем текущий стиль
         var oldStyle = this.Resources["ButtonStyle"] as Style;
 
         if (oldStyle != null)
         {
-            // Создаем новый стиль на основе старого
             var newStyle = new Style(typeof(Button), oldStyle);
 
-            // Удаляем старый Background (если есть)
             newStyle.Setters.Add(new Setter(Control.BackgroundProperty, brush));
 
-            // Обновляем ресурс (используем DynamicResource для автоматического обновления)
             this.Resources["ButtonStyle"] = newStyle;
         }
     }
