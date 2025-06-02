@@ -2,6 +2,7 @@
 using ProtosInterface.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,9 +49,12 @@ public partial class MainWindow : Window
         MenuItem item = new MenuItem();
         List<ProductLink> links = new List<ProductLink>();
         List<Operation> operations = new List<Operation>();
+        List<OperationVariant> operationVariants = new List<OperationVariant>();
+        List<OperationVariantComponent> operationVariantComponents = new List<OperationVariantComponent>();
         switch (message.Result)
         {
             case SaveWindow.SaveOption.SaveAsNew:
+
                 item = trvMenu.Items[0] as MenuItem;
 
                 string lastItem = _context.Products
@@ -115,19 +119,42 @@ public partial class MainWindow : Window
 
                 _context.ProductLinks.AddRange(links);
 
-                lastItem = _context.Operations
-                                   .OrderByDescending(x => x.Id)
-                                   .Select(x => x.Id!.ToString())
-                                   .FirstOrDefault()!;
-
                 var oldOperationList = _context.Operations.Where(o => o.ProductId == oldItem.Id).ToList();
 
                 count = 0;
 
                 foreach (MenuItem operation in OperationList.Items)
                 {
+                    lastItem = _context.Operations
+                                       .OrderByDescending(x => x.Id)
+                                       .Select(x => x.Id!.ToString())
+                                       .FirstOrDefault()!;
+
                     int code = int.Parse(operation.Title.Split('|')[0].Trim());
-                    
+
+                    var equipments = _context.Equipment
+                    .Join(
+                        _context.OperationVariantComponents,
+                        e => e.Id,
+                        ovc => ovc.EquipmentId,
+                        (e, ovc) => new { Equipment = e, OVC = ovc }
+                    )
+                    .Join(
+                        _context.OperationVariants,
+                        combined => combined.OVC.OperationVariantId,
+                        ov => ov.Id,
+                        (combined, ov) => new { combined.Equipment, OV = ov }
+                        )
+                    .Where(x => x.OV.OperationId == operation.Id)
+                    .Select(x => new {
+                        x.Equipment.Id,
+                        x.Equipment.Name,
+                        x.OV.Duration,
+                        x.OV.Description,
+                    })
+                    .Distinct()
+                    .ToList();
+
                     if (code == oldOperationList[count].Code)
                     {                     
                         Operation oldOperation = _context.Operations.FirstOrDefault(x => x.Id == operation.Id)!;   
@@ -136,13 +163,47 @@ public partial class MainWindow : Window
                         {
                             operations.Add(new Operation
                             {
-                                Id = int.Parse(lastItem),
+                                Id = int.Parse(lastItem) + 1,
                                 Code = oldOperation.Code,
                                 TypeId = oldOperation.TypeId,
                                 ProductId = newProduct.Id,
                                 CoopStatusId = oldOperation.CoopStatusId,
                                 Description = oldOperation.Description,
                             });
+
+                            int operationcount = 0;
+
+                            foreach (var equipment in equipments)
+                            {
+                                lastItem = _context.OperationVariants
+                                   .OrderByDescending(x => x.Id)
+                                   .Select(x => x.Id!.ToString())
+                                   .FirstOrDefault()!;
+
+                                operationVariants.Add(new OperationVariant
+                                {
+                                    Id = int.Parse(lastItem) + 1,
+                                    OperationId = operations[count].Id,
+                                    Duration = equipment.Duration,
+                                    Description = equipment.Description,
+                                });
+
+                                lastItem = _context.OperationVariants
+                                   .OrderByDescending(x => x.Id)
+                                   .Select(x => x.Id!.ToString())
+                                   .FirstOrDefault()!;
+
+                                operationVariantComponents.Add(new OperationVariantComponent
+                                {
+                                    Id = int.Parse(lastItem) + 1,
+                                    OperationVariantId = operationVariants[operationcount].Id,
+                                    EquipmentId = equipment.Id,
+                                    ProfessionId = equipment.Id,
+                                    WorkersAmount = 1,
+                                });
+
+                                operationcount++;
+                            }
                         }
                         else
                         {
@@ -160,7 +221,12 @@ public partial class MainWindow : Window
                     count++;
                 }
 
+                _context.Operations.AddRange(operations);
+                _context.OperationVariants.AddRange(operationVariants);
+                _context.OperationVariantComponents.AddRange(operationVariantComponents);
+
                 _context.SaveChanges();
+
                 MessageBox.Show("Элемент был добавлен в таблицу");
                 break;
             case SaveWindow.SaveOption.SaveChanges:

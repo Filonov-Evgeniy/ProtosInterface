@@ -21,8 +21,6 @@ namespace ProtosInterface.Models
         public int ProfessionId { get; set; }
 
         public int WorkersAmount { get; set; }
- 
-        public string? Description { get; set; }
 
         [ForeignKey("OperationVariantId")]
         public OperationVariant OperationVariant { get; set; }
