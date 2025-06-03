@@ -63,15 +63,11 @@ namespace ProtosInterface
                 {
                     var operations = mainContext.OperationTypes.AsNoTracking().ToList();
                     items.AddRange(operations.Select(p => new MenuItem(p.Id, p.Name)));
+                    items.Remove(items[0]);
                 }
 
                 return items;
             });
-        }
-
-        private bool IsHasChildren(AppDbContext context, int productId)
-        {
-            return context.ProductLinks.Any(p => p.ParentProductId == productId);
         }
 
         private void BuildMenuItems(AppDbContext context, int productId, ref MenuItem item)

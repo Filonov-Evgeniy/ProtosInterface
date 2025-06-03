@@ -57,7 +57,7 @@ namespace ProtosInterface
 
             foreach (var equipment in equipments)
             {
-                if (equipment.Id != null)
+                if (equipment.Id != null )
                 {
                     result.Add(new MenuItem { Title = equipment.Name, Id = equipment.Id }, equipment.Duration.ToString());
                 }

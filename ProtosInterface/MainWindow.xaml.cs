@@ -223,7 +223,7 @@ public partial class MainWindow : Window
                 item = trvMenu.Items[0] as MenuItem;
   
                 _context.ProductLinks
-                    .Where(p => p.ParentProductId == item.itemId)
+                    .Where(pl => pl.ParentProductId == item.itemId)
                     .ExecuteDelete();
 
                 foreach (MenuItem product in item.Items)
@@ -239,6 +239,22 @@ public partial class MainWindow : Window
                         IncludedProduct = includedProduct,
 
                         Amount = product.Amount
+                    });
+                }
+
+                _context.Operations.Where(o => o.ProductId == item.Id).ExecuteDelete();
+
+                foreach(MenuItem operation in OperationList.Items)
+                {
+                    int typeId = 1;
+                    operations.Add(new Operation
+                    {
+                        Id = operation.Id,
+                        Code = int.Parse(operation.Title.Split('|')[0].Trim()),
+                        TypeId = typeId,
+                        ProductId = item.Id,
+                        CoopStatusId = 1,
+                        Description = "",
                     });
                 }
 
@@ -290,18 +306,20 @@ public partial class MainWindow : Window
     {
         if (productsRadioButton.IsChecked == true)
         {
-            ItemList list = new ItemList(itemsToAdd, true, true);
+            ItemList list = new ItemList(itemsToAdd, true, (bool)productsRadioButton.IsChecked);
 
             if (list.ShowDialog() == true)
             {
                 var selectedItem = trvMenu.Items[0] as MenuItem;
+
                 if (selectedItem != null)
                 {
                     foreach (MenuItem item in itemsToAdd)
                     {
+                        item.Parent = selectedItem;
+
                         selectedItem.Items.Add(item);
                     }
-
                     
                     MessageBox.Show("Элементы добавлены");
                 }
@@ -313,13 +331,15 @@ public partial class MainWindow : Window
         }
         else
         {
-            ItemList list = new ItemList(itemsToAdd, true, false);
+            ItemList list = new ItemList(itemsToAdd, true, (bool)productsRadioButton.IsChecked);
 
-            if (list.ShowDialog() == true)
+            if (list.ShowDialog() == true && trvMenu.Items[0] is MenuItem)
             {
                 foreach (MenuItem item in itemsToAdd)
                 {
-                    OperationList.Items.Add(item);
+                    int code = int.Parse((OperationList.Items[OperationList.Items.Count - 1] as MenuItem).Title.Split("|")[0].Trim()) + 5;
+
+                    OperationList.Items.Add(new MenuItem{ Title = $"{code} | " + item.Title, Id = item.Id });
                 }
 
                 MessageBox.Show("Операции добавлены");
