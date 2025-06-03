@@ -1,4 +1,12 @@
-﻿CREATE TABLE [dbo].[Product] (
+﻿CREATE TABLE [Product_Type]
+(
+	[id] int NOT NULL,
+	[name] nvarchar(100) NOT NULL,
+	[description] nvarchar(max) NULL,
+	PRIMARY KEY CLUSTERED ([id] ASC)
+);
+
+CREATE TABLE [dbo].[Product] (
     [id]             INT           NOT NULL,
     [name]           NVARCHAR (250) NOT NULL,
     [type_id]        INT           NOT NULL,
@@ -17,13 +25,11 @@ CREATE TABLE [dbo].[Product_Link] (
     FOREIGN KEY ([included_product_id]) REFERENCES [dbo].[Product] ([id])
 );
 
-CREATE TABLE [Product_Type]
-(
-	[id] int NOT NULL,
-	[name] nvarchar(100) NOT NULL,
-	[description] nvarchar(max) NULL
-	PRIMARY KEY CLUSTERED ([id] ASC)
-);
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (-1, N'Default', N'')
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (0, N'Изделие', N'')
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (1, N'Деталь', N'')
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (2, N'Стандартное', N'')
+INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (3, N'Остальное', N'')
 
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1, N'Дет1', 1, 1, NULL)
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (2, N'Дет2', 1, 1, NULL)
@@ -43,7 +49,6 @@ INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (205, N'Лист 4', 3, 1, NULL)
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (206, N'Лист 5', 3, 1, NULL)
 
-
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (9, 1, 2)
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (9, 2, 1)
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (10, 4, 1)
@@ -59,12 +64,6 @@ INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (12, 8, 1)
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (12, 205, 0.2)
 INSERT [dbo].[Product_Link] ([parent_product_id], [included_product_id], [amount]) VALUES (12, 206, 0.2)
-
-INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (-1, N'Default', N'')
-INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (0, N'Изделие', N'')
-INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (1, N'Деталь', N'')
-INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (2, N'Стандартное', N'')
-INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (3, N'Остальное', N'')
 
 CREATE TABLE [dbo].[Operation_Type] (
     [id]          INT           NOT NULL,
@@ -173,7 +172,7 @@ CREATE TABLE [dbo].[Equipment_Type]
 CREATE TABLE [dbo].[Equipment] (
     [id]               INT           NOT NULL,
     [inventory_number] INT           NOT NULL,
-    [name]             NVARCHAR (10)  NOT NULL,
+    [name]             NVARCHAR (30)  NOT NULL,
     [area_id]          NVARCHAR (30)  NOT NULL,
     [type_id]          INT           NOT NULL,
     [load_factor]      INT           NOT NULL,
@@ -189,8 +188,8 @@ CREATE TABLE [dbo].[Operation_Variant_Component]
 	[operation_variant_id] int not null, 
 	[equipment_id] int not null, 
 	[profession_id] int null, 
-	[workers_amount] int null
-	FOREIGN KEY ([operation_variant_id]) REFERENCES [dbo].[Operation_Variant] ([id])
+	[workers_amount] int null,
+	FOREIGN KEY ([operation_variant_id]) REFERENCES [dbo].[Operation_Variant] ([id]),
 	FOREIGN KEY ([equipment_id]) REFERENCES [dbo].[Equipment] ([id])
 )
 

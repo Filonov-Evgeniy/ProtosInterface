@@ -57,20 +57,10 @@ public partial class MainWindow : Window
 
                 item = trvMenu.Items[0] as MenuItem;
 
-                string lastItem = _context.Products
+                int lastItem = _context.Products
                                           .OrderByDescending(x => x.Id)
-                                          .Select(x => x.Id!.ToString())
+                                          .Select(x => x.Id)
                                           .FirstOrDefault()!;
-
-                int newID = int.Parse(lastItem);
-
-                bool isNextItemExists = true;
-
-                while (isNextItemExists)
-                {
-                    newID++;
-                    isNextItemExists = _context.Products.Any(x => x.Id == newID);
-                }
 
                 var oldItem = _context.Products
                                       .FirstOrDefault(x => x.Id == item.Id);
@@ -90,7 +80,7 @@ public partial class MainWindow : Window
 
                 var newProduct = new Product
                 {
-                    Id = newID,
+                    Id = lastItem + 1,
                     Name = $"({count}) " + item.Title,
                     TypeId = oldItem.TypeId,
                     CoopStatusId = oldItem.CoopStatusId,
@@ -127,7 +117,7 @@ public partial class MainWindow : Window
                 {
                     lastItem = _context.Operations
                                        .OrderByDescending(x => x.Id)
-                                       .Select(x => x.Id!.ToString())
+                                       .Select(x => x.Id)
                                        .FirstOrDefault()!;
 
                     int code = int.Parse(operation.Title.Split('|')[0].Trim());
@@ -163,7 +153,7 @@ public partial class MainWindow : Window
                         {
                             operations.Add(new Operation
                             {
-                                Id = int.Parse(lastItem) + 1,
+                                Id = lastItem + 1,
                                 Code = oldOperation.Code,
                                 TypeId = oldOperation.TypeId,
                                 ProductId = newProduct.Id,
@@ -177,25 +167,25 @@ public partial class MainWindow : Window
                             {
                                 lastItem = _context.OperationVariants
                                    .OrderByDescending(x => x.Id)
-                                   .Select(x => x.Id!.ToString())
+                                   .Select(x => x.Id)
                                    .FirstOrDefault()!;
 
                                 operationVariants.Add(new OperationVariant
                                 {
-                                    Id = int.Parse(lastItem) + 1,
+                                    Id = lastItem + 1,
                                     OperationId = operations[count].Id,
                                     Duration = equipment.Duration,
                                     Description = equipment.Description,
                                 });
 
-                                lastItem = _context.OperationVariants
+                                lastItem = _context.OperationVariantComponents
                                    .OrderByDescending(x => x.Id)
-                                   .Select(x => x.Id!.ToString())
+                                   .Select(x => x.Id)
                                    .FirstOrDefault()!;
 
                                 operationVariantComponents.Add(new OperationVariantComponent
                                 {
-                                    Id = int.Parse(lastItem) + 1,
+                                    Id = lastItem + 1,
                                     OperationVariantId = operationVariants[operationcount].Id,
                                     EquipmentId = equipment.Id,
                                     ProfessionId = equipment.Id,
@@ -283,13 +273,11 @@ public partial class MainWindow : Window
             }
             else
             {
-
                 if (insertedItem != null)
                 {
                     insertedItem.Parent = selectedItem;
                     selectedItem.Items.Add(insertedItem);
                 }
-
             }
         }
         else
@@ -427,6 +415,13 @@ public partial class MainWindow : Window
 
     private void trvMenu_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
+        //var olditem = e.OldValue as MenuItem;
+        //AppDbContext _context = new AppDbContext();
+        ////возможно ещё минус 1
+        //if (OperationList.Items.Count == _context.Operations.Select(x => x.ProductId == olditem.Id).Count())
+        //{
+
+        //}
         if (trvMenu.SelectedItem != null)
         {
             OperationList.ItemsSource = null;
@@ -465,7 +460,6 @@ public partial class MainWindow : Window
                 OperationList.DisplayMemberPath = "Title";
                 break;
             case "Equipment":
-                //EquipmentList.DisplayMemberPath = "Title";
                 OnPropertyChanged(nameof(EquipmentList));
                 EquipmentList.ItemsSource = list.OperationEquipment(request);
                 break;
