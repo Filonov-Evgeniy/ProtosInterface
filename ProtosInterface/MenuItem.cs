@@ -34,6 +34,15 @@ namespace ProtosInterface
             set { itemName = value; }
         }
 
+        public string ShortName
+        {
+            get 
+            {
+                return CodeCleaner.ParseProductName(Title); 
+            }
+            set { itemName = value; }
+        }
+
         public int Id
         {
             get { return itemId; }

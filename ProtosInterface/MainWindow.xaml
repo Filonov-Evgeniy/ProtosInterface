@@ -94,7 +94,7 @@
                                                 <StackPanel Orientation="Horizontal">
                                                     <!--<CheckBox x:Name="test" Margin="0,3,5,0" IsChecked="{Binding IsSelected}"/>-->
                                                     <TextBlock Style="{StaticResource ScaledTextBlockStyle}">
-                                                        <Run Text="{Binding Title}"/>
+                                                        <Run Text="{Binding ShortName}"/>
                                                     </TextBlock>
                                                 </StackPanel>
                                             </HierarchicalDataTemplate>
