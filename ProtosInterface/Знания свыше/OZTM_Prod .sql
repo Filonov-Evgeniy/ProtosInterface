@@ -9572,7 +9572,7 @@ GO
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1348, N'Болт М8-6gx28.0915 ГОСТ 7805', 2, 2, N'')
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1349, N'Канат 3,0 Г-Н-Т ГОСТ 3062 (оцинк.) (допускается канат Дн=2,0 мм)', 2, 2, N'')
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1350, N'Трубка термоусадочная Дн=8,0 мм', 1, 2, N'')
-INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1351, N'Проволока 3,0-08Х18Н10 ГОСТ 18143', 2, 2, N'Применяется для изготовления                    Т11-254-04.06.003 Скоба в количестве 6 шт.')
+INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1351, N'Проволока 3,0-08Х18Н10 ГОСТ 18143', 2, 2, N'Применяется для изготовления  Т11-254-04.06.003 Скоба в количестве 6 шт.')
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1352, N'Заклепка вытяжная ISO 15977-4,8х8', 1, 2, N'')
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1353, N'Заклепка вытяжная ISO 15977-4,8х16', 1, 2, N'')
 INSERT [dbo].[Product] ([id], [name], [type_id], [coop_status_id], [description]) VALUES (1354, N'Болт М8-6gх18.21.12Х18Н10Т ГОСТ 7805', 2, 2, N'')

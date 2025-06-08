@@ -217,7 +217,7 @@ public partial class MainWindow : Window
 
                 _context.SaveChanges();
 
-                MessageBox.Show("Элемент был добавлен в таблицу");
+                MessageBox.Show("Элемент был добавлен в БД");
                 break;
             case SaveWindow.SaveOption.SaveChanges:
                 item = trvMenu.Items[0] as MenuItem;
