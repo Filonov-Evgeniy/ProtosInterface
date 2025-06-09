@@ -280,35 +280,48 @@
                         </Border>
 
                         <Border Grid.Row="2" 
-                                Margin="5,5,5,5">
+                                Margin="5">
                             <ListBox x:Name="EquipmentList"
-                                     Margin="5,5,5,5" 
+                                     Margin="5" 
                                      ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                      ScrollViewer.CanContentScroll="True">
-                                <ListBox.ItemsSource>
-                                    <CompositeCollection>
-                                        <!-- Заголовки -->
-                                        <ListBoxItem IsEnabled="False" 
-                                                     FontWeight="Bold">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="Станок" 
-                                                           Width="150"/>
-                                                <TextBlock Text="Время выполнения" 
-                                                           Width="150"/>
-                                            </StackPanel>
-                                        </ListBoxItem>
+                                <ListBox.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontSize" Value="18"/>
+                                    </Style>
+                                    <Style TargetType="ListBox">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBox">
+                                                    <StackPanel Background="White">
+                                                        <!-- Заголовок -->
+                                                        <StackPanel Orientation="Horizontal" 
+                                                                    Background="LightGray">
+                                                            <TextBlock Text="Станок"
+                                                                       Style="{StaticResource ScaledTextBlockStyle}"
+                                                                       Width="150"/>
+                                                            <TextBlock Text="| Время выполнения"
+                                                                       Style="{StaticResource ScaledTextBlockStyle}"
+                                                                       Width="200"/>
+                                                        </StackPanel>
 
-                                        <!-- Основные данные -->
-                                        <CollectionContainer Collection="{Binding EquipmentList}"/>
-                                    </CompositeCollection>
-                                </ListBox.ItemsSource>
+                                                        <!-- Содержимое ListBox -->
+                                                        <ItemsPresenter/>
+                                                    </StackPanel>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.Resources>
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Key.Title}" 
+                                        <StackPanel Orientation="Horizontal" Background="White">
+                                            <TextBlock Text="{Binding Key.Title}"
+                                                       Style="{StaticResource ScaledTextBlockStyle}"
                                                        Width="150"/>
                                             <TextBlock Text="{Binding Value}" 
+                                                       Style="{StaticResource ScaledTextBlockStyle}"
                                                        Width="150"/>
                                         </StackPanel>
                                     </DataTemplate>

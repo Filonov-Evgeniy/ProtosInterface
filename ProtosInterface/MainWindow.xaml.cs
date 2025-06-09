@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -81,7 +82,7 @@ public partial class MainWindow : Window
                 var newProduct = new Product
                 {
                     Id = lastItem + 1,
-                    Name = $"({count}) " + item.Title,
+                    Name = ReplaceNumberInBrackets(item.Title, count),
                     TypeId = oldItem.TypeId,
                     CoopStatusId = oldItem.CoopStatusId,
                     Description = oldItem.Description,
@@ -122,6 +123,7 @@ public partial class MainWindow : Window
 
                     int code = int.Parse(operation.Title.Split('|')[0].Trim());
 
+                    //понадобиться ещё 1 похожий запрос
                     var equipments = _context.Equipment
                     .Join(
                         _context.OperationVariantComponents,
@@ -145,7 +147,7 @@ public partial class MainWindow : Window
                     .Distinct()
                     .ToList();
 
-                    if (code == oldOperationList[count].Code)
+                    if (code == oldOperationList[count].Code && count < oldOperationList.Count)
                     {                     
                         Operation oldOperation = _context.Operations.FirstOrDefault(x => x.Id == operation.Id)!;   
                         
@@ -160,44 +162,52 @@ public partial class MainWindow : Window
                                 CoopStatusId = oldOperation.CoopStatusId,
                                 Description = oldOperation.Description,
                             });
-
-                            int operationcount = 0;
-
-                            foreach (var equipment in equipments)
-                            {
-                                lastItem = _context.OperationVariants
-                                   .OrderByDescending(x => x.Id)
-                                   .Select(x => x.Id)
-                                   .FirstOrDefault()!;
-
-                                operationVariants.Add(new OperationVariant
-                                {
-                                    Id = lastItem + 1,
-                                    OperationId = operations[count].Id,
-                                    Duration = equipment.Duration,
-                                    Description = equipment.Description,
-                                });
-
-                                lastItem = _context.OperationVariantComponents
-                                   .OrderByDescending(x => x.Id)
-                                   .Select(x => x.Id)
-                                   .FirstOrDefault()!;
-
-                                operationVariantComponents.Add(new OperationVariantComponent
-                                {
-                                    Id = lastItem + 1,
-                                    OperationVariantId = operationVariants[operationcount].Id,
-                                    EquipmentId = equipment.Id,
-                                    ProfessionId = equipment.Id,
-                                    WorkersAmount = 1,
-                                });
-
-                                operationcount++;
-                            }
                         }
                         else
                         {
+                            operations.Add(new Operation
+                            {
+                                Id = lastItem + 1,
+                                Code = oldOperation.Code,
+                                TypeId = oldOperation.TypeId,
+                                ProductId = newProduct.Id,
+                                CoopStatusId = oldOperation.CoopStatusId,
+                                Description = oldOperation.Description,
+                            });
+                        }
 
+                        int operationcount = 0;
+
+                        foreach (var equipment in equipments)
+                        {
+                            lastItem = _context.OperationVariants
+                               .OrderByDescending(x => x.Id)
+                               .Select(x => x.Id)
+                               .FirstOrDefault()!;
+
+                            operationVariants.Add(new OperationVariant
+                            {
+                                Id = lastItem + 1,
+                                OperationId = operations[count].Id,
+                                Duration = equipment.Duration,
+                                Description = equipment.Description,
+                            });
+
+                            lastItem = _context.OperationVariantComponents
+                               .OrderByDescending(x => x.Id)
+                               .Select(x => x.Id)
+                               .FirstOrDefault()!;
+
+                            operationVariantComponents.Add(new OperationVariantComponent
+                            {
+                                Id = lastItem + 1,
+                                OperationVariantId = operationVariants[operationcount].Id,
+                                EquipmentId = equipment.Id,
+                                ProfessionId = equipment.Id,
+                                WorkersAmount = 1,
+                            });
+
+                            operationcount++;
                         }
                     }
                     else
@@ -265,6 +275,23 @@ public partial class MainWindow : Window
             case SaveWindow.SaveOption.Cancel:
                 break;
         }
+    }
+
+    public string ReplaceNumberInBrackets(string originalName, int newNumber)
+    {
+        string newName;
+        string pattern = @"^\(\d+\)";
+
+        if (originalName.Contains(pattern))
+        {
+            newName = Regex.Replace(originalName, pattern, $"({newNumber})");
+        }
+        else
+        {
+            newName = $"({newNumber}) " + originalName;
+        }
+
+        return newName;
     }
 
     private void CopyTreeItemButton_Click(object sender, RoutedEventArgs e)
@@ -358,9 +385,13 @@ public partial class MainWindow : Window
             {
                 MessageBox.Show("Не выбран элемент для удаления");
             }
-            else
+            else if (selectedItem.Parent != null)
             {
                 selectedItem.Parent.Items.Remove(selectedItem);
+            }
+            else
+            {
+                MessageBox.Show("Нельзя удалять корневой элемент");
             }
         }
         else
