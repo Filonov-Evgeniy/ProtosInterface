@@ -477,7 +477,8 @@ public partial class MainWindow : Window
                     OperationList.Items.Add(item as MenuItem);
                 }
 
-                OperationList.DisplayMemberPath = "Title";
+                //OperationList.DisplayMemberPath = "Title";
+
                 break;
             case "Equipment":
                 OnPropertyChanged(nameof(EquipmentList));
@@ -606,5 +607,11 @@ public partial class MainWindow : Window
 
             this.Resources["ButtonStyle"] = newStyle;
         }
+    }
+
+    public void ShowMessage_Click()
+    {
+        
+        MessageBox.Show("asd");
     }
 }
