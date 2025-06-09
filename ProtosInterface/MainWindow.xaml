@@ -58,7 +58,7 @@
                         <ColumnDefinition Width="3*"/>
                         <ColumnDefinition Width="7*"/>
                     </Grid.ColumnDefinitions>
-                    <Border BorderThickness="0,0,0,0" 
+                    <Border BorderThickness="0" 
                             Grid.Row="1">
 
                         <Grid Grid.Column="0" 
@@ -72,7 +72,7 @@
 
                             <Button x:Name="productSelect"
                                     Content="Выбрать изделие"
-                                    Margin="5,5,5,5"
+                                    Margin="5"
                                     Grid.Row="0"
                                     Click="productSelect_Click"
                                     Style="{DynamicResource ButtonStyle}"/>
@@ -262,7 +262,7 @@
                         </Grid.RowDefinitions>
 
                         <Border Grid.Row="0" 
-                                Margin="5,5,5,5">
+                                Margin="5">
                             <TextBox x:Name="FullName" 
                                      IsEnabled="False" 
                                      VerticalContentAlignment="Center"/>
@@ -271,7 +271,7 @@
                         <Border Grid.Row="1" 
                                 Margin="5,0,5,5">
                             <ListBox x:Name="OperationList" 
-                                     Margin="5,5,5,5" 
+                                     Margin="5" 
                                      ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                      ScrollViewer.CanContentScroll="True" 
                                      SelectionChanged="OperationList_SelectionChanged">
@@ -313,25 +313,26 @@
                                      ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                      ScrollViewer.CanContentScroll="True">
                                 <ListBox.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="FontSize" Value="18"/>
-                                    </Style>
+                                    
                                     <Style TargetType="ListBox">
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="ListBox">
                                                     <StackPanel Background="White">
+                                                        <Border BorderThickness="0,0,0,1" BorderBrush="Black">
                                                         <!-- Заголовок -->
-                                                        <StackPanel Orientation="Horizontal" 
-                                                                    Background="LightGray">
-                                                            <TextBlock Text="Станок"
-                                                                       Style="{StaticResource ScaledTextBlockStyle}"
-                                                                       Width="150"/>
-                                                            <TextBlock Text="| Время выполнения"
-                                                                       Style="{StaticResource ScaledTextBlockStyle}"
-                                                                       Width="200"/>
-                                                        </StackPanel>
-
+                                                            <StackPanel Orientation="Horizontal" 
+                                                                        Background="LightGray"
+                                                                        Margin="1"
+                                                                        >
+                                                                <TextBlock Text="  Станок"
+                                                                           Style="{StaticResource ScaledTextBlockStyle}"
+                                                                           Width="200"/>
+                                                                <TextBlock Text="| Время выполнения"
+                                                                           Style="{StaticResource ScaledTextBlockStyle}"
+                                                                           Width="300"/>
+                                                            </StackPanel>
+                                                        </Border>
                                                         <!-- Содержимое ListBox -->
                                                         <ItemsPresenter/>
                                                     </StackPanel>
@@ -343,13 +344,19 @@
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Background="White">
+                                        <StackPanel Orientation="Horizontal">
+
                                             <TextBlock Text="{Binding Key.Title}"
                                                        Style="{StaticResource ScaledTextBlockStyle}"
-                                                       Width="150"/>
+                                                       Width="195"
+                                                       Margin="1"/>
+                                            <TextBlock Text="|"
+                                                       Style="{StaticResource ScaledTextBlockStyle}"
+                                                       Width="5"/>
                                             <TextBlock Text="{Binding Value}" 
                                                        Style="{StaticResource ScaledTextBlockStyle}"
-                                                       Width="150"/>
+                                                       Width="300"       
+                                                       Margin="1"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
