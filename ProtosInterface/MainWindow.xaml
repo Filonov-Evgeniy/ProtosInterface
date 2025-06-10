@@ -279,31 +279,42 @@
                                     <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="7*"/>
-                                                <ColumnDefinition Width="3*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="10"/>
+                                                <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock
                                                 x:Name="Title"
-                                                Grid.Column="0" 
+                                                Grid.Column="2" 
                                                 VerticalAlignment="Center"
                                                 Text="{Binding Title}"/>
-                                            <Grid x:Name="ButtonsGrid" Grid.Column="1">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="5*"/>
-                                                    <ColumnDefinition Width="5*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Button Grid.Column="0"
-                                                        x:Name="UpButton" 
-                                                        Content="Вверх"/>
-                                                <Button Grid.Column="1"
-                                                        x:Name="DownButton" 
-                                                        Content="Вниз"/>
-                                            </Grid>
+                                            <StackPanel x:Name="ButtonsGrid" 
+                                                         Grid.Column="0" 
+                                                        HorizontalAlignment="Center"
+                                                        Orientation="Horizontal">
+                                                <Button x:Name="UpButton" 
+                                                        Content="↑"
+                                                        Width="20"
+                                                        Background="White"
+                                                        BorderBrush="LightGray"
+                                                        Foreground="Gray"
+                                                        BorderThickness="1,1,0.5,1"
+                                                        Click="UpButton_Click"
+                                                        Tag="{Binding}"/>
+                                                <Button x:Name="DownButton"
+                                                        Width="20"
+                                                        Content="↓"
+                                                        Background="White"
+                                                        BorderBrush="LightGray"
+                                                        Foreground="Gray"
+                                                        BorderThickness="0.5,1,1,1"
+                                                        Click="DownButton_Click"
+                                                        Tag="{Binding}"/>
+                                            </StackPanel>
                                         </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-
                         </Border>
 
                         <Border Grid.Row="2" 

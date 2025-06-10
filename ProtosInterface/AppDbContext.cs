@@ -44,10 +44,10 @@ namespace ProtosInterface
                       .HasMaxLength(4000)
                       .HasColumnName("description");
 
-                entity.HasOne(p => p.ProductType) // Навигационное свойство в Product (его нужно добавить!)
-                      .WithMany(pt => pt.Products) // Навигационное свойство в ProductType
-                      .HasForeignKey(p => p.TypeId) // Внешний ключ в Product
-                      .OnDelete(DeleteBehavior.Restrict); // Или Cascade, если нужно
+                entity.HasOne(p => p.ProductType) 
+                      .WithMany(pt => pt.Products) 
+                      .HasForeignKey(p => p.TypeId)
+                      .OnDelete(DeleteBehavior.Restrict); 
             });
 
             // Конфигурация ProductLink

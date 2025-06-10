@@ -50,7 +50,7 @@ public partial class MainWindow : Window
         message.Owner = this;
         message.ShowDialog();
         AppDbContext _context = new AppDbContext();
-        MenuItem item = new MenuItem();
+        MenuItem root = new MenuItem();
         List<ProductLink> links = new List<ProductLink>();
         List<Operation> operations = new List<Operation>();
         List<OperationVariant> operationVariants = new List<OperationVariant>();
@@ -59,14 +59,14 @@ public partial class MainWindow : Window
         {
             case SaveWindow.SaveOption.SaveAsNew:
 
-                item = trvMenu.Items[0] as MenuItem;
+                root = trvMenu.Items[0] as MenuItem;
 
                 int lastItemId = _context.Products.GetLastId();
 
                 var oldItem = _context.Products
-                                      .FirstOrDefault(x => x.Id == item.Id);
+                                      .FirstOrDefault(x => x.Id == root.Id);
 
-                string name = item.Title;
+                string name = root.Title;
                 int count = NameCount(oldItem.Name, "product");
 
                 RenameWindow rename = new RenameWindow(ReplaceNumberInBrackets(name, count));
@@ -93,7 +93,7 @@ public partial class MainWindow : Window
 
                 _context.Products.Add(newProduct);
 
-                foreach (MenuItem product in item.Items)
+                foreach (MenuItem product in root.Items)
                 {
                     Product productParent = _context.Products.Find(newProduct.Id)!;
                     Product includedProduct = _context.Products.Find(product.itemId)!;
@@ -228,19 +228,19 @@ public partial class MainWindow : Window
                 MessageBox.Show("Элемент был добавлен в БД");
                 break;
             case SaveWindow.SaveOption.SaveChanges:
-                item = trvMenu.Items[0] as MenuItem;
+                root = trvMenu.Items[0] as MenuItem;
   
                 _context.ProductLinks
-                    .Where(pl => pl.ParentProductId == item.itemId)
+                    .Where(pl => pl.ParentProductId == root.itemId)
                     .ExecuteDelete();
 
-                foreach (MenuItem product in item.Items)
+                foreach (MenuItem product in root.Items)
                 {
-                    Product productParent = _context.Products.Find(item.itemId)!;
+                    Product productParent = _context.Products.Find(root.itemId)!;
                     Product includedProduct = _context.Products.Find(product.itemId)!;
                     links.Add(new ProductLink
                     {
-                        ParentProductId = item.itemId,
+                        ParentProductId = root.itemId,
                         ParentProduct = productParent,
 
                         IncludedProductId = product.itemId,
@@ -250,7 +250,7 @@ public partial class MainWindow : Window
                     });
                 }
 
-                _context.Operations.Where(o => o.ProductId == item.Id).ExecuteDelete();
+                _context.Operations.Where(o => o.ProductId == root.Id).ExecuteDelete();
 
                 foreach(MenuItem operation in OperationList.Items)
                 {
@@ -260,7 +260,7 @@ public partial class MainWindow : Window
                         Id = operation.Id,
                         Code = int.Parse(operation.Title.Split('|')[0].Trim()),
                         TypeId = typeId,
-                        ProductId = item.Id,
+                        ProductId = root.Id,
                         CoopStatusId = 1,
                         Description = "",
                     });
@@ -388,10 +388,20 @@ public partial class MainWindow : Window
             {
                 foreach (MenuItem item in itemsToAdd)
                 {
-                    int code = int.Parse((OperationList.Items[OperationList.Items.Count - 1] as MenuItem).Title.Split("|")[0].Trim()) + 5;
+                    string code = "";
+                    if(list.enteredNumber < 10)
+                    {
+                        code += "0" + list.enteredNumber;
+                    }
+                    else
+                    {
+                        code += list.enteredNumber;
+                    }
+                    
 
-                    OperationList.Items.Add(new MenuItem{ Title = $"{code} | " + item.Title, Id = item.Id });
+                    OperationList.Items.Add(new MenuItem{ Title = code + " | " + item.Title, Id = item.Id });
                 }
+                ListSort(OperationList);
 
                 MessageBox.Show("Операции добавлены");
             }
@@ -664,9 +674,72 @@ public partial class MainWindow : Window
         }
     }
 
-    public void ShowMessage_Click()
+    private void UpButton_Click(object sender, RoutedEventArgs e)
     {
-        
-        MessageBox.Show("asd");
+        if (sender is Button button && button.Tag is MenuItem item)
+        {
+            // Логика перемещения вверх
+            int index = OperationList.Items.IndexOf(item);
+
+            if (index > 0)
+            {
+                if (index == 1)
+                {
+                    (OperationList.Items[index] as MenuItem).Title = $"0{index * 5} | " + (OperationList.Items[index] as MenuItem).Title.Split('|')[1].Trim();
+                }
+                else
+                {
+                    (OperationList.Items[index] as MenuItem).Title = $"{index * 5} | " + (OperationList.Items[index] as MenuItem).Title.Split('|')[1].Trim();
+                }
+                (OperationList.Items[index - 1] as MenuItem).Title = $"{(index + 1) * 5} | " + (OperationList.Items[index - 1] as MenuItem).Title.Split('|')[1].Trim();
+                var buffer = OperationList.Items[index];
+                OperationList.Items[index] = OperationList.Items[index - 1];
+                OperationList.Items[index - 1] = buffer;
+            }
+        }
+    }
+
+    private void DownButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is MenuItem item)
+        {
+            // Логика перемещения вниз
+            int index = OperationList.Items.IndexOf(item);
+
+            if (index < OperationList.Items.Count - 1)
+            {
+                if (index == 0)
+                {
+                    (OperationList.Items[index + 1] as MenuItem).Title = $"0{(index + 1) * 5} | " + (OperationList.Items[index + 1] as MenuItem).Title.Split('|')[1].Trim();
+                }
+                else
+                {
+                    (OperationList.Items[index + 1] as MenuItem).Title = $"{(index + 1) * 5} | " + (OperationList.Items[index + 1] as MenuItem).Title.Split('|')[1].Trim();
+                }
+                (OperationList.Items[index] as MenuItem).Title = $"{(index + 2) * 5} | " + (OperationList.Items[index] as MenuItem).Title.Split('|')[1].Trim();
+                var buffer = OperationList.Items[index];
+                OperationList.Items[index] = OperationList.Items[index + 1];
+                OperationList.Items[index + 1] = buffer;
+            }
+        }
+    }
+
+    private void ListSort(ListBox listBox)
+    {
+        var items = listBox.Items.Cast<MenuItem>()
+            .OrderBy(item =>
+            {
+                // Разбираем номер из формата "XX | название"
+                string numberPart = item.Title.Split('|').First().Trim();
+                return int.TryParse(numberPart, out int num) ? num : int.MaxValue;
+            })
+            .ToList();
+
+        // Очищаем и добавляем отсортированные элементы
+        listBox.Items.Clear();
+        foreach (var item in items)
+        {
+            listBox.Items.Add(item);
+        }
     }
 }
