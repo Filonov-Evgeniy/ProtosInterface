@@ -2,6 +2,7 @@
 using ProtosInterface.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,10 +12,12 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ProtosInterface.Extensions;
 
 namespace ProtosInterface;
 
@@ -58,31 +61,31 @@ public partial class MainWindow : Window
 
                 item = trvMenu.Items[0] as MenuItem;
 
-                int lastItem = _context.Products
-                                          .OrderByDescending(x => x.Id)
-                                          .Select(x => x.Id)
-                                          .FirstOrDefault()!;
+                int lastItemId = _context.Products.GetLastId();
 
                 var oldItem = _context.Products
                                       .FirstOrDefault(x => x.Id == item.Id);
 
-                int count;
+                string name = item.Title;
+                int count = NameCount(oldItem.Name, "product");
 
-                if (oldItem.Name.Split().Length > 1)
+                RenameWindow rename = new RenameWindow(ReplaceNumberInBrackets(name, count));
+
+                if(rename.ShowDialog() == true)
                 {
-                    count = _context.Products
-                                    .Count(p => EF.Functions.Like(p.Name, $"%{oldItem.Name.Split()[1]}%"));
+                    name = rename.EnteredText;
                 }
                 else
                 {
-                    count = _context.Products
-                                    .Count(p => EF.Functions.Like(p.Name, $"%{oldItem.Name.Split()[0]}%"));
+                    break;
                 }
 
+                count = NameCount(name, "product");
+                
                 var newProduct = new Product
                 {
-                    Id = lastItem + 1,
-                    Name = ReplaceNumberInBrackets(item.Title, count),
+                    Id = lastItemId + 1,
+                    Name = ReplaceNumberInBrackets(name, count),
                     TypeId = oldItem.TypeId,
                     CoopStatusId = oldItem.CoopStatusId,
                     Description = oldItem.Description,
@@ -116,10 +119,7 @@ public partial class MainWindow : Window
 
                 foreach (MenuItem operation in OperationList.Items)
                 {
-                    lastItem = _context.Operations
-                                       .OrderByDescending(x => x.Id)
-                                       .Select(x => x.Id)
-                                       .FirstOrDefault()!;
+                    lastItemId = _context.Operations.GetLastId();
 
                     int code = int.Parse(operation.Title.Split('|')[0].Trim());
 
@@ -146,76 +146,74 @@ public partial class MainWindow : Window
                     })
                     .Distinct()
                     .ToList();
-
-                    if (code == oldOperationList[count].Code && count < oldOperationList.Count)
-                    {                     
-                        Operation oldOperation = _context.Operations.FirstOrDefault(x => x.Id == operation.Id)!;   
+      
+                    Operation oldOperation = _context.Operations.FirstOrDefault(x => x.Id == operation.Id)!;   
                         
-                        if (oldOperation.TypeId == oldOperationList[count].TypeId)
+                    if (oldOperation.TypeId == oldOperationList[count].TypeId)
+                    {
+                        operations.Add(new Operation
                         {
-                            operations.Add(new Operation
-                            {
-                                Id = lastItem + 1,
-                                Code = oldOperation.Code,
-                                TypeId = oldOperation.TypeId,
-                                ProductId = newProduct.Id,
-                                CoopStatusId = oldOperation.CoopStatusId,
-                                Description = oldOperation.Description,
-                            });
-                        }
-                        else
-                        {
-                            operations.Add(new Operation
-                            {
-                                Id = lastItem + 1,
-                                Code = oldOperation.Code,
-                                TypeId = oldOperation.TypeId,
-                                ProductId = newProduct.Id,
-                                CoopStatusId = oldOperation.CoopStatusId,
-                                Description = oldOperation.Description,
-                            });
-                        }
-
-                        int operationcount = 0;
-
-                        foreach (var equipment in equipments)
-                        {
-                            lastItem = _context.OperationVariants
-                               .OrderByDescending(x => x.Id)
-                               .Select(x => x.Id)
-                               .FirstOrDefault()!;
-
-                            operationVariants.Add(new OperationVariant
-                            {
-                                Id = lastItem + 1,
-                                OperationId = operations[count].Id,
-                                Duration = equipment.Duration,
-                                Description = equipment.Description,
-                            });
-
-                            lastItem = _context.OperationVariantComponents
-                               .OrderByDescending(x => x.Id)
-                               .Select(x => x.Id)
-                               .FirstOrDefault()!;
-
-                            operationVariantComponents.Add(new OperationVariantComponent
-                            {
-                                Id = lastItem + 1,
-                                OperationVariantId = operationVariants[operationcount].Id,
-                                EquipmentId = equipment.Id,
-                                ProfessionId = equipment.Id,
-                                WorkersAmount = 1,
-                            });
-
-                            operationcount++;
-                        }
+                            Id = lastItemId + 1 + count,
+                            Code = oldOperation.Code,
+                            TypeId = oldOperation.TypeId,
+                            ProductId = newProduct.Id,
+                            CoopStatusId = oldOperation.CoopStatusId,
+                            Description = oldOperation.Description,
+                        });
                     }
                     else
                     {
-                        if (code % 5 != 0)
+                        operations.Add(new Operation
                         {
+                            Id = lastItemId + 1,
+                            Code = oldOperation.Code,
+                            TypeId = oldOperation.TypeId,
+                            ProductId = newProduct.Id,
+                            CoopStatusId = oldOperation.CoopStatusId,
+                            Description = oldOperation.Description,
+                        });
+                    }
 
+                    int operationcount = 0;
+
+                    foreach (var equipment in equipments)
+                    {
+                        if (operationVariants.Count == 0)
+                        {
+                            lastItemId = _context.OperationVariants.GetLastId();
                         }
+                        else
+                        {
+                            lastItemId = operationVariants[operationVariants.Count - 1].Id;
+                        }
+
+                        operationVariants.Add(new OperationVariant
+                        {
+                            Id = lastItemId + 1,
+                            OperationId = operations[count].Id,
+                            Duration = equipment.Duration,
+                            Description = equipment.Description,
+                        });
+
+                        if (operationVariantComponents.Count == 0)
+                        {
+                            lastItemId = _context.OperationVariantComponents.GetLastId();
+                        }
+                        else
+                        {
+                            lastItemId = operationVariantComponents[operationVariantComponents.Count - 1].Id;
+                        }
+
+                        operationVariantComponents.Add(new OperationVariantComponent
+                        {
+                            Id = lastItemId + 1,
+                            OperationVariantId = operationVariants[operationcount].Id,
+                            EquipmentId = equipment.Id,
+                            ProfessionId = equipment.Id,
+                            WorkersAmount = 1,
+                        });
+
+                        operationcount++;
                     }
                     
                     count++;
@@ -286,12 +284,38 @@ public partial class MainWindow : Window
         {
             newName = Regex.Replace(originalName, pattern, $"({newNumber})");
         }
-        else
+        else if (newNumber > 0)
         {
             newName = $"({newNumber}) " + originalName;
         }
+        else
+        {
+            newName = originalName;
+        }
 
         return newName;
+    }
+
+    public int NameCount(string name, string table)
+    {
+        int count = 0;
+        AppDbContext _context = new AppDbContext();
+
+        switch (table)
+        {
+            case "product":
+                if (name.Split().Length > 1)
+                {
+                    count = _context.Products.Count(p => EF.Functions.Like(p.Name, $"%{name.Split()[1]}%"));
+                }
+                else
+                {
+                    count = _context.Products.Count(p => EF.Functions.Like(p.Name, $"%{name.Split()[0]}%"));
+                }
+            break;
+        }
+
+        return count;
     }
 
     private void CopyTreeItemButton_Click(object sender, RoutedEventArgs e)

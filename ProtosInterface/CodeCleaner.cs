@@ -15,13 +15,13 @@ namespace ProtosInterface
             // Паттерны для выявления кодов изделий
             string pattern = @"
             (?<code>
-                (?:[A-ZА-Я]{1,2}\d{2,}[A-ZА-Я]?\b)       # Коды типа УЗ01К
-                |(?:\d{2,}(?:\.\d{2,}){1,}[A-ZА-Я]?\b)    # Коды типа 9511.19.020СБ
+                (?:\d{2,}(?:\.\d{2,}){1,}[A-ZА-Я]?\b)    # Коды типа 9511.19.020СБ
                 |(?:ГОСТ\s?[A-ZА-Я]*-?\d+[A-ZА-Я]*-?\d*)  # ГОСТ/ISO стандарты
                 |(?:ТУ\s?\d+-\d+-\d+)                     # Технические условия
                 |(?:[A-ZА-Я]\d+-\d+[a-zа-я]*\w*)          # Коды типа М6-6gx20.46
             )";
-
+            //(?:[A-ZА-Я]{1,2}\d{2,}[A-ZА-Я]?\b)       # Коды типа УЗ01К
+            //|    
             var match = Regex.Match(fullName, pattern,
                 RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
 

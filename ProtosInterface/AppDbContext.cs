@@ -235,7 +235,6 @@ namespace ProtosInterface
         {
             DBConnection connect = new DBConnection();
             optionsBuilder.UseSqlServer(connect.ConnectionString);
-
         }
     }
 }
