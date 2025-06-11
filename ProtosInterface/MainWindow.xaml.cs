@@ -277,23 +277,40 @@ public partial class MainWindow : Window
 
     public string ReplaceNumberInBrackets(string originalName, int newNumber)
     {
-        string newName;
+        //string newName;
+        //string pattern = @"^\(\d+\)";
+
+        //if (originalName.Contains(pattern))
+        //{
+        //    newName = Regex.Replace(originalName, pattern, $"({newNumber})");
+        //}
+        //else if (newNumber > 0)
+        //{
+        //    newName = $"({newNumber}) " + originalName;
+        //}
+        //else
+        //{
+        //    newName = originalName;
+        //}
+
+        //return newName;
+        // Паттерн для поиска "(число)" в начале строки
         string pattern = @"^\(\d+\)";
 
-        if (originalName.Contains(pattern))
+        // Проверяем, есть ли совпадение с регулярным выражением
+        if (Regex.IsMatch(originalName, pattern))
         {
-            newName = Regex.Replace(originalName, pattern, $"({newNumber})");
+            // Заменяем существующие скобки с числом на новые
+            return Regex.Replace(originalName, pattern, $"({newNumber})");
         }
         else if (newNumber > 0)
         {
-            newName = $"({newNumber}) " + originalName;
-        }
-        else
-        {
-            newName = originalName;
+            // Добавляем новые скобки в начало, если их не было
+            return $"({newNumber}) {originalName}";
         }
 
-        return newName;
+        // Если newNumber <= 0, возвращаем оригинальное имя без изменений
+        return originalName;
     }
 
     public int NameCount(string name, string table)
