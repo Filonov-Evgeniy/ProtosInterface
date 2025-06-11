@@ -28,8 +28,8 @@ namespace ProtosInterface
         private event PropertyChangedEventHandler? PropertyChanged;
         List<MenuItem> itemList;
         private AppDbContext _context;
-        bool type;
-
+        private bool type;
+        public int enteredNumber;
         public ItemList(List<MenuItem> itemList, bool operation, bool type)
         {
             InitializeComponent();
@@ -106,10 +106,25 @@ namespace ProtosInterface
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
+            itemList.Clear();
             MenuItem[] itemsToAdd = new MenuItem[ItemListBox.SelectedItems.Count];
+            OperationCode opCode = new OperationCode();
+
             ItemListBox.SelectedItems.CopyTo(itemsToAdd, 0);
             itemList.AddRange(itemsToAdd);
-            this.DialogResult = true;
+            if (type == true)
+            {
+                this.DialogResult = true;
+            }
+            else
+            {
+                if (opCode.ShowDialog() == true)
+                {
+                    enteredNumber = opCode.EnteredNumber;
+                    this.DialogResult = true;
+                }
+            }
+            this.Close();
         }
 
         // Отфильтрованная коллекция (привязана к ListBox)

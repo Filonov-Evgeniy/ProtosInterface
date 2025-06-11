@@ -164,23 +164,40 @@ public partial class MainWindow : Window
 
     public string ReplaceNumberInBrackets(string originalName, int newNumber)
     {
-        string newName;
+        //string newName;
+        //string pattern = @"^\(\d+\)";
+
+        //if (originalName.Contains(pattern))
+        //{
+        //    newName = Regex.Replace(originalName, pattern, $"({newNumber})");
+        //}
+        //else if (newNumber > 0)
+        //{
+        //    newName = $"({newNumber}) " + originalName;
+        //}
+        //else
+        //{
+        //    newName = originalName;
+        //}
+
+        //return newName;
+        // Паттерн для поиска "(число)" в начале строки
         string pattern = @"^\(\d+\)";
 
-        if (originalName.Contains(pattern))
+        // Проверяем, есть ли совпадение с регулярным выражением
+        if (Regex.IsMatch(originalName, pattern))
         {
-            newName = Regex.Replace(originalName, pattern, $"({newNumber})");
+            // Заменяем существующие скобки с числом на новые
+            return Regex.Replace(originalName, pattern, $"({newNumber})");
         }
         else if (newNumber > 0)
         {
-            newName = $"({newNumber}) " + originalName;
-        }
-        else
-        {
-            newName = originalName;
+            // Добавляем новые скобки в начало, если их не было
+            return $"({newNumber}) {originalName}";
         }
 
-        return newName;
+        // Если newNumber <= 0, возвращаем оригинальное имя без изменений
+        return originalName;
     }
 
     public int NameCount(string name, string table)
@@ -275,10 +292,20 @@ public partial class MainWindow : Window
             {
                 foreach (MenuItem item in itemsToAdd)
                 {
-                    int code = int.Parse((OperationList.Items[OperationList.Items.Count - 1] as MenuItem).Title.Split("|")[0].Trim()) + 5;
+                    string code = "";
+                    if(list.enteredNumber < 10)
+                    {
+                        code += "0" + list.enteredNumber;
+                    }
+                    else
+                    {
+                        code += list.enteredNumber;
+                    }
+                    
 
-                    OperationList.Items.Add(new MenuItem{ Title = $"{code} | " + item.Title, Id = item.Id });
+                    OperationList.Items.Add(new MenuItem{ Title = code + " | " + item.Title, Id = item.Id });
                 }
+                ListSort(OperationList);
 
                 MessageBox.Show("Операции добавлены");
             }
@@ -551,9 +578,72 @@ public partial class MainWindow : Window
         }
     }
 
-    public void ShowMessage_Click()
+    private void UpButton_Click(object sender, RoutedEventArgs e)
     {
-        
-        MessageBox.Show("asd");
+        if (sender is Button button && button.Tag is MenuItem item)
+        {
+            // Логика перемещения вверх
+            int index = OperationList.Items.IndexOf(item);
+
+            if (index > 0)
+            {
+                if (index == 1)
+                {
+                    (OperationList.Items[index] as MenuItem).Title = $"0{index * 5} | " + (OperationList.Items[index] as MenuItem).Title.Split('|')[1].Trim();
+                }
+                else
+                {
+                    (OperationList.Items[index] as MenuItem).Title = $"{index * 5} | " + (OperationList.Items[index] as MenuItem).Title.Split('|')[1].Trim();
+                }
+                (OperationList.Items[index - 1] as MenuItem).Title = $"{(index + 1) * 5} | " + (OperationList.Items[index - 1] as MenuItem).Title.Split('|')[1].Trim();
+                var buffer = OperationList.Items[index];
+                OperationList.Items[index] = OperationList.Items[index - 1];
+                OperationList.Items[index - 1] = buffer;
+            }
+        }
+    }
+
+    private void DownButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is MenuItem item)
+        {
+            // Логика перемещения вниз
+            int index = OperationList.Items.IndexOf(item);
+
+            if (index < OperationList.Items.Count - 1)
+            {
+                if (index == 0)
+                {
+                    (OperationList.Items[index + 1] as MenuItem).Title = $"0{(index + 1) * 5} | " + (OperationList.Items[index + 1] as MenuItem).Title.Split('|')[1].Trim();
+                }
+                else
+                {
+                    (OperationList.Items[index + 1] as MenuItem).Title = $"{(index + 1) * 5} | " + (OperationList.Items[index + 1] as MenuItem).Title.Split('|')[1].Trim();
+                }
+                (OperationList.Items[index] as MenuItem).Title = $"{(index + 2) * 5} | " + (OperationList.Items[index] as MenuItem).Title.Split('|')[1].Trim();
+                var buffer = OperationList.Items[index];
+                OperationList.Items[index] = OperationList.Items[index + 1];
+                OperationList.Items[index + 1] = buffer;
+            }
+        }
+    }
+
+    private void ListSort(ListBox listBox)
+    {
+        var items = listBox.Items.Cast<MenuItem>()
+            .OrderBy(item =>
+            {
+                // Разбираем номер из формата "XX | название"
+                string numberPart = item.Title.Split('|').First().Trim();
+                return int.TryParse(numberPart, out int num) ? num : int.MaxValue;
+            })
+            .ToList();
+
+        // Очищаем и добавляем отсортированные элементы
+        listBox.Items.Clear();
+        foreach (var item in items)
+        {
+            listBox.Items.Add(item);
+        }
     }
 }
