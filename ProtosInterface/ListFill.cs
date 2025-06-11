@@ -49,7 +49,7 @@ namespace ProtosInterface
                 .Where(x => x.OV.OperationId == opId)
                 .Select(x => new{
                     x.Equipment.Id,
-                    x.Equipment.Name,
+                    x.Equipment.ShortName,
                     x.OV.Duration,
                 })
                 .Distinct()
@@ -59,7 +59,7 @@ namespace ProtosInterface
             {
                 if (equipment.Id != null )
                 {
-                    result.Add(new MenuItem { Title = equipment.Name, Id = equipment.Id }, equipment.Duration.ToString());
+                    result.Add(new MenuItem { Title = equipment.ShortName, Id = equipment.Id }, equipment.Duration.ToString());
                 }
             }
             return result;

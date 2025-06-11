@@ -442,7 +442,7 @@ CREATE TABLE [Operation_Type]
 	[id] int NOT NULL IDENTITY (1, 1),
 	[name] varchar(250) NOT NULL,
 	[short_name] varchar(100) NOT NULL,
-	[description] varchar(8000) NULL
+	[description] varchar(8000) NULL,
 )
 GO
 

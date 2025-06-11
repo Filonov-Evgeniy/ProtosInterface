@@ -148,43 +148,49 @@ namespace ProtosInterface
                 entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.Id)
-                      .HasColumnName("id");
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd(); // Для IDENTITY
 
                 entity.Property(e => e.InventoryNumber)
-                      .IsRequired()
-                      .HasColumnName("inventory_number");
-
-                entity.Property(e => e.Name)
-                      .IsRequired()
-                      .HasMaxLength(10)
-                      .HasColumnName("name");
-
-                entity.Property(e => e.AreaId)
-                      .IsRequired()
-                      .HasMaxLength(30)
-                      .HasColumnName("area_id");
-
-                entity.Property(e => e.TypeId)
-                      .IsRequired()
-                      .HasColumnName("type_id");
-
-                entity.Property(e => e.LoadFactor)
-                      .IsRequired()
-                      .HasColumnName("load_factor");
-
-                entity.Property(e => e.Description)
-                      .HasColumnType("VARCHAR(MAX)")
-                      .HasColumnName("description");
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .HasColumnName("inventory_number");
 
                 entity.Property(e => e.ShortName)
-                      .HasMaxLength(10)
-                      .HasColumnName("short_name");
+                    .HasMaxLength(100) // Соответствует varchar(100) в БД
+                    .HasColumnName("short_name");
 
-                //entity.HasOne(e => e.Equipment_Type)
-                //      .WithMany()
-                //      .HasForeignKey(e => e.TypeId);
-            });
-            modelBuilder.Entity<OperationVariantComponent>(entity =>
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(250) // Соответствует varchar(250) в БД
+                    .HasColumnName("name");
+
+                entity.Property(e => e.FunctionalAreaId)
+                    .IsRequired()
+                    .HasColumnName("functional_area_id");
+
+                entity.Property(e => e.TerritorialAreaId)
+                    .IsRequired()
+                    .HasColumnName("territorial_area_id");
+
+                entity.Property(e => e.LoadFactor)
+                    .IsRequired()
+                    .HasColumnName("load_factor")
+                    .HasDefaultValue(1.0) // DEFAULT 1
+                    .HasColumnType("float");
+
+                entity.Property(e => e.WorkShiftId)
+                    .HasColumnName("work_shift_id");
+
+                entity.Property(e => e.Overtime)
+                    .HasColumnName("overtime")
+                    .HasDefaultValue(0.0) // DEFAULT 0
+                    .HasColumnType("float");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(4000) // varchar(4000)
+                    .HasColumnName("description");
+            }); modelBuilder.Entity<OperationVariantComponent>(entity =>
             {
                 entity.ToTable("Operation_Variant_Component");
                 entity.HasKey(ovc => ovc.Id);

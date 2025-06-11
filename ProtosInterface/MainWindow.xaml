@@ -338,7 +338,7 @@
                                                                         >
                                                                 <TextBlock Text="  Станок"
                                                                            Style="{StaticResource ScaledTextBlockStyle}"
-                                                                           Width="200"/>
+                                                                           Width="300"/>
                                                                 <TextBlock Text="| Время выполнения"
                                                                            Style="{StaticResource ScaledTextBlockStyle}"
                                                                            Width="300"/>
@@ -359,7 +359,7 @@
 
                                             <TextBlock Text="{Binding Key.Title}"
                                                        Style="{StaticResource ScaledTextBlockStyle}"
-                                                       Width="195"
+                                                       Width="295"
                                                        Margin="1"/>
                                             <TextBlock Text="|"
                                                        Style="{StaticResource ScaledTextBlockStyle}"
