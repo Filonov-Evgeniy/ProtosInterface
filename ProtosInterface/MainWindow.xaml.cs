@@ -30,11 +30,13 @@ public partial class MainWindow : Window
     List<MenuItem> searchingItem = new List<MenuItem>();
     List<MenuItem> productsList = new List<MenuItem>();
     dbDataLoader dbLoader = new dbDataLoader();
+    AppDbContext _context;
     public Dictionary<MenuItem, string> EquipmentLsit { get; } = new Dictionary<MenuItem, string>();
     int itemid = -1;
     public MainWindow()
     {
         InitializeComponent();
+        _context = new AppDbContext();
     }
 
     static public MenuItem Menu_Create(int id)
@@ -49,8 +51,7 @@ public partial class MainWindow : Window
         SaveWindow message = new SaveWindow();
         message.Owner = this;
         message.ShowDialog();
-        AppDbContext _context = new AppDbContext();
-        MenuItem item = new MenuItem();
+        MenuItem root = new MenuItem();
         List<ProductLink> links = new List<ProductLink>();
         List<Operation> operations = new List<Operation>();
         List<OperationVariant> operationVariants = new List<OperationVariant>();
@@ -59,220 +60,106 @@ public partial class MainWindow : Window
         {
             case SaveWindow.SaveOption.SaveAsNew:
 
-                item = trvMenu.Items[0] as MenuItem;
+                //root = trvMenu.Items[0] as MenuItem;
 
-                int lastItemId = _context.Products.GetLastId();
+                //int lastItemId = _context.Products.GetLastId();
 
-                var oldItem = _context.Products
-                                      .FirstOrDefault(x => x.Id == item.Id);
+                //var rootItem = _context.Products
+                //                      .FirstOrDefault(x => x.Id == root.Id);
 
-                string name = item.Title;
-                int count = NameCount(oldItem.Name, "product");
+                //string name = root.Title;
+                //int count = NameCount(rootItem.Name, "product");
 
-                RenameWindow rename = new RenameWindow(ReplaceNumberInBrackets(name, count));
+                //RenameWindow rename = new RenameWindow(ReplaceNumberInBrackets(name, count));
 
-                if(rename.ShowDialog() == true)
-                {
-                    name = rename.EnteredText;
-                }
-                else
-                {
-                    break;
-                }
+                //if(rename.ShowDialog() == true)
+                //{
+                //    name = rename.EnteredText;
+                //}
+                //else
+                //{
+                //    break;
+                //}
 
-                count = NameCount(name, "product");
+                //count = NameCount(name, "product");
                 
-                var newProduct = new Product
-                {
-                    Id = lastItemId + 1,
-                    Name = ReplaceNumberInBrackets(name, count),
-                    TypeId = oldItem.TypeId,
-                    CoopStatusId = oldItem.CoopStatusId,
-                    Description = oldItem.Description,
-                };
+                //var newProduct = new Product
+                //{
+                //    Id = lastItemId + 1,
+                //    Name = ReplaceNumberInBrackets(name, count),
+                //    TypeId = rootItem.TypeId,
+                //    CoopStatusId = rootItem.CoopStatusId,
+                //    Description = rootItem.Description,
+                //};
 
-                _context.Products.Add(newProduct);
+                //_context.Products.Add(newProduct);
 
-                foreach (MenuItem product in item.Items)
-                {
-                    Product productParent = _context.Products.Find(newProduct.Id)!;
-                    Product includedProduct = _context.Products.Find(product.itemId)!;
+                //foreach (MenuItem product in root.Items)
+                //{
+                //    Product productParent = _context.Products.Find(newProduct.Id)!;
+                //    Product includedProduct = _context.Products.Find(product.itemId)!;
 
-                    if (includedProduct != null)
-                    {
-                        links.Add(new ProductLink
-                        {
-                            ParentProductId = newProduct.Id,
-                            ParentProduct = productParent,
-                            IncludedProductId = product.itemId,
-                            IncludedProduct = includedProduct,
-                            Amount = product.Amount
-                        });
-                    }
-                }
+                //    if (includedProduct != null)
+                //    {
+                //        links.Add(new ProductLink
+                //        {
+                //            ParentProductId = newProduct.Id,
+                //            ParentProduct = productParent,
+                //            IncludedProductId = product.itemId,
+                //            IncludedProduct = includedProduct,
+                //            Amount = product.Amount
+                //        });
+                //    }
+                //}
 
-                _context.ProductLinks.AddRange(links);
+                //_context.ProductLinks.AddRange(links);
 
-                var oldOperationList = _context.Operations.Where(o => o.ProductId == oldItem.Id).ToList();
-
-                count = 0;
-
+                List<int> operationsTypeId = new List<int>();
+                List<int> operationsCode = new List<int>();
                 foreach (MenuItem operation in OperationList.Items)
                 {
-                    lastItemId = _context.Operations.GetLastId();
-
-                    int code = int.Parse(operation.Title.Split('|')[0].Trim());
-
-                    //понадобиться ещё 1 похожий запрос
-                    var equipments = _context.Equipment
-                    .Join(
-                        _context.OperationVariantComponents,
-                        e => e.Id,
-                        ovc => ovc.EquipmentId,
-                        (e, ovc) => new { Equipment = e, OVC = ovc }
-                    )
-                    .Join(
-                        _context.OperationVariants,
-                        combined => combined.OVC.OperationVariantId,
-                        ov => ov.Id,
-                        (combined, ov) => new { combined.Equipment, OV = ov }
-                        )
-                    .Where(x => x.OV.OperationId == operation.Id)
-                    .Select(x => new {
-                        x.Equipment.Id,
-                        x.Equipment.Name,
-                        x.OV.Duration,
-                        x.OV.Description,
-                    })
-                    .Distinct()
-                    .ToList();
-      
-                    Operation oldOperation = _context.Operations.FirstOrDefault(x => x.Id == operation.Id)!;   
-                        
-                    if (oldOperation.TypeId == oldOperationList[count].TypeId)
-                    {
-                        operations.Add(new Operation
-                        {
-                            Id = lastItemId + 1 + count,
-                            Code = oldOperation.Code,
-                            TypeId = oldOperation.TypeId,
-                            ProductId = newProduct.Id,
-                            CoopStatusId = oldOperation.CoopStatusId,
-                            Description = oldOperation.Description,
-                        });
-                    }
-                    else
-                    {
-                        operations.Add(new Operation
-                        {
-                            Id = lastItemId + 1,
-                            Code = oldOperation.Code,
-                            TypeId = oldOperation.TypeId,
-                            ProductId = newProduct.Id,
-                            CoopStatusId = oldOperation.CoopStatusId,
-                            Description = oldOperation.Description,
-                        });
-                    }
-
-                    int operationcount = 0;
-
-                    foreach (var equipment in equipments)
-                    {
-                        if (operationVariants.Count == 0)
-                        {
-                            lastItemId = _context.OperationVariants.GetLastId();
-                        }
-                        else
-                        {
-                            lastItemId = operationVariants[operationVariants.Count - 1].Id;
-                        }
-
-                        operationVariants.Add(new OperationVariant
-                        {
-                            Id = lastItemId + 1,
-                            OperationId = operations[count].Id,
-                            Duration = equipment.Duration,
-                            Description = equipment.Description,
-                        });
-
-                        if (operationVariantComponents.Count == 0)
-                        {
-                            lastItemId = _context.OperationVariantComponents.GetLastId();
-                        }
-                        else
-                        {
-                            lastItemId = operationVariantComponents[operationVariantComponents.Count - 1].Id;
-                        }
-
-                        operationVariantComponents.Add(new OperationVariantComponent
-                        {
-                            Id = lastItemId + 1,
-                            OperationVariantId = operationVariants[operationcount].Id,
-                            EquipmentId = equipment.Id,
-                            ProfessionId = equipment.Id,
-                            WorkersAmount = 1,
-                        });
-
-                        operationcount++;
-                    }
-                    
-                    count++;
+                    string[] operationSplitted = operation.Title.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                    operationsCode.Add(Convert.ToInt32(operationSplitted[0].Trim()));
+                    operationsTypeId.Add(getOperationTypeIdByName(operationSplitted[1].Trim()));
                 }
 
-                _context.Operations.AddRange(operations);
-                _context.OperationVariants.AddRange(operationVariants);
-                _context.OperationVariantComponents.AddRange(operationVariantComponents);
-
-                _context.SaveChanges();
-
-                MessageBox.Show("Элемент был добавлен в БД");
-                break;
-            case SaveWindow.SaveOption.SaveChanges:
-                item = trvMenu.Items[0] as MenuItem;
-  
-                _context.ProductLinks
-                    .Where(pl => pl.ParentProductId == item.itemId)
-                    .ExecuteDelete();
-
-                foreach (MenuItem product in item.Items)
+                List<int> operationsForCopyId = new List<int>();
+                List<Operation> newOperation= new List<Operation>();
+                for (int i = 0; i < operationsTypeId.Count; i++)
                 {
-                    Product productParent = _context.Products.Find(item.itemId)!;
-                    Product includedProduct = _context.Products.Find(product.itemId)!;
-                    links.Add(new ProductLink
-                    {
-                        ParentProductId = item.itemId,
-                        ParentProduct = productParent,
-
-                        IncludedProductId = product.itemId,
-                        IncludedProduct = includedProduct,
-
-                        Amount = product.Amount
-                    });
+                    int operationId = getOperationByTypeId(operationsTypeId[i]);
+                    operationsForCopyId.Add(operationId);
+                    newOperation.Add(getOperationFromReference(operationId, operationsCode[i]));
                 }
 
-                _context.Operations.Where(o => o.ProductId == item.Id).ExecuteDelete();
-
-                foreach(MenuItem operation in OperationList.Items)
-                {
-                    int typeId = 1;
-                    operations.Add(new Operation
-                    {
-                        Id = operation.Id,
-                        Code = int.Parse(operation.Title.Split('|')[0].Trim()),
-                        TypeId = typeId,
-                        ProductId = item.Id,
-                        CoopStatusId = 1,
-                        Description = "",
-                    });
-                }
-
-                _context.ProductLinks.AddRange(links);
-                _context.SaveChanges();
                 MessageBox.Show("Сохранение завершено!");
                 break;
             case SaveWindow.SaveOption.Cancel:
                 break;
         }
+    }
+    private Operation getOperationFromReference(int referenceId, int code)
+    {
+        Operation operation = new Operation();
+        Operation referenceOperation = _context.Operations.FirstOrDefault(x => x.Id == referenceId);
+        operation.OperationType = referenceOperation.OperationType;
+        operation.TypeId = referenceOperation.TypeId;
+        operation.Code = code;
+        operation.ProductId = referenceOperation.ProductId;
+        operation.Product = referenceOperation.Product;
+        operation.CoopStatusId = referenceOperation.CoopStatusId;
+        return operation;
+    }
+    private int getOperationByTypeId(int typeId)
+    {
+        int operationId = _context.Operations.FirstOrDefault(x => x.TypeId == typeId).Id;
+        return operationId;
+    }
+
+    private int getOperationTypeIdByName(string name)
+    {
+        int operationId = _context.OperationTypes.FirstOrDefault(x => x.Name == name).Id;
+        return operationId;
     }
 
     public string ReplaceNumberInBrackets(string originalName, int newNumber)
