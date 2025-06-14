@@ -265,39 +265,17 @@ public partial class MainWindow : Window
 
     public string ReplaceNumberInBrackets(string originalName, int newNumber)
     {
-        //string newName;
-        //string pattern = @"^\(\d+\)";
-
-        //if (originalName.Contains(pattern))
-        //{
-        //    newName = Regex.Replace(originalName, pattern, $"({newNumber})");
-        //}
-        //else if (newNumber > 0)
-        //{
-        //    newName = $"({newNumber}) " + originalName;
-        //}
-        //else
-        //{
-        //    newName = originalName;
-        //}
-
-        //return newName;
-        // Паттерн для поиска "(число)" в начале строки
         string pattern = @"^\(\d+\)";
 
-        // Проверяем, есть ли совпадение с регулярным выражением
         if (Regex.IsMatch(originalName, pattern))
         {
-            // Заменяем существующие скобки с числом на новые
             return Regex.Replace(originalName, pattern, $"({newNumber})");
         }
         else if (newNumber > 0)
         {
-            // Добавляем новые скобки в начало, если их не было
             return $"({newNumber}) {originalName}";
         }
 
-        // Если newNumber <= 0, возвращаем оригинальное имя без изменений
         return originalName;
     }
 
@@ -515,10 +493,19 @@ public partial class MainWindow : Window
         if (trvMenu.SelectedItem != null)
         {
             OperationList.ItemsSource = null;
+            EquipmentList.ItemsSource = null;
             var selectedItem = trvMenu.SelectedItem as MenuItem;
             this.FillListItems("Operation", selectedItem.itemId);
-            this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
-            FullName.Text = ((MenuItem)trvMenu.SelectedItem).Title.ToString() + " полное название";
+            if(OperationList.Items.Count > 0)
+            {
+                this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
+            }
+            else
+            {
+                OperationList.Items.Add(new MenuItem { Title = "Операций нет" });
+            }
+            FullName.Text = ((MenuItem)trvMenu.SelectedItem).Title.ToString();
+            
         }
     }
 
@@ -630,9 +617,16 @@ public partial class MainWindow : Window
                 trvMenu.Items.Clear();
                 trvMenu.Items.Add(Menu_Create(item.Id));
                 itemid = item.Id;
-                FullName.Text = ((MenuItem)trvMenu.Items[0]).Title.ToString() + " полное название";
+                FullName.Text = ((MenuItem)trvMenu.Items[0]).Title.ToString();
                 this.FillListItems("Operation", (trvMenu.Items[0] as MenuItem).itemId);
-                this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
+                if (OperationList.Items.Count > 0)
+                {
+                    this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
+                }
+                else
+                {
+                    OperationList.Items.Add(new MenuItem { Title = "Операций нет" });
+                }
             }
         }
     }
