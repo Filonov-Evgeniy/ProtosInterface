@@ -60,59 +60,59 @@ public partial class MainWindow : Window
         {
             case SaveWindow.SaveOption.SaveAsNew:
 
-                //root = trvMenu.Items[0] as MenuItem;
+                root = trvMenu.Items[0] as MenuItem;
 
-                //int lastItemId = _context.Products.GetLastId();
+                int lastItemId = _context.Products.GetLastId();
 
-                //var rootItem = _context.Products
-                //                      .FirstOrDefault(x => x.Id == root.Id);
+                var rootItem = _context.Products
+                                      .FirstOrDefault(x => x.Id == root.Id);
 
-                //string name = root.Title;
-                //int count = NameCount(rootItem.Name, "product");
+                string name = root.Title;
+                int count = NameCount(rootItem.Name, "product");
 
-                //RenameWindow rename = new RenameWindow(ReplaceNumberInBrackets(name, count));
+                RenameWindow rename = new RenameWindow(ReplaceNumberInBrackets(name, count));
 
-                //if(rename.ShowDialog() == true)
-                //{
-                //    name = rename.EnteredText;
-                //}
-                //else
-                //{
-                //    break;
-                //}
+                if (rename.ShowDialog() == true)
+                {
+                    name = rename.EnteredText;
+                }
+                else
+                {
+                    break;
+                }
 
-                //count = NameCount(name, "product");
-                
-                //var newProduct = new Product
-                //{
-                //    Id = lastItemId + 1,
-                //    Name = ReplaceNumberInBrackets(name, count),
-                //    TypeId = rootItem.TypeId,
-                //    CoopStatusId = rootItem.CoopStatusId,
-                //    Description = rootItem.Description,
-                //};
+                count = NameCount(name, "product");
 
-                //_context.Products.Add(newProduct);
+                var newProduct = new Product
+                {
+                    Id = lastItemId + 1,
+                    Name = ReplaceNumberInBrackets(name, count),
+                    TypeId = rootItem.TypeId,
+                    CoopStatusId = rootItem.CoopStatusId,
+                    Description = rootItem.Description,
+                };
 
-                //foreach (MenuItem product in root.Items)
-                //{
-                //    Product productParent = _context.Products.Find(newProduct.Id)!;
-                //    Product includedProduct = _context.Products.Find(product.itemId)!;
+                _context.Products.Add(newProduct);
 
-                //    if (includedProduct != null)
-                //    {
-                //        links.Add(new ProductLink
-                //        {
-                //            ParentProductId = newProduct.Id,
-                //            ParentProduct = productParent,
-                //            IncludedProductId = product.itemId,
-                //            IncludedProduct = includedProduct,
-                //            Amount = product.Amount
-                //        });
-                //    }
-                //}
+                foreach (MenuItem product in root.Items)
+                {
+                    Product productParent = _context.Products.Find(newProduct.Id)!;
+                    Product includedProduct = _context.Products.Find(product.itemId)!;
 
-                //_context.ProductLinks.AddRange(links);
+                    if (includedProduct != null)
+                    {
+                        links.Add(new ProductLink
+                        {
+                            ParentProductId = newProduct.Id,
+                            ParentProduct = productParent,
+                            IncludedProductId = product.itemId,
+                            IncludedProduct = includedProduct,
+                            Amount = product.Amount
+                        });
+                    }
+                }
+
+                _context.ProductLinks.AddRange(links);
 
                 List<int> operationsTypeId = new List<int>();
                 List<int> operationsCode = new List<int>();
@@ -123,20 +123,121 @@ public partial class MainWindow : Window
                     operationsTypeId.Add(getOperationTypeIdByName(operationSplitted[1].Trim()));
                 }
 
-                List<int> operationsForCopyId = new List<int>();
-                List<Operation> newOperation= new List<Operation>();
+                Dictionary<int, Operation> originalCopyOperations = new Dictionary<int, Operation>();
                 for (int i = 0; i < operationsTypeId.Count; i++)
                 {
                     int operationId = getOperationByTypeId(operationsTypeId[i]);
-                    operationsForCopyId.Add(operationId);
-                    newOperation.Add(getOperationFromReference(operationId, operationsCode[i]));
+                    Operation newOperation = getOperationFromReference(operationId, operationsCode[i]);
+                    originalCopyOperations.Add(operationId, newOperation);
                 }
 
+                _context.Operations.AddRange(originalCopyOperations.Values);
+                _context.SaveChanges();
+
+                Dictionary<int, Dictionary<OperationVariant, OperationVariant>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
+                for (int i = 0; i < variantIdAndVariantForCopy.Count; i++)
+                {
+                    foreach (OperationVariant opVariant in variantIdAndVariantForCopy[i].Values)
+                    {
+                        _context.OperationVariants.AddRange(opVariant);
+                    }
+                }
+                _context.SaveChanges();
+
+                List<OperationVariantComponent> newOpVarComp = getOperationVariantComponentFromReference(variantIdAndVariantForCopy);
+                _context.OperationVariantComponents.AddRange(newOpVarComp);
+                _context.SaveChanges();
+
+                MessageBox.Show("Сохранение завершено!");
+                break;
+            case SaveWindow.SaveOption.SaveChanges:
+                root = trvMenu.Items[0] as MenuItem;
+
+                _context.ProductLinks
+                    .Where(pl => pl.ParentProductId == root.itemId)
+                    .ExecuteDelete();
+
+                foreach (MenuItem product in root.Items)
+                {
+                    Product productParent = _context.Products.Find(root.itemId)!;
+                    Product includedProduct = _context.Products.Find(product.itemId)!;
+                    links.Add(new ProductLink
+                    {
+                        ParentProductId = root.itemId,
+                        ParentProduct = productParent,
+
+                        IncludedProductId = product.itemId,
+                        IncludedProduct = includedProduct,
+
+                        Amount = product.Amount
+                    });
+                }
+
+                _context.Operations.Where(o => o.ProductId == root.Id).ExecuteDelete();
+
+                foreach (MenuItem operation in OperationList.Items)
+                {
+                    int typeId = 1;
+                    operations.Add(new Operation
+                    {
+                        Id = operation.Id,
+                        Code = int.Parse(operation.Title.Split('|')[0].Trim()),
+                        TypeId = typeId,
+                        ProductId = root.Id,
+                        CoopStatusId = 1,
+                        Description = "",
+                    });
+                }
+
+                _context.ProductLinks.AddRange(links);
+                _context.SaveChanges();
                 MessageBox.Show("Сохранение завершено!");
                 break;
             case SaveWindow.SaveOption.Cancel:
                 break;
         }
+    }
+    private List<OperationVariantComponent> getOperationVariantComponentFromReference(Dictionary<int, Dictionary<OperationVariant, OperationVariant>> variantIdAndVariantForCopy)
+    {
+        List<OperationVariantComponent> operationVariantComponentsCopy = new List<OperationVariantComponent>();
+
+        foreach (Dictionary<OperationVariant, OperationVariant> variants in variantIdAndVariantForCopy.Values)
+        {
+            foreach (var dict in variants)
+            {
+                OperationVariantComponent oldComp = _context.OperationVariantComponents.Where(x => x.OperationVariantId == dict.Key.Id) as OperationVariantComponent;
+                OperationVariantComponent newComp = new OperationVariantComponent();
+                newComp.ProfessionId = oldComp.ProfessionId;
+                newComp.EquipmentId = oldComp.EquipmentId;
+                newComp.Equipment = oldComp.Equipment;
+                newComp.OperationVariantId = dict.Value.Id;
+                newComp.OperationVariant = dict.Value;
+                operationVariantComponentsCopy.Add(newComp);
+            }
+        }
+
+        return operationVariantComponentsCopy;
+    }
+
+    private Dictionary<int, Dictionary<OperationVariant, OperationVariant>> getOperationVariantListFromReference(Dictionary<int, Operation> originalCopyOperations)
+    {
+        Dictionary<int, Dictionary<OperationVariant, OperationVariant>> modifiedVariants = new Dictionary<int, Dictionary<OperationVariant, OperationVariant>>();
+        foreach (int operationId in originalCopyOperations.Keys)
+        {
+            List<OperationVariant> variantForCopy = _context.OperationVariants.Where(x => x.OperationId == operationId).ToList();
+            Dictionary<OperationVariant, OperationVariant> oldNewOpVariants = new Dictionary<OperationVariant, OperationVariant>();
+            foreach (OperationVariant variant in variantForCopy)
+            {
+                List<OperationVariant> modifiedVariantsValues = new List<OperationVariant>();
+                OperationVariant newVariant = new OperationVariant();
+                newVariant.Duration = variant.Duration;
+                newVariant.OperationId = originalCopyOperations[variant.OperationId].Id;
+                modifiedVariantsValues.Add(newVariant);
+                oldNewOpVariants.Add(variant, newVariant);
+            }
+            modifiedVariants.Add(operationId, oldNewOpVariants);
+        }
+        return modifiedVariants;
     }
     private Operation getOperationFromReference(int referenceId, int code)
     {
