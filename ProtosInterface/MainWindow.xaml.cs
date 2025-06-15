@@ -224,7 +224,9 @@ public partial class MainWindow : Window
         {
             foreach (var dict in variants)
             {
-                List<OperationVariantComponent> oldComp = _context.OperationVariantComponents.Where(x => x.OperationVariantId == dict.Key.Id).ToList();
+                MessageBox.Show(_context.OperationVariantComponents.Where(x => x.OperationVariantId == dict.Key.Id).Select(x => x.Id).FirstOrDefault().ToString());
+                List<OperationVariantComponent> oldComp = new List<OperationVariantComponent>();
+                oldComp = _context.OperationVariantComponents.Where(x => x.OperationVariantId == dict.Key.Id).Select(x => new OperationVariantComponent{ Id = x.Id, EquipmentId = x.EquipmentId }).ToList();
                 OperationVariantComponent newComp = new OperationVariantComponent();
                 foreach (OperationVariantComponent comp in oldComp)
                 {
@@ -237,6 +239,7 @@ public partial class MainWindow : Window
                     newComp.Id = opVarCompId + 1;
                     opVarCompId++;
                 }
+                oldComp.Clear();
             }
         }
 
