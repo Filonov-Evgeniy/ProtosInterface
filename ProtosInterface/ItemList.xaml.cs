@@ -72,6 +72,7 @@ namespace ProtosInterface
                 LoadingIndicator.Visibility = Visibility.Visible;
                 List<MenuItem> dataList = new List<MenuItem>();
                 dbDataLoader loader = new dbDataLoader();
+                AllItems.Clear();
                 if (type == true)
                 {
                     dataList = await loader.GetProductDataAsync();
@@ -96,6 +97,8 @@ namespace ProtosInterface
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
+                AllItems.Clear();
+                ItemListBox.ItemsSource = null;
             }
             finally
             {
@@ -122,6 +125,10 @@ namespace ProtosInterface
                 {
                     enteredNumber = opCode.EnteredNumber;
                     this.DialogResult = true;
+                }
+                else
+                {
+                    this.DialogResult = false;
                 }
             }
             this.Close();

@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProtosInterface.Extensions;
 using ProtosInterface.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,7 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ProtosInterface.Extensions;
+using OfficeOpenXml;
 
 namespace ProtosInterface;
 
@@ -60,6 +62,11 @@ public partial class MainWindow : Window
         {
             case SaveWindow.SaveOption.SaveAsNew:
 
+                if (trvMenu.Items[0] is not MenuItem)
+                {
+                    MessageBox.Show("Перед сохранением выберите изделие");
+                    break;
+                }
                 root = trvMenu.Items[0] as MenuItem;
 
                 int lastItemId = _context.Products.GetLastId();
@@ -313,7 +320,7 @@ public partial class MainWindow : Window
                 {
                     count = _context.Products.Count(p => EF.Functions.Like(p.Name, $"%{name.Split()[0]}%"));
                 }
-            break;
+                break;
         }
 
         return count;
@@ -328,7 +335,7 @@ public partial class MainWindow : Window
 
     private void InsertTreeItemButton_Click(object sender, RoutedEventArgs e)
     {
-        
+
         var selectedItem = trvMenu.Items[0] as MenuItem;
 
         if (selectedItem != null)
@@ -372,7 +379,7 @@ public partial class MainWindow : Window
 
                         selectedItem.Items.Add(item);
                     }
-                    
+
                     MessageBox.Show("Элементы добавлены");
                 }
                 else
@@ -390,7 +397,7 @@ public partial class MainWindow : Window
                 foreach (MenuItem item in itemsToAdd)
                 {
                     string code = "";
-                    if(list.enteredNumber < 10)
+                    if (list.enteredNumber < 10)
                     {
                         code += "0" + list.enteredNumber;
                     }
@@ -398,9 +405,9 @@ public partial class MainWindow : Window
                     {
                         code += list.enteredNumber;
                     }
-                    
 
-                    OperationList.Items.Add(new MenuItem{ Title = code + " | " + item.Title, Id = item.Id });
+
+                    OperationList.Items.Add(new MenuItem { Title = code + " | " + item.Title, Id = item.Id });
                 }
                 ListSort(OperationList);
 
@@ -432,6 +439,7 @@ public partial class MainWindow : Window
         else
         {
             var selectedItem = OperationList.SelectedItem as MenuItem;
+            int index = OperationList.Items.IndexOf(selectedItem);
             if (selectedItem == null)
             {
                 MessageBox.Show("Не выбран элемент для удаления");
@@ -439,6 +447,27 @@ public partial class MainWindow : Window
             else
             {
                 OperationList.Items.Remove(selectedItem);
+                for (int i = index; i < OperationList.Items.Count; i++)
+                {
+                    int code = int.Parse((OperationList.Items[i] as MenuItem).Title.ToString().Split('|')[0]);
+                    if (code <= 5)
+                    {
+                        code = index + 1;
+                    }
+                    else
+                    {
+                        code -= 5;
+                    }
+                    if (code < 10)
+                    {
+                        (OperationList.Items[i] as MenuItem).Title = "0" + code + " | " + (OperationList.Items[i] as MenuItem).Title.ToString().Split('|')[1].Trim();
+                    }
+                    else
+                    {
+                        (OperationList.Items[i] as MenuItem).Title = code + " | " + (OperationList.Items[i] as MenuItem).Title.ToString().Split('|')[1].Trim();
+                    }
+                }
+                OperationList.Items.Refresh();
             }
         }
     }
@@ -514,7 +543,7 @@ public partial class MainWindow : Window
             EquipmentList.ItemsSource = null;
             var selectedItem = trvMenu.SelectedItem as MenuItem;
             this.FillListItems("Operation", selectedItem.itemId);
-            if(OperationList.Items.Count > 0)
+            if (OperationList.Items.Count > 0)
             {
                 this.FillListItems("Equipment", (OperationList.Items[0] as MenuItem).Id);
             }
@@ -523,18 +552,18 @@ public partial class MainWindow : Window
                 OperationList.Items.Add(new MenuItem { Title = "Операций нет" });
             }
             FullName.Text = ((MenuItem)trvMenu.SelectedItem).Title.ToString();
-            
+
         }
     }
 
     private void OperationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if(OperationList.SelectedItem != null)
+        if (OperationList.SelectedItem != null)
         {
             EquipmentList.ItemsSource = null;
             var selectedItem = OperationList.SelectedItem as MenuItem;
 
-            this.FillListItems("Equipment", selectedItem.Id);            
+            this.FillListItems("Equipment", selectedItem.Id);
         }
     }
 
@@ -551,8 +580,6 @@ public partial class MainWindow : Window
                 {
                     OperationList.Items.Add(item as MenuItem);
                 }
-
-                //OperationList.DisplayMemberPath = "Title";
 
                 break;
             case "Equipment":
@@ -607,7 +634,7 @@ public partial class MainWindow : Window
         if (parent == null) return;
 
         parent.UpdateLayout();
-        
+
         foreach (var item in parent.Items)
         {
             if (parent.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem container)
@@ -654,7 +681,7 @@ public partial class MainWindow : Window
         if (sender is RadioButton radioButton && radioButton.IsChecked == true && radioButton.Tag != null)
         {
             string colorString;
-            if(radioButton.Tag?.ToString() == "Product")
+            if (radioButton.Tag?.ToString() == "Product")
             {
                 colorString = "#c7f9f7";
                 productSelect.IsEnabled = true;
@@ -746,17 +773,118 @@ public partial class MainWindow : Window
         var items = listBox.Items.Cast<MenuItem>()
             .OrderBy(item =>
             {
-                // Разбираем номер из формата "XX | название"
                 string numberPart = item.Title.Split('|').First().Trim();
                 return int.TryParse(numberPart, out int num) ? num : int.MaxValue;
             })
             .ToList();
 
-        // Очищаем и добавляем отсортированные элементы
         listBox.Items.Clear();
         foreach (var item in items)
         {
             listBox.Items.Add(item);
+        }
+    }
+
+    private void ExportButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Excel Files|*.xlsx",
+                FileName = "DynamicExport.xlsx"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using (var package = new ExcelPackage())
+                {
+                    var worksheet = package.Workbook.Worksheets.Add("ExportedData");
+                    int currentColumn = 1;
+
+                    // Всегда экспортируем первый ListBox
+                    ExportListBoxToColumn(worksheet, ProductExport, currentColumn++);
+                    worksheet.Cells[1, 1].Value = "Основные данные";
+
+                    // Проверяем чекбоксы
+                    if (OperationCheck.IsChecked == true)
+                    {
+                        ExportListBoxToColumn(worksheet, OperationExport, currentColumn);
+                        worksheet.Cells[1, currentColumn].Value = "Доп. данные 1";
+                        currentColumn++;
+                    }
+
+                    if (EquipmentCheck.IsChecked == true)
+                    {
+                        ExportListBoxToColumn(worksheet, EquipmentExport, currentColumn);
+                        worksheet.Cells[1, currentColumn].Value = "Доп. данные 2";
+                        currentColumn++;
+                    }
+
+                    // Автоподбор ширины для всех использованных колонок
+                    for (int i = 1; i < currentColumn; i++)
+                    {
+                        worksheet.Column(i).AutoFit();
+                    }
+
+                    package.SaveAs(new FileInfo(saveFileDialog.FileName));
+                    MessageBox.Show("Экспорт завершен успешно!");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка экспорта: {ex.Message}");
+        }
+    }
+
+    private void ExportListBoxToColumn(ExcelWorksheet worksheet, ListBox listBox, int column)
+    {
+        for (int i = 0; i < listBox.Items.Count; i++)
+        {
+            worksheet.Cells[i + 2, column].Value = listBox.Items[i]?.ToString();
+        }
+    }
+    private void CheckOperation_Checked(object sender, RoutedEventArgs e)
+    {
+        OperationExport.IsEnabled = true;
+    }
+
+    private void CheckEquipment_Checked(object sender, RoutedEventArgs e)
+    {
+        EquipmentExport.IsEnabled = true;
+    }
+
+    private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.Source is TabControl tabControl)
+        {
+            int selectedIndex = tabControl.SelectedIndex;
+            if(selectedIndex == 2)
+            {
+                TabItem selectedTab = tabControl.SelectedItem as TabItem;
+
+                var selectedItems = OperationList.Items.Cast<object>().ToList();
+
+                foreach (var item in selectedItems)
+                {
+                    OperationExport.Items.Add((item as MenuItem).Title);
+                }
+
+                selectedItems = EquipmentList.Items.Cast<object>().ToList();
+
+                foreach (var item in selectedItems)
+                {
+                    if (item is Dictionary<MenuItem, string> dictionary)
+                    {
+                        foreach (var pair in dictionary)
+                        {
+                            MenuItem key = pair.Key;
+                            EquipmentExport.Items.Add(key.Title);
+                        }
+                    }
+                }
+            }
         }
     }
 }
