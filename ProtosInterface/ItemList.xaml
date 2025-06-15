@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Список Изделий" 
         Height="450" 
-        Width="320"
+        Width="400"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Icon="Resources/Lupa.png">
@@ -37,26 +37,32 @@
                      Grid.Row="0"
                      Grid.RowSpan="2"
                      BorderThickness="0,0,0,0"/>
-            <StackPanel Orientation="Horizontal"
-                        Grid.Row="2"
+            <Grid       Grid.Row="2"
                         VerticalAlignment="Center"
                         x:Name="FilterField">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <CheckBox x:Name="Product"
                           Content="Изделие"
                           VerticalAlignment="Center"
-                          Margin="10,0,5,0"
+                          Grid.Column="0"
+                          HorizontalAlignment="Right"
+                          Margin="0,0,15,0"
                           IsChecked="{Binding IsFilter1Enabled, UpdateSourceTrigger=PropertyChanged}"/>
                 <CheckBox x:Name="Assembly_uint"
                           Content="Сборная единица"
                           VerticalAlignment="Center"
-                          Margin="10,0,10,0"
+                          Grid.Column="1"
                           IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}"/>
                 <CheckBox x:Name="Detail"
                           Content="Деталь"
                           VerticalAlignment="Center"
-                          Margin="5,0,0,0"
+                          Grid.Column="2"
                           IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
-            </StackPanel>
+            </Grid>
             <Button x:Name="SelectButton" 
                     Grid.Row="3" 
                     Content="" 

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" WindowStartupLocation="Manual" Top="300" Left="500">
+        Title="" Height="450" Width="1000" WindowStartupLocation="Manual" Top="300" Left="500">
     <Window.Resources>
         <local:ScreenSizeChanged x:Key="ScreenSizeToTextSize"/>
         <Style TargetType="Button"
@@ -51,7 +51,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TabControl Grid.Row="0" Grid.ColumnSpan="2">
+        <TabControl Grid.Row="0" 
+                    Grid.ColumnSpan="2"
+                    SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Дерево">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -378,6 +380,97 @@
             </TabItem>
             <TabItem Header="Гант">
 
+            </TabItem>
+            <TabItem Header="Экспорт">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0"
+                            BorderThickness="1"
+                            Margin="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="9*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <Button Grid.Row="1"
+                                    Content="Экспорт в Excel"
+                                    Margin="5"
+                                    Style="{DynamicResource ButtonStyle}"
+                                    x:Name="ExportButton"
+                                    Click="ExportButton_Click"/>
+                            <StackPanel Grid.Row="0"
+                                    Margin="5">
+                                <TextBlock Text="Элементы для экспорта:"
+                                           Margin="5"/>
+                                <CheckBox Content="Добавить Операции"
+                                          Margin="10"
+                                          Tag="OperationCheck"
+                                          Checked="CheckOperation_Checked"
+                                          x:Name="OperationCheck"/>
+                                <CheckBox Content="Добавить Оборудование"
+                                          Margin="10"
+                                          Tag="EquipmentCheck"
+                                          Checked="CheckEquipment_Checked"
+                                          x:Name="EquipmentCheck"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1"
+                            BorderThickness="1"
+                            Margin="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" 
+                                  Margin="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Изделие:" 
+                                           Margin="5" 
+                                           Grid.Row="0"/>
+                                <ListBox x:Name="ProductExport" 
+                                         Grid.Row="1"/>
+                            </Grid>
+                            <Grid Grid.Column="1" 
+                                  Margin="5"
+                                  IsEnabled="False">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Операции:" 
+                                           Margin="5" 
+                                           Grid.Row="0"/>
+                                <ListBox x:Name="OperationExport" 
+                                         Grid.Row="1"/>
+                            </Grid>
+                            <Grid Grid.Column="2" 
+                                  Margin="5"
+                                  IsEnabled="False">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Оборудование:" 
+                                           Margin="5" 
+                                           Grid.Row="0"/>
+                                <ListBox x:Name="EquipmentExport" 
+                                         Grid.Row="1"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>
