@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OZTM.Data.Tables;
 using ProtosInterface.Models;
 using System;
 using System.Collections.Generic;
@@ -18,6 +17,12 @@ namespace ProtosInterface
         public dbDataLoader()
         {
             _context = new AppDbContext();
+        }
+
+        public List<ProductType> getProductTypeData()
+        {
+            List<ProductType> productTypes = _context.ProductTypes.ToList();
+            return productTypes;
         }
 
         public List<MenuItem> getOperationData()

@@ -890,4 +890,10 @@ public partial class MainWindow : Window
             }
         }
     }
+
+    private void createProductButton_Click(object sender, RoutedEventArgs e)
+    {
+        ProductCreator productCreator = new ProductCreator();
+        productCreator.ShowDialog();
+    }
 }
