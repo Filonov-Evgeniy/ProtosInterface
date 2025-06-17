@@ -132,36 +132,41 @@ public partial class MainWindow : Window
 
                 List<int> operationsTypeId = new List<int>();
                 List<int> operationsCode = new List<int>();
-                foreach (MenuItem operation in OperationList.Items)
-                {
-                    string[] operationSplitted = operation.Title.Split('|', StringSplitOptions.RemoveEmptyEntries);
-                    operationsCode.Add(Convert.ToInt32(operationSplitted[0].Trim()));
-                    operationsTypeId.Add(getOperationTypeIdByName(operationSplitted[1].Trim()));
-                }
 
-                int operationsId = _context.Operations.GetLastId();
-                Dictionary<int, Operation> originalCopyOperations = new Dictionary<int, Operation>();
-                for (int i = 0; i < operationsTypeId.Count; i++)
+                MenuItem firstOperation = OperationList.Items[0] as MenuItem;
+                if (firstOperation.Title != "Операций нет")
                 {
-                    int operationId = getOperationByTypeId(operationsTypeId[i]);
-                    Operation newOperation = getOperationFromReference(operationId, operationsCode[i], operationsId);
-                    originalCopyOperations.Add(operationId, newOperation);
-                    operationsId++;
-                }
-
-                _context.Operations.AddRange(originalCopyOperations.Values);
-
-                Dictionary<int, Dictionary<OperationVariant, OperationVariant>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
-                foreach (var outerPair in variantIdAndVariantForCopy)
-                {
-                    foreach (var innerPair in outerPair.Value)
+                    foreach (MenuItem operation in OperationList.Items)
                     {
-                        _context.OperationVariants.Add(innerPair.Value);
+                        string[] operationSplitted = operation.Title.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                        operationsCode.Add(Convert.ToInt32(operationSplitted[0].Trim()));
+                        operationsTypeId.Add(getOperationTypeIdByName(operationSplitted[1].Trim()));
                     }
-                }
 
-                List<OperationVariantComponent> newOpVarComp = getOperationVariantComponentFromReference(variantIdAndVariantForCopy);
-                _context.OperationVariantComponents.AddRange(newOpVarComp);
+                    int operationsId = _context.Operations.GetLastId();
+                    Dictionary<int, Operation> originalCopyOperations = new Dictionary<int, Operation>();
+                    for (int i = 0; i < operationsTypeId.Count; i++)
+                    {
+                        int operationId = getOperationByTypeId(operationsTypeId[i]);
+                        Operation newOperation = getOperationFromReference(operationId, operationsCode[i], operationsId);
+                        originalCopyOperations.Add(operationId, newOperation);
+                        operationsId++;
+                    }
+
+                    _context.Operations.AddRange(originalCopyOperations.Values);
+
+                    Dictionary<int, Dictionary<OperationVariant, OperationVariant>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
+                    foreach (var outerPair in variantIdAndVariantForCopy)
+                    {
+                        foreach (var innerPair in outerPair.Value)
+                        {
+                            _context.OperationVariants.Add(innerPair.Value);
+                        }
+                    }
+
+                    List<OperationVariantComponent> newOpVarComp = getOperationVariantComponentFromReference(variantIdAndVariantForCopy);
+                    _context.OperationVariantComponents.AddRange(newOpVarComp);
+                }
                 _context.SaveChanges();
 
                 MessageBox.Show("Сохранение завершено!");
