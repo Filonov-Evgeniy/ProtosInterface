@@ -49,6 +49,7 @@ namespace ProtosInterface
             set { itemId = value; }
         }
         public double Amount { get; set; }
+
         [JsonIgnore]
         public MenuItem Parent { get; set; }
 

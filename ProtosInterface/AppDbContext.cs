@@ -235,6 +235,11 @@ namespace ProtosInterface
                       .HasMaxLength(4000)
                       .HasColumnName("description");
             });
+
+            //modelBuilder.Entity<Authorization>(entity =>
+            //{
+            //    entity.ToTable("Authorization");
+            //});
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -811,104 +811,20 @@ public partial class MainWindow : Window
 
     private void ExportButton_Click(object sender, RoutedEventArgs e)
     {
-        try
+        if (trvMenu.Items[0] is MenuItem)
         {
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            productsList.Clear();
+            foreach (MenuItem item in trvMenu.Items)
             {
-                Filter = "Excel Files|*.xlsx",
-                FileName = "DynamicExport.xlsx"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                using (var package = new ExcelPackage())
-                {
-                    var worksheet = package.Workbook.Worksheets.Add("ExportedData");
-                    int currentColumn = 1;
-
-                    // Всегда экспортируем первый ListBox
-                    ExportListBoxToColumn(worksheet, ProductExport, currentColumn++);
-                    worksheet.Cells[1, 1].Value = "Основные данные";
-
-                    // Проверяем чекбоксы
-                    if (OperationCheck.IsChecked == true)
-                    {
-                        ExportListBoxToColumn(worksheet, OperationExport, currentColumn);
-                        worksheet.Cells[1, currentColumn].Value = "Доп. данные 1";
-                        currentColumn++;
-                    }
-
-                    if (EquipmentCheck.IsChecked == true)
-                    {
-                        ExportListBoxToColumn(worksheet, EquipmentExport, currentColumn);
-                        worksheet.Cells[1, currentColumn].Value = "Доп. данные 2";
-                        currentColumn++;
-                    }
-
-                    // Автоподбор ширины для всех использованных колонок
-                    for (int i = 1; i < currentColumn; i++)
-                    {
-                        worksheet.Column(i).AutoFit();
-                    }
-
-                    package.SaveAs(new FileInfo(saveFileDialog.FileName));
-                    MessageBox.Show("Экспорт завершен успешно!");
-                }
+                productsList.Add(item);
             }
+
+            ExportWindow export = new ExportWindow(productsList, OperationList, EquipmentList);
+            export.ShowDialog();
         }
-        catch (Exception ex)
+        else
         {
-            MessageBox.Show($"Ошибка экспорта: {ex.Message}");
-        }
-    }
-
-    private void ExportListBoxToColumn(ExcelWorksheet worksheet, ListBox listBox, int column)
-    {
-        for (int i = 0; i < listBox.Items.Count; i++)
-        {
-            worksheet.Cells[i + 2, column].Value = listBox.Items[i]?.ToString();
-        }
-    }
-    private void CheckOperation_Checked(object sender, RoutedEventArgs e)
-    {
-        OperationExport.IsEnabled = true;
-    }
-
-    private void CheckEquipment_Checked(object sender, RoutedEventArgs e)
-    {
-        EquipmentExport.IsEnabled = true;
-    }
-
-    private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (e.Source is TabControl tabControl)
-        {
-            int selectedIndex = tabControl.SelectedIndex;
-            if(selectedIndex == 2)
-            {
-                TabItem selectedTab = tabControl.SelectedItem as TabItem;
-
-                var selectedItems = OperationList.Items.Cast<object>().ToList();
-
-                foreach (var item in selectedItems)
-                {
-                    OperationExport.Items.Add((item as MenuItem).Title);
-                }
-
-                selectedItems = EquipmentList.Items.Cast<object>().ToList();
-
-                foreach (var item in selectedItems)
-                {
-                    if (item is Dictionary<MenuItem, string> dictionary)
-                    {
-                        foreach (var pair in dictionary)
-                        {
-                            MenuItem key = pair.Key;
-                            EquipmentExport.Items.Add(key.Title);
-                        }
-                    }
-                }
-            }
+            MessageBox.Show("Выберите элемент для экспорта");
         }
     }
 

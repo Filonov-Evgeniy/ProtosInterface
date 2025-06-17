@@ -18,6 +18,8 @@
                     Value="#c7f9f7"/>
             <Setter Property="FontSize"
                     Value="18"/>
+            <Setter Property="Foreground"
+                    Value="#00406C"/>
         </Style>
         <Style TargetType="ProgressBar"
                x:Key="ProgressStyle">

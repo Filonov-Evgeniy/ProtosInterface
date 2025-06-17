@@ -1,0 +1,42 @@
+﻿<Window x:Class="ProtosInterface.ExportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProtosInterface"
+        mc:Ignorable="d"
+        Title="ExportWindow" Height="250" Width="250" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Border BorderThickness="1"
+                Margin="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Button Grid.Row="1"
+                        Content="Экспорт в Excel"
+                        Margin="5"
+                        Background="#c7f9f7"
+                        Foreground="#00406C"
+                        x:Name="ExportButton"
+                        Click="ExportButton_Click"/>
+                <StackPanel Grid.Row="0"
+                            Margin="5">
+                    <TextBlock Text="Элементы для экспорта:"
+                               Margin="5"/>
+                    <CheckBox Content="Добавить Операции"
+                              Margin="10"
+                              Tag="OperationCheck"
+                              Checked="CheckOperation_Checked"
+                              x:Name="OperationCheck"/>
+                    <CheckBox Content="Добавить Оборудование"
+                              Margin="10"
+                              Tag="EquipmentCheck"
+                              Checked="CheckEquipment_Checked"
+                              x:Name="EquipmentCheck"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

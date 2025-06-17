@@ -24,12 +24,13 @@ namespace ProtosInterface
     public partial class ItemList : Window
     {
         private ObservableCollection<MenuItem> AllItems { get; } = new ObservableCollection<MenuItem>();
+        private Dictionary<int, List<MenuItem>> TypeItem = new Dictionary<int, List<MenuItem>>();
 
-        private event PropertyChangedEventHandler? PropertyChanged;
-        List<MenuItem> itemList;
-        private AppDbContext _context;
+        private List<MenuItem> itemList = new List<MenuItem>();
         private bool type;
         public int enteredNumber;
+        AppDbContext _context = new AppDbContext();
+
         public ItemList(List<MenuItem> itemList, bool operation, bool type)
         {
             InitializeComponent();
@@ -54,15 +55,6 @@ namespace ProtosInterface
             LoadDataAsync();
             this.itemList = itemList;
             itemList.Clear();
-
-            //foreach (MenuItem item in dataList)
-            //{
-            //    AllItems.Add(item);
-            //}
-
-            // Настраиваем фильтрацию
-            //FilteredItems = CollectionViewSource.GetDefaultView(AllItems);
-            //FilteredItems.Filter = FilterItems;
         }
 
         private async void LoadDataAsync()
@@ -73,6 +65,7 @@ namespace ProtosInterface
                 List<MenuItem> dataList = new List<MenuItem>();
                 dbDataLoader loader = new dbDataLoader();
                 AllItems.Clear();
+
                 if (type == true)
                 {
                     dataList = await loader.getProductData();
@@ -86,13 +79,24 @@ namespace ProtosInterface
                 ItemListBox.DisplayMemberPath = "Title";
 
                 AllItems.Clear();
+
                 foreach (MenuItem item in dataList)
                 {
                     AllItems.Add(item);
                 }
 
-                FilteredItems = CollectionViewSource.GetDefaultView(AllItems);
-                FilteredItems.Filter = FilterItems;
+                foreach (MenuItem item in AllItems)
+                {
+                    int typeId = int.Parse(_context.Products.Where(x => x.Id == item.Id)
+                                                            .Select(x => x.TypeId)
+                                                            .FirstOrDefault().ToString()!);
+
+                    if (!TypeItem.ContainsKey(typeId))
+                    {
+                        TypeItem[typeId] = new List<MenuItem>();
+                    }
+                    TypeItem[typeId].Add(item);
+                }
             }
             catch (Exception ex)
             {
@@ -134,71 +138,6 @@ namespace ProtosInterface
             this.Close();
         }
 
-        // Отфильтрованная коллекция (привязана к ListBox)
-        public ICollectionView FilteredItems { get; private set; }
-
-        // Свойства для CheckBox
-        private bool _isFilter1Enabled;
-        public bool IsFilter1Enabled
-        {
-            get => _isFilter1Enabled;
-            set
-            {
-                _isFilter1Enabled = value;
-                OnPropertyChanged(nameof(IsFilter1Enabled));
-                FilteredItems.Refresh(); // Обновляем фильтрацию
-            }
-        }
-
-        private bool _isFilter2Enabled;
-        public bool IsFilter2Enabled
-        {
-            get => _isFilter2Enabled;
-            set
-            {
-                _isFilter2Enabled = value;
-                OnPropertyChanged(nameof(IsFilter2Enabled));
-                FilteredItems.Refresh();
-            }
-        }
-
-        private bool _isFilter3Enabled;
-        public bool IsFilter3Enabled
-        {
-            get => _isFilter3Enabled;
-            set
-            {
-                _isFilter3Enabled = value;
-                OnPropertyChanged(nameof(IsFilter3Enabled));
-                FilteredItems.Refresh();
-            }
-        }
-
-        // Логика фильтрации
-        private bool FilterItems(object obj)
-        {
-            if (obj is not MenuItem item)
-                return false;
-
-            // Если все CheckBox выключены - показываем все элементы
-            if (!IsFilter1Enabled && !IsFilter2Enabled && !IsFilter3Enabled)
-                return true;
-
-            IQueryable product = _context.Products.Include(p => p.ProductType).Where(p => p.Id == item.Id);
-
-            //Проверяем условия фильтрации
-
-            //bool passesFilter1 = IsFilter1Enabled && product.;
-            //bool passesFilter2 = IsFilter2Enabled && item.Category == "Категория 2";
-            //bool passesFilter3 = IsFilter3Enabled && item.Name.Contains("3");
-
-            //return passesFilter1 || passesFilter2 || passesFilter3;
-            return true;
-        }
-
-        protected void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
         private void ColorChange(string hexColor, string resource)
         {
             var brush = (SolidColorBrush)new BrushConverter().ConvertFromString(hexColor)!;
@@ -208,6 +147,7 @@ namespace ProtosInterface
             if (oldStyle != null)
             {
                 Style newStyle;
+
                 if(resource == "ButtonStyle")
                 {
                     newStyle = new Style(typeof(Button), oldStyle);

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
-        Title="" Height="450" Width="1000" WindowStartupLocation="Manual" Top="300" Left="500">
+        Title="" Height="500" Width="1000" WindowStartupLocation="Manual" Top="300" Left="500">
     <Window.Resources>
         <local:ScreenSizeChanged x:Key="ScreenSizeToTextSize"/>
         <Style TargetType="Button"
@@ -14,6 +14,8 @@
                     Value="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Converter={StaticResource ScreenSizeToTextSize}}"/>
             <Setter Property="Background" 
                     Value="#c7f9f7"/>
+            <Setter Property="Foreground"
+                    Value="#00406C"/>
         </Style>
         <Style TargetType="Border">
             <Setter Property="BorderBrush" 
@@ -52,8 +54,7 @@
         </Grid.RowDefinitions>
 
         <TabControl Grid.Row="0" 
-                    Grid.ColumnSpan="2"
-                    SelectionChanged="TabControl_SelectionChanged">
+                    Grid.ColumnSpan="2">
             <TabItem Header="Дерево">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -73,8 +74,8 @@
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="1*"/>
-                                <RowDefinition Height="5.5*"/>
-                                <RowDefinition Height="3.5*"/>
+                                <RowDefinition Height="4.5*"/>
+                                <RowDefinition Height="4.5*"/>
                             </Grid.RowDefinitions>
 
                             <Button x:Name="productSelect"
@@ -94,7 +95,6 @@
 
                                     <TreeView Name="trvMenu" 
                                               SelectedItemChanged="trvMenu_SelectedItemChanged">
-                                        Grid.Row="1"
                                         <TreeView.ItemTemplate>
                                             <HierarchicalDataTemplate DataType="{x:Type MenuItem}" 
                                                                       ItemsSource="{Binding Items}">
@@ -161,7 +161,7 @@
                                 </Grid>
                             </Border>
                             <Border Grid.Row="2" 
-                                    Margin="5,0,5,5">
+                                    Margin="5,5,5,5">
                                 <Grid>
 
                                     <Grid.RowDefinitions>
@@ -172,6 +172,7 @@
                                     <Grid Grid.Row="1">
 
                                         <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
@@ -217,12 +218,24 @@
                                                     Margin="2.5,5,5,2.5"/>
                                         </Grid>
 
-                                        <Grid Grid.Row="2">
+                                        <Grid Grid.Row="3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="86*"/>
+                                                <ColumnDefinition Width="57*"/>
+                                            </Grid.ColumnDefinitions>
                                             <Button x:Name="SaveEdition" 
                                                     Click="SaveEdition_Click" 
                                                     Content="Сохранить" 
                                                     Style="{DynamicResource ButtonStyle}"
-                                                    Margin="5,2.5,5,5"/>
+                                                    Margin="5,2,5,5" Grid.ColumnSpan="2"/>
+                                        </Grid>
+
+                                        <Grid Grid.Row="2">
+                                            <Button x:Name="ExportButton" 
+                                                    Click="ExportButton_Click" 
+                                                    Content="Экспорт в Excel" 
+                                                    Style="{DynamicResource ButtonStyle}"
+                                                    Margin="5,2.5,5,2.5"/>
                                         </Grid>
 
                                     </Grid>
@@ -331,14 +344,14 @@
                                      ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                      ScrollViewer.CanContentScroll="True">
                                 <ListBox.Resources>
-                                    
+
                                     <Style TargetType="ListBox">
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="ListBox">
                                                     <StackPanel Background="White">
                                                         <Border BorderThickness="0,0,0,1" BorderBrush="Black">
-                                                        <!-- Заголовок -->
+                                                            <!-- Заголовок -->
                                                             <StackPanel Orientation="Horizontal" 
                                                                         Background="LightGray"
                                                                         Margin="1"
@@ -384,98 +397,6 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Гант">
-
-            </TabItem>
-            <TabItem Header="Экспорт">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0"
-                            BorderThickness="1"
-                            Margin="5">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="9*"/>
-                                <RowDefinition Height="1*"/>
-                            </Grid.RowDefinitions>
-                            <Button Grid.Row="1"
-                                    Content="Экспорт в Excel"
-                                    Margin="5"
-                                    Style="{DynamicResource ButtonStyle}"
-                                    x:Name="ExportButton"
-                                    Click="ExportButton_Click"/>
-                            <StackPanel Grid.Row="0"
-                                    Margin="5">
-                                <TextBlock Text="Элементы для экспорта:"
-                                           Margin="5"/>
-                                <CheckBox Content="Добавить Операции"
-                                          Margin="10"
-                                          Tag="OperationCheck"
-                                          Checked="CheckOperation_Checked"
-                                          x:Name="OperationCheck"/>
-                                <CheckBox Content="Добавить Оборудование"
-                                          Margin="10"
-                                          Tag="EquipmentCheck"
-                                          Checked="CheckEquipment_Checked"
-                                          x:Name="EquipmentCheck"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="1"
-                            BorderThickness="1"
-                            Margin="5">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid Grid.Column="0" 
-                                  Margin="5">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-
-                                <TextBlock Text="Изделие:" 
-                                           Margin="5" 
-                                           Grid.Row="0"/>
-                                <ListBox x:Name="ProductExport" 
-                                         Grid.Row="1"/>
-                            </Grid>
-                            <Grid Grid.Column="1" 
-                                  Margin="5"
-                                  IsEnabled="False">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-
-                                <TextBlock Text="Операции:" 
-                                           Margin="5" 
-                                           Grid.Row="0"/>
-                                <ListBox x:Name="OperationExport" 
-                                         Grid.Row="1"/>
-                            </Grid>
-                            <Grid Grid.Column="2" 
-                                  Margin="5"
-                                  IsEnabled="False">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-
-                                <TextBlock Text="Оборудование:" 
-                                           Margin="5" 
-                                           Grid.Row="0"/>
-                                <ListBox x:Name="EquipmentExport" 
-                                         Grid.Row="1"/>
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </Grid>
             </TabItem>
         </TabControl>
     </Grid>
