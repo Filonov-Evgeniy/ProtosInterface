@@ -1,4 +1,11 @@
-﻿CREATE TABLE [dbo].[Product_Type]
+﻿create table [dbo].[Authorization]
+(
+    [login] nvarchar(20) not null,
+    [password] nvarchar(50) not null,
+    primary key clustered ([login] asc)
+);
+
+CREATE TABLE [dbo].[Product_Type]
 (
 	[id] int NOT NULL,
 	[name] nvarchar(100) NOT NULL,
@@ -80,6 +87,8 @@ CREATE TABLE [dbo].[Operation_Variant_Component]
 	FOREIGN KEY ([operation_variant_id]) REFERENCES [dbo].[Operation_Variant] ([id]),
 	FOREIGN KEY ([equipment_id]) REFERENCES [dbo].[Equipment] ([id])
 );
+
+INSERT [dbo].[Authorization] ([login], [password]) VALUES ('adm','123')
 
 INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (-1, N'Default', N'')
 INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (0, N'Изделие', N'')

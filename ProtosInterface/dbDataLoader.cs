@@ -19,21 +19,6 @@ namespace ProtosInterface
         {
             _context = new AppDbContext();
         }
-
-        public List<MenuItem> getOperationData()
-        {
-            IQueryable operations = _context.OperationTypes;
-
-            List<MenuItem> items = new List<MenuItem>();
-            foreach (Models.OperationType operation in operations)
-            {
-                int id = operation.Id;
-                string name = operation.Name;
-                items.Add(new MenuItem(id, name));
-            }
-
-            return items;
-        }
         
         public async Task<List<MenuItem>> GetProductDataAsync()
         {

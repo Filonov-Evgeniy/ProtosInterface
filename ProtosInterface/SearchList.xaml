@@ -38,7 +38,9 @@
                     Grid.Row="1" 
                     Content="Найти" 
                     Click="SearchButton_Click"
-                    Background="#c7f9f7"/>
+                    Background="#c7f9f7"
+                    Foreground="#00406C"
+                    FontSize="20"/>
         </Grid>
     </Grid>
 </Window>

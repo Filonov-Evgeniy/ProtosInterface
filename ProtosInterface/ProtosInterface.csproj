@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Remove="Resources\Lupa.png" />
+    <None Remove="Resources\Visible.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +27,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\Lupa.png" />
+    <Resource Include="Resources\Visible.jpg" />
   </ItemGroup>
 
 </Project>

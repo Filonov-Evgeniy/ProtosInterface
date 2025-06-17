@@ -18,7 +18,7 @@ namespace ProtosInterface.Models
         public int TypeId { get; set; }
 
         // Навигационное свойство для связи с ProductType
-        public ProductType ProductType { get; set; } // <- Добавляем это!
+        public ProductType ProductType { get; set; }
 
         public int CoopStatusId { get; set; }
         [MaxLength(4000)]
