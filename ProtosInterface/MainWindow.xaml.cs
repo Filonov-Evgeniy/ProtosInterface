@@ -216,6 +216,7 @@ public partial class MainWindow : Window
                 }
 
                 _context.ProductLinks.AddRange(links);
+                _context.Operations.AddRange(operations);
                 
                 _context.SaveChanges();
                 MessageBox.Show("Сохранение завершено!");
