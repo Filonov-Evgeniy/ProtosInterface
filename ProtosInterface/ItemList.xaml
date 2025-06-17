@@ -32,41 +32,71 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="7*"/>
                 <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="0.75*"/>
+                <RowDefinition Height="0.75*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
             <ListBox x:Name="ItemListBox" 
                      Grid.Row="0"
                      Grid.RowSpan="2"
                      BorderThickness="0,0,0,0"/>
-            <Grid       Grid.Row="2"
-                        VerticalAlignment="Center"
-                        x:Name="FilterField">
+            <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="0.75*"/>
                 </Grid.ColumnDefinitions>
+                <CheckBox x:Name="Standart"
+                          Content="Стандартное"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Left"
+                          Grid.Column="3"
+                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
                 <CheckBox x:Name="Product"
                           Content="Изделие"
                           VerticalAlignment="Center"
+                          HorizontalAlignment="Right"
+                          Margin="0,0,10,0"
+                          Grid.Column="1"
+                          IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <Grid Grid.Row="2"
+                  x:Name="FilterField">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox x:Name="Default"
+                          Content="Default"
+                          VerticalAlignment="Center"
+                          Grid.Row="0"
                           Grid.Column="0"
                           HorizontalAlignment="Right"
                           Margin="0,0,15,0"
                           IsChecked="{Binding IsFilter1Enabled, UpdateSourceTrigger=PropertyChanged}"/>
-                <CheckBox x:Name="Assembly_uint"
-                          Content="Сборная единица"
-                          VerticalAlignment="Center"
-                          Grid.Column="1"
-                          IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}"/>
+                
                 <CheckBox x:Name="Detail"
                           Content="Деталь"
                           VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          Grid.Row="0"
                           Grid.Column="2"
+                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
+                
+                <CheckBox x:Name="Other"
+                          Content="Остальное"
+                          VerticalAlignment="Center"
+                          Grid.Row="0"
+                          Grid.Column="4"
                           IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
             <Button x:Name="SelectButton" 
-                    Grid.Row="3" 
+                    Grid.Row="4" 
                     Content="" 
                     Click="SelectButton_Click"
                     Visibility="Visible"
