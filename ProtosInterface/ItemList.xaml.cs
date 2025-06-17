@@ -75,7 +75,7 @@ namespace ProtosInterface
                 AllItems.Clear();
                 if (type == true)
                 {
-                    dataList = await loader.GetProductDataAsync();
+                    dataList = await loader.getProductData();
                 }
                 else
                 {
