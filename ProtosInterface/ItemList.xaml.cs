@@ -68,8 +68,7 @@ namespace ProtosInterface
 
                 if (type == true)
                 {
-                    FilterField.Visibility = Visibility.Collapsed;
-                    dataList = await loader.GetProductDataAsync();
+                    dataList = await loader.getProductData();
                 }
                 else
                 {

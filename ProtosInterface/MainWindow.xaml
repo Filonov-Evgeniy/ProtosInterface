@@ -58,12 +58,17 @@
             <TabItem Header="Дерево">
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="7*"/>
+                        <ColumnDefinition Width="6*"/>
                     </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Vertical">
+                        <Button x:Name="createProductButton" Content="Создать изделие" Click="createProductButton_Click"/>
+                    </StackPanel>
                     <Border BorderThickness="0" 
-                            Grid.Row="1">
-
+                            Grid.Row="1"
+                            Grid.Column="1">
+                        
                         <Grid Grid.Column="0" 
                               Background="#e3e3e3">
 
@@ -267,7 +272,7 @@
                             </Border>
                         </Grid>
                     </Border>
-                    <Grid Grid.Column="1"  
+                    <Grid Grid.Column="2"  
                           Background="#e3e3e3"
                           Grid.Row="1">
 

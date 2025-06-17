@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OZTM.Data.Tables;
 using ProtosInterface.Models;
 using System;
 using System.Collections.Generic;
@@ -19,6 +18,27 @@ namespace ProtosInterface
         {
             _context = new AppDbContext();
         }
+
+        public List<ProductType> getProductTypeData()
+        {
+            List<ProductType> productTypes = _context.ProductTypes.ToList();
+            return productTypes;
+        }
+
+        public List<MenuItem> getOperationData()
+        {
+            IQueryable operations = _context.OperationTypes;
+
+            List<MenuItem> items = new List<MenuItem>();
+            foreach (Models.OperationType operation in operations)
+            {
+                int id = operation.Id;
+                string name = operation.Name;
+                items.Add(new MenuItem(id, name));
+            }
+
+            return items;
+        }
         
         public async Task<List<MenuItem>> GetProductDataAsync()
         {
@@ -31,6 +51,34 @@ namespace ProtosInterface
                 {
                     var products = mainContext.Products.AsNoTracking().ToList();
                     items.AddRange(products.Select(p => new MenuItem(p.Id, p.Name)));
+                }
+
+                return items;
+            });
+        }
+
+        public async Task<List<MenuItem>> getProductData()
+        {
+            return await Task.Run(async () =>
+            {
+                IQueryable products = _context.Products;
+
+                List<MenuItem> items = new List<MenuItem>();
+                foreach (Product product in products)
+                {
+                    int id = product.Id;
+                    string name = product.Name;
+                    items.Add(new MenuItem(id, name));
+                }
+
+                for (int i = 0; i < items.Count; i++)
+                {
+                    if (isHasChildren(items[i].itemId))
+                    {
+                        MenuItem item = items[i];
+                        buildMenuItems(items[i].itemId, ref item);
+                        items[i] = item;
+                    }
                 }
 
                 return items;
