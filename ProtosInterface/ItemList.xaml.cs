@@ -35,9 +35,6 @@ namespace ProtosInterface
         {
             InitializeComponent();
             ItemListBox.Visibility = Visibility.Collapsed;
-            Detail.IsChecked = true;
-            Assembly_uint.IsChecked = true;
-            Product.IsChecked = true;
             this.type = type;
             SelectButton.Content = operation ? "Добавить" : "Выбрать";
             
