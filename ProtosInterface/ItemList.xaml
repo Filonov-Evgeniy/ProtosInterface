@@ -37,7 +37,7 @@
             </Grid.RowDefinitions>
             <ListBox x:Name="ItemListBox" 
                      Grid.Row="0"
-                     Grid.RowSpan="3"
+                     Grid.RowSpan="2"
                      BorderThickness="0,0,0,0"/>
             <Grid       Grid.Row="2"
                         VerticalAlignment="Center"

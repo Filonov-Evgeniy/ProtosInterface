@@ -1,7 +1,8 @@
-﻿using System.Configuration;
+﻿using OfficeOpenXml;
+using System.Configuration;
 using System.Data;
 using System.Windows;
-using OfficeOpenXml;
+using static OfficeOpenXml.ExcelErrorValue;
 
 namespace ProtosInterface;
 
@@ -13,7 +14,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         // Установка лицензии EPPlus 8+
-        //ExcelPackage.License = LicenseContext.NonCommercial;
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
         base.OnStartup(e);
     }

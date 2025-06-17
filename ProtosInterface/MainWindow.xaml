@@ -74,8 +74,8 @@
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="1*"/>
-                                <RowDefinition Height="5*"/>
-                                <RowDefinition Height="4*"/>
+                                <RowDefinition Height="4.5*"/>
+                                <RowDefinition Height="4.5*"/>
                             </Grid.RowDefinitions>
 
                             <Button x:Name="productSelect"
@@ -95,7 +95,6 @@
 
                                     <TreeView Name="trvMenu" 
                                               SelectedItemChanged="trvMenu_SelectedItemChanged">
-                                        Grid.Row="1"
                                         <TreeView.ItemTemplate>
                                             <HierarchicalDataTemplate DataType="{x:Type MenuItem}" 
                                                                       ItemsSource="{Binding Items}">
@@ -162,7 +161,7 @@
                                 </Grid>
                             </Border>
                             <Border Grid.Row="2" 
-                                    Margin="5,0,5,5">
+                                    Margin="5,5,5,5">
                                 <Grid>
 
                                     <Grid.RowDefinitions>
