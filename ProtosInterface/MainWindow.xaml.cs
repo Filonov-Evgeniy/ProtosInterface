@@ -150,7 +150,6 @@ public partial class MainWindow : Window
                 }
 
                 _context.Operations.AddRange(originalCopyOperations.Values);
-                _context.SaveChanges();
 
                 Dictionary<int, Dictionary<OperationVariant, OperationVariant>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
                 foreach (var outerPair in variantIdAndVariantForCopy)
@@ -160,7 +159,6 @@ public partial class MainWindow : Window
                         _context.OperationVariants.Add(innerPair.Value);
                     }
                 }
-                _context.SaveChanges();
 
                 List<OperationVariantComponent> newOpVarComp = getOperationVariantComponentFromReference(variantIdAndVariantForCopy);
                 _context.OperationVariantComponents.AddRange(newOpVarComp);
@@ -193,8 +191,13 @@ public partial class MainWindow : Window
 
                 _context.Operations.Where(o => o.ProductId == root.Id).ExecuteDelete();
 
+                
                 foreach (MenuItem operation in OperationList.Items)
                 {
+                    if (operation.Title == "Операций нет")
+                    {
+                        continue;
+                    }
                     int typeId = 1;
                     operations.Add(new Operation
                     {
@@ -208,6 +211,7 @@ public partial class MainWindow : Window
                 }
 
                 _context.ProductLinks.AddRange(links);
+                
                 _context.SaveChanges();
                 MessageBox.Show("Сохранение завершено!");
                 break;
@@ -413,6 +417,17 @@ public partial class MainWindow : Window
                     OperationList.Items.Add(new MenuItem { Title = code + " | " + item.Title, Id = item.Id });
                 }
                 ListSort(OperationList);
+
+                if (OperationList.Items.Count == 2)
+                {
+                    for (int i = OperationList.Items.Count - 1; i >= 0; i--)
+                    {
+                        if (OperationList.Items[i] is MenuItem item && item.Title == "Операций нет")
+                        {
+                            OperationList.Items.RemoveAt(i);
+                        }
+                    }
+                }
 
                 MessageBox.Show("Операции добавлены");
             }
