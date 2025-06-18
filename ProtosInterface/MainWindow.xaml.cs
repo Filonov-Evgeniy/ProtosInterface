@@ -407,38 +407,44 @@ public partial class MainWindow : Window
         else
         {
             ItemList list = new ItemList(itemsToAdd, true, (bool)productsRadioButton.IsChecked);
-
-            if (list.ShowDialog() == true && trvMenu.Items[0] is MenuItem)
+            if (trvMenu.SelectedItem == trvMenu.Items[0]) 
             {
-                foreach (MenuItem item in itemsToAdd)
+                if (list.ShowDialog() == true && trvMenu.Items[0] is MenuItem)
                 {
-                    string code = "";
-                    if (list.enteredNumber < 10)
+                    foreach (MenuItem item in itemsToAdd)
                     {
-                        code += "0" + list.enteredNumber;
-                    }
-                    else
-                    {
-                        code += list.enteredNumber;
-                    }
-
-
-                    OperationList.Items.Add(new MenuItem { Title = code + " | " + item.Title, Id = item.Id });
-                }
-                ListSort(OperationList);
-
-                if (OperationList.Items.Count == 2)
-                {
-                    for (int i = OperationList.Items.Count - 1; i >= 0; i--)
-                    {
-                        if (OperationList.Items[i] is MenuItem item && item.Title == "Операций нет")
+                        string code = "";
+                        if (list.enteredNumber < 10)
                         {
-                            OperationList.Items.RemoveAt(i);
+                            code += "0" + list.enteredNumber;
+                        }
+                        else
+                        {
+                            code += list.enteredNumber;
+                        }
+
+
+                        OperationList.Items.Add(new MenuItem { Title = code + " | " + item.Title, Id = item.Id });
+                    }
+                    ListSort(OperationList);
+
+                    if (OperationList.Items.Count == 2)
+                    {
+                        for (int i = OperationList.Items.Count - 1; i >= 0; i--)
+                        {
+                            if (OperationList.Items[i] is MenuItem item && item.Title == "Операций нет")
+                            {
+                                OperationList.Items.RemoveAt(i);
+                            }
                         }
                     }
-                }
 
-                MessageBox.Show("Операции добавлены");
+                    MessageBox.Show("Операции добавлены");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Нельзя добавить операции не в корневой элемент");
             }
         }
         itemsToAdd.Clear();
