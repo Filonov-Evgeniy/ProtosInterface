@@ -57,7 +57,7 @@ namespace ProtosInterface
             });
         }
 
-        public async Task<List<MenuItem>> getProductData()
+        public async Task<List<MenuItem>> getProductData(List<MenuItem> dataList = null)
         {
             return await Task.Run(async () =>
             {
@@ -69,6 +69,7 @@ namespace ProtosInterface
                     int id = product.Id;
                     string name = product.Name;
                     items.Add(new MenuItem(id, name));
+                    dataList.Add(new MenuItem(id, name));
                 }
 
                 for (int i = 0; i < items.Count; i++)
@@ -78,11 +79,59 @@ namespace ProtosInterface
                         MenuItem item = items[i];
                         buildMenuItems(items[i].itemId, ref item);
                         items[i] = item;
+                        dataList[i] = item;
                     }
                 }
 
                 return items;
             });
+        }
+
+        public List<MenuItem> getProductByTypeId(int typeId)
+        {
+            IQueryable products = _context.Products.Where(x=>x.TypeId == typeId);
+            List<MenuItem> items = new List<MenuItem>();
+            foreach (Product product in products)
+            {
+                int id = product.Id;
+                string name = product.Name;
+                items.Add(new MenuItem(id, name));
+            }
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (isHasChildren(items[i].itemId))
+                {
+                    MenuItem item = items[i];
+                    buildMenuItems(items[i].itemId, ref item);
+                    items[i] = item;
+                }
+            }
+
+            return items;
+        }
+
+        public List<MenuItem> ConvertToMenuItemFromProducts(IQueryable query)
+        {
+            List<MenuItem> items = new List<MenuItem>();
+            foreach (Product product in query)
+            {
+                int id = product.Id;
+                string name = product.Name;
+                items.Add(new MenuItem(id, name));
+            }
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (isHasChildren(items[i].itemId))
+                {
+                    MenuItem item = items[i];
+                    buildMenuItems(items[i].itemId, ref item);
+                    items[i] = item;
+                }
+            }
+
+            return items;
         }
 
         public async Task<List<MenuItem>> GetOperationDataAsync()
