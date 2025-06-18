@@ -15,7 +15,14 @@ public partial class App : Application
     {
         // Установка лицензии EPPlus 8+
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
+        if (DBConnection.useAuth == true)
+        {
+            this.StartupUri = new Uri("AuthorizationWindow.xaml", UriKind.Relative);
+        }
+        else
+        {
+            this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
+        }
         base.OnStartup(e);
     }
 }

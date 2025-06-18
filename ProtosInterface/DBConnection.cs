@@ -9,6 +9,7 @@ namespace ProtosInterface
 {
     class DBConnection
     {
+        public static bool useAuth = false;
         //private readonly string connectionString = @"Data Source=KAYSER\MSSQLSERV;Initial Catalog=TestDB;Integrated Security=True;TrustServerCertificate=true;";
         //private readonly string connectionString = @"Server=192.168.0.106;Database=TestMainDB;Integrated Security=True;TrustServerCertificate=true;";
         //private readonly string connectionString = @"Data Source=KAYSER\MSSQLSERV;Initial Catalog=TestMainDB;Integrated Security=True;TrustServerCertificate=true;";

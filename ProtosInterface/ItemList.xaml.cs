@@ -25,7 +25,12 @@ namespace ProtosInterface
     {
         private ObservableCollection<MenuItem> AllItems { get; } = new ObservableCollection<MenuItem>();
         private Dictionary<int, List<MenuItem>> TypeItem = new Dictionary<int, List<MenuItem>>();
-        private IQueryable productQery;
+        private List<CheckBox> formCheckboxes = new List<CheckBox>();
+        private List<MenuItem> dataList = new List<MenuItem>();
+        private List<MenuItem> dataListFull = new List<MenuItem>();
+        private Dictionary<CheckBox, List<MenuItem>> checkboxQueries = new Dictionary<CheckBox, List<MenuItem>>();
+        private Dictionary<CheckBox, int> checkboxCode = new Dictionary<CheckBox, int>(); 
+        dbDataLoader loader = new dbDataLoader();
 
         private List<MenuItem> itemList = new List<MenuItem>();
         private bool type;
@@ -35,6 +40,7 @@ namespace ProtosInterface
         public ItemList(List<MenuItem> itemList, bool operation, bool type)
         {
             InitializeComponent();
+            getCheckboxes();
             ItemListBox.Visibility = Visibility.Collapsed;
             this.type = type;
             SelectButton.Content = operation ? "Добавить" : "Выбрать";
@@ -55,18 +61,31 @@ namespace ProtosInterface
             itemList.Clear();
         }
 
+        private void getCheckboxes()
+        {
+            formCheckboxes.Add(StandartCheckBox);
+            formCheckboxes.Add(ProductCheckBox);
+            formCheckboxes.Add(DefaultCheckBox);
+            formCheckboxes.Add(DetailCheckBox);
+            formCheckboxes.Add(OtherCheckBox);
+
+            checkboxCode.Add(StandartCheckBox, 2);
+            checkboxCode.Add(ProductCheckBox, 0);
+            checkboxCode.Add(DefaultCheckBox, -1);
+            checkboxCode.Add(DetailCheckBox, 1);
+            checkboxCode.Add(OtherCheckBox, 3);
+        }
+
         private async void LoadDataAsync()
         {
             try
             {
                 LoadingIndicator.Visibility = Visibility.Visible;
-                List<MenuItem> dataList = new List<MenuItem>();
-                dbDataLoader loader = new dbDataLoader();
                 AllItems.Clear();
 
                 if (type == true)
                 {
-                    dataList = await loader.getProductData();
+                    dataList = await loader.getProductData(dataListFull);
                 }
                 else
                 {
@@ -159,6 +178,67 @@ namespace ProtosInterface
 
                 this.Resources[resource] = newStyle;
             }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            var checkbox = (CheckBox)sender;
+            int checkedBoxes = 0;
+            foreach (CheckBox check in formCheckboxes)
+            {
+                if (check.IsChecked == true)
+                {
+                    checkedBoxes++;
+                }
+            }
+            
+            if (checkedBoxes == 1)
+            {
+                dataList.Clear();
+                ItemListBox.Items.Refresh();
+            }
+
+            if (checkboxQueries.ContainsKey(checkbox))
+            {
+                dataList.AddRange(checkboxQueries[checkbox]);
+                ItemListBox.Items.Refresh();
+            }
+            else
+            {
+                List<MenuItem> item = loader.getProductByTypeId(checkboxCode[checkbox]);
+                checkboxQueries.Add(checkbox, item);
+                dataList.AddRange(item);
+                ItemListBox.Items.Refresh();
+            }
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            int checkedCount = 0;
+            dataList.Clear();
+            foreach (CheckBox checkbox in formCheckboxes)
+            {
+                if (checkbox.IsChecked == true)
+                {
+                    checkedCount++;
+                }
+            }
+
+            if (checkedCount == 0)
+            {
+                dataList.AddRange(dataListFull);
+            }
+            else
+            {
+                foreach (CheckBox checkbox in formCheckboxes)
+                {
+                    if (checkbox.IsChecked == true)
+                    {
+                        dataList.AddRange(checkboxQueries[checkbox]);
+                    }
+                }
+            }
+            ItemListBox.Items.Refresh();
         }
     }
 }

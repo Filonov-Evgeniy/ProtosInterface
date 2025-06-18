@@ -54,14 +54,14 @@
                           VerticalAlignment="Center"
                           HorizontalAlignment="Left"
                           Grid.Column="4"
-                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
+                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                 <CheckBox x:Name="ProductCheckBox"
                           Content="Изделие"
                           VerticalAlignment="Center"
                           HorizontalAlignment="Left"
                           Margin="38,0,0,0"
                           Grid.Column="1"
-                          IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}"/>
+                          IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
             </Grid>
             <Grid Grid.Row="2"
                   x:Name="FilterField">
@@ -79,7 +79,7 @@
                           Grid.Column="0"
                           HorizontalAlignment="Right"
                           Margin="0,0,15,0"
-                          IsChecked="{Binding IsFilter1Enabled, UpdateSourceTrigger=PropertyChanged}"/>
+                          IsChecked="{Binding IsFilter1Enabled, UpdateSourceTrigger=PropertyChanged}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
 
                 <CheckBox x:Name="DetailCheckBox"
                           Content="Деталь"
@@ -87,14 +87,14 @@
                           HorizontalAlignment="Center"
                           Grid.Row="0"
                           Grid.Column="2"
-                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
+                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
 
                 <CheckBox x:Name="OtherCheckBox"
                           Content="Остальное"
                           VerticalAlignment="Center"
                           Grid.Row="0"
                           Grid.Column="4"
-                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
+                          IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
             </Grid>
             <Button x:Name="SelectButton" 
                     Grid.Row="4" 
