@@ -86,10 +86,13 @@ namespace ProtosInterface
                 if (type == true)
                 {
                     dataList = await loader.getProductData(dataListFull);
+                    Grid.SetRowSpan(ItemListBox, 2);
                 }
                 else
                 {
-                    FilterField.Visibility = Visibility.Collapsed;
+                    FilterField1.Visibility = Visibility.Collapsed;
+                    FilterField2.Visibility = Visibility.Collapsed;
+                    Grid.SetRowSpan(ItemListBox, 4);
                     dataList = await loader.GetOperationDataAsync();
                 }
                 ItemListBox.ItemsSource = dataList;

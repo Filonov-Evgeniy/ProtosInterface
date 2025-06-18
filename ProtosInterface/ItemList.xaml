@@ -41,7 +41,8 @@
                      Grid.Row="0"
                      Grid.RowSpan="2"
                      BorderThickness="0,0,0,0"/>
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="3"
+                  x:Name="FilterField1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="57*"/>
                     <ColumnDefinition Width="114*"/>
@@ -65,7 +66,7 @@
                           IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
             </Grid>
             <Grid Grid.Row="2"
-                  x:Name="FilterField">
+                  x:Name="FilterField2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1.5*"/>
                     <ColumnDefinition Width="0.75*"/>
