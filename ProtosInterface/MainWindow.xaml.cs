@@ -423,8 +423,27 @@ public partial class MainWindow : Window
                             code += list.enteredNumber;
                         }
 
+                        bool duplicatedCode = false;
 
-                        OperationList.Items.Add(new MenuItem { Title = code + " | " + item.Title, Id = item.Id });
+                        foreach (MenuItem operationItem in OperationList.Items)
+                        {
+                            string[] opName = operationItem.Title.Trim().Split('|', StringSplitOptions.RemoveEmptyEntries);
+                            if (code == opName[0].Trim())
+                            {
+                                duplicatedCode = true;
+                                break;
+                            }
+                        }
+
+                        if (!duplicatedCode)
+                        {
+                            OperationList.Items.Add(new MenuItem { Title = code + " | " + item.Title, Id = item.Id });
+                            MessageBox.Show("Операции добавлены");
+                        }
+                        else
+                        {
+                            MessageBox.Show("На указанной позиции уже есть операция");
+                        }
                     }
                     ListSort(OperationList);
 
@@ -438,8 +457,6 @@ public partial class MainWindow : Window
                             }
                         }
                     }
-
-                    MessageBox.Show("Операции добавлены");
                 }
             }
             else
