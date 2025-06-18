@@ -25,6 +25,7 @@ namespace ProtosInterface
     {
         private ObservableCollection<MenuItem> AllItems { get; } = new ObservableCollection<MenuItem>();
         private Dictionary<int, List<MenuItem>> TypeItem = new Dictionary<int, List<MenuItem>>();
+        private IQueryable productQery;
 
         private List<MenuItem> itemList = new List<MenuItem>();
         private bool type;
@@ -35,9 +36,6 @@ namespace ProtosInterface
         {
             InitializeComponent();
             ItemListBox.Visibility = Visibility.Collapsed;
-            Detail.IsChecked = true;
-            Assembly_uint.IsChecked = true;
-            Product.IsChecked = true;
             this.type = type;
             SelectButton.Content = operation ? "Добавить" : "Выбрать";
             

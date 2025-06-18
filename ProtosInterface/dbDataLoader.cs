@@ -85,6 +85,29 @@ namespace ProtosInterface
             });
         }
 
+        public List<MenuItem> ConvertToMenuItemFromProducts(IQueryable query)
+        {
+            List<MenuItem> items = new List<MenuItem>();
+            foreach (Product product in query)
+            {
+                int id = product.Id;
+                string name = product.Name;
+                items.Add(new MenuItem(id, name));
+            }
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (isHasChildren(items[i].itemId))
+                {
+                    MenuItem item = items[i];
+                    buildMenuItems(items[i].itemId, ref item);
+                    items[i] = item;
+                }
+            }
+
+            return items;
+        }
+
         public async Task<List<MenuItem>> GetOperationDataAsync()
         {
             return await Task.Run(async () =>

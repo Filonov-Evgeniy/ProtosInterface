@@ -42,23 +42,24 @@
                      BorderThickness="0,0,0,0"/>
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.75*"/>
-                    <ColumnDefinition Width="1.5*"/>
-                    <ColumnDefinition Width="0.75*"/>
-                    <ColumnDefinition Width="1.5*"/>
-                    <ColumnDefinition Width="0.75*"/>
+                    <ColumnDefinition Width="57*"/>
+                    <ColumnDefinition Width="114*"/>
+                    <ColumnDefinition Width="29*"/>
+                    <ColumnDefinition Width="28*"/>
+                    <ColumnDefinition Width="114*"/>
+                    <ColumnDefinition Width="57*"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox x:Name="Standart"
+                <CheckBox x:Name="StandartCheckBox"
                           Content="Стандартное"
                           VerticalAlignment="Center"
                           HorizontalAlignment="Left"
-                          Grid.Column="3"
+                          Grid.Column="4"
                           IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
-                <CheckBox x:Name="Product"
+                <CheckBox x:Name="ProductCheckBox"
                           Content="Изделие"
                           VerticalAlignment="Center"
-                          HorizontalAlignment="Right"
-                          Margin="0,0,10,0"
+                          HorizontalAlignment="Left"
+                          Margin="38,0,0,0"
                           Grid.Column="1"
                           IsChecked="{Binding IsFilter2Enabled, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
@@ -71,7 +72,7 @@
                     <ColumnDefinition Width="0.75*"/>
                     <ColumnDefinition Width="1.5*"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox x:Name="Default"
+                <CheckBox x:Name="DefaultCheckBox"
                           Content="Default"
                           VerticalAlignment="Center"
                           Grid.Row="0"
@@ -79,16 +80,16 @@
                           HorizontalAlignment="Right"
                           Margin="0,0,15,0"
                           IsChecked="{Binding IsFilter1Enabled, UpdateSourceTrigger=PropertyChanged}"/>
-                
-                <CheckBox x:Name="Detail"
+
+                <CheckBox x:Name="DetailCheckBox"
                           Content="Деталь"
                           VerticalAlignment="Center"
                           HorizontalAlignment="Center"
                           Grid.Row="0"
                           Grid.Column="2"
                           IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
-                
-                <CheckBox x:Name="Other"
+
+                <CheckBox x:Name="OtherCheckBox"
                           Content="Остальное"
                           VerticalAlignment="Center"
                           Grid.Row="0"
