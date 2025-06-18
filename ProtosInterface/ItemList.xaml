@@ -124,7 +124,7 @@
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0"/>
+                <TextBox x:Name="SearchTextBox" Grid.Column="0"/>
                 <Border BorderThickness="1" 
                         Grid.Column="1">
                     <Border.Style>
@@ -150,13 +150,14 @@
                            Source="Resources/Lupa.png"
                            MouseDown="SearchPic_MouseDown"/>
                 </Border>
-                <Button Grid.Column="2"
+                <Button x:Name="ClearSearchButton"
+                        Grid.Column="2"
                         Content="Х"
                         FontSize="24"
                         Padding="0,-5,0,0"
                         BorderBrush="LightGray"
                         Background="Transparent"
-                        FontWeight="Bold"/>
+                        FontWeight="Bold" Click="ClearSearchButton_Click"/>
             </Grid>
         </Grid>
     </Grid>

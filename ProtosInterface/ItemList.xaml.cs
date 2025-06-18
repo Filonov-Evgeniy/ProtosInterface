@@ -246,7 +246,26 @@ namespace ProtosInterface
 
         private void SearchPic_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            string searchingItem = SearchTextBox.Text;
+            if (searchingItem.Trim().Length > 0)
+            {
+                List<MenuItem> searchItems = new List<MenuItem>();
+                foreach (MenuItem item in dataList)
+                {
+                    if (item.Title.ToLower().Contains(searchingItem.ToLower()))
+                    {
+                        searchItems.Add(item);
+                    }
+                }
+                ItemListBox.ItemsSource = searchItems;
+                ItemListBox.Items.Refresh();
+            }
+        }
 
+        private void ClearSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            ItemListBox.ItemsSource = dataList;
+            ItemListBox.Items.Refresh();
         }
     }
 }
