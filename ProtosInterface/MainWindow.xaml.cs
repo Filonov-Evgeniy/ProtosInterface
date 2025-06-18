@@ -225,6 +225,7 @@ public partial class MainWindow : Window
                 break;
         }
     }
+
     private List<OperationVariantComponent> getOperationVariantComponentFromReference(Dictionary<int, Dictionary<OperationVariant, OperationVariant>> variantIdAndVariantForCopy)
     {
         int opVarCompId = _context.OperationVariantComponents.GetLastId();
@@ -277,6 +278,7 @@ public partial class MainWindow : Window
         }
         return modifiedVariants;
     }
+
     private Operation getOperationFromReference(int referenceId, int code, int id)
     {
         Operation operation = new Operation();
@@ -289,6 +291,7 @@ public partial class MainWindow : Window
         operation.Id = id + 1;
         return operation;
     }
+
     private int getOperationByTypeId(int typeId)
     {
         int operationId = _context.Operations.FirstOrDefault(x => x.TypeId == typeId).Id;

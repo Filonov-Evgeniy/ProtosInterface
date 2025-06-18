@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
-        Title="" Height="500" Width="1000" WindowStartupLocation="Manual" Top="300" Left="500">
+        Title="" Height="600" Width="1000" WindowStartupLocation="Manual" Top="300" Left="500">
     <Window.Resources>
         <local:ScreenSizeChanged x:Key="ScreenSizeToTextSize"/>
         <Style TargetType="Button"
@@ -58,16 +58,12 @@
             <TabItem Header="Дерево">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="7*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Vertical">
-                        <Button x:Name="createProductButton" Content="Создать изделие" Click="createProductButton_Click"/>
-                    </StackPanel>
                     <Border BorderThickness="0" 
                             Grid.Row="1"
-                            Grid.Column="1">
+                            Grid.Column="0">
                         
                         <Grid Grid.Column="0" 
                               Background="#e3e3e3">
@@ -89,7 +85,7 @@
                                     Margin="5,0,5,5">
                                 <Grid>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="8*"/>
+                                        <RowDefinition Height="7*"/>
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
 
@@ -176,9 +172,21 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
 
-                                        <Grid Grid.Row="1">
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Button x:Name="createProductButton" 
+                                                    Content="Создать изделие" 
+                                                    Click="createProductButton_Click"
+                                                    Margin="5,5,5,2.5"
+                                                    Style="{DynamicResource ButtonStyle}"/>
+                                        </Grid>
+                                        
+                                        <Grid Grid.Row="2">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
@@ -198,7 +206,7 @@
                                                     Margin="2.5,2.5,5,2.5"/>
                                         </Grid>
 
-                                        <Grid Grid.Row="0">
+                                        <Grid Grid.Row="1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
@@ -208,17 +216,17 @@
                                                     Click="AddNewTreeItemButton_Click" 
                                                     Grid.Column="0" 
                                                     Style="{DynamicResource ButtonStyle}"
-                                                    Margin="5,5,2.5,2.5"/>
+                                                    Margin="5,2.5,2.5,2.5"/>
 
                                             <Button x:Name="DeleteTreeItemButton" 
                                                     Content="Удалить" 
                                                     Click="DeleteTreeItemButton_Click" 
                                                     Grid.Column="1" 
                                                     Style="{DynamicResource ButtonStyle}"
-                                                    Margin="2.5,5,5,2.5"/>
+                                                    Margin="2.5,2.5,5,2.5"/>
                                         </Grid>
 
-                                        <Grid Grid.Row="3">
+                                        <Grid Grid.Row="4">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="86*"/>
                                                 <ColumnDefinition Width="57*"/>
@@ -230,7 +238,10 @@
                                                     Margin="5,2,5,5" Grid.ColumnSpan="2"/>
                                         </Grid>
 
-                                        <Grid Grid.Row="2">
+                                        <Grid Grid.Row="3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
                                             <Button x:Name="ExportButton" 
                                                     Click="ExportButton_Click" 
                                                     Content="Экспорт в Excel" 
@@ -271,7 +282,7 @@
                             </Border>
                         </Grid>
                     </Border>
-                    <Grid Grid.Column="2"  
+                    <Grid Grid.Column="1"  
                           Background="#e3e3e3"
                           Grid.Row="1">
 
@@ -354,11 +365,10 @@
                                                             <!-- Заголовок -->
                                                             <StackPanel Orientation="Horizontal" 
                                                                         Background="LightGray"
-                                                                        Margin="1"
-                                                                        >
+                                                                        Margin="1">
                                                                 <TextBlock Text="  Станок"
                                                                            Style="{StaticResource ScaledTextBlockStyle}"
-                                                                           Width="300"/>
+                                                                           Width="400"/>
                                                                 <TextBlock Text="| Время выполнения"
                                                                            Style="{StaticResource ScaledTextBlockStyle}"
                                                                            Width="300"/>

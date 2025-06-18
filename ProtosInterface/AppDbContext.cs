@@ -11,6 +11,7 @@ namespace ProtosInterface
 {
     class AppDbContext : DbContext
     {
+        public DbSet<Authorization> Authorizations { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductLink> ProductLinks { get; set; }
         public DbSet<OperationType> OperationTypes { get; set; }
@@ -236,10 +237,21 @@ namespace ProtosInterface
                       .HasColumnName("description");
             });
 
-            //modelBuilder.Entity<Authorization>(entity =>
-            //{
-            //    entity.ToTable("Authorization");
-            //});
+            modelBuilder.Entity<Models.Authorization>(entity =>
+            {
+                entity.ToTable("Authorization");
+                entity.HasKey(a => a.Login);
+
+                entity.Property(a => a.Login)
+                      .IsRequired()
+                      .HasMaxLength(20)
+                      .HasColumnName("login");
+
+                entity.Property(a => a.Password)
+                      .IsRequired()
+                      .HasMaxLength(50)
+                      .HasColumnName("password");
+            });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
