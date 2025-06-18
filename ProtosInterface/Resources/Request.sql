@@ -88,7 +88,7 @@ CREATE TABLE [dbo].[Operation_Variant_Component]
 	FOREIGN KEY ([equipment_id]) REFERENCES [dbo].[Equipment] ([id])
 );
 
-INSERT [dbo].[Authorization] ([login], [password]) VALUES ('adm','123')
+INSERT [dbo].[Authorization] ([login], [password]) VALUES ('admin','321')
 
 INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (-1, N'Default', N'')
 INSERT [dbo].[Product_Type] ([id], [name], [description]) VALUES (0, N'Изделие', N'')

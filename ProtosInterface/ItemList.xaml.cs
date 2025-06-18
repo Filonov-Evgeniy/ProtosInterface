@@ -159,5 +159,10 @@ namespace ProtosInterface
                 this.Resources[resource] = newStyle;
             }
         }
+
+        private void SearchPic_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
     }
 }

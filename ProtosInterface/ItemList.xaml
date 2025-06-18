@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
         Title="Список Изделий" 
-        Height="450" 
+        Height="550" 
         Width="400"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
@@ -32,6 +32,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="7*"/>
                 <RowDefinition Height="1*"/>
+                <RowDefinition Height="0.75*"/>
                 <RowDefinition Height="0.75*"/>
                 <RowDefinition Height="0.75*"/>
                 <RowDefinition Height="2*"/>
@@ -96,7 +97,7 @@
                           IsChecked="{Binding IsFilter3Enabled, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
             <Button x:Name="SelectButton" 
-                    Grid.Row="4" 
+                    Grid.Row="5" 
                     Content="" 
                     Click="SelectButton_Click"
                     Visibility="Visible"
@@ -114,6 +115,47 @@
                              Width="200" Height="20"
                              Style="{DynamicResource ProgressStyle}"/>
             </StackPanel>
+
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0"/>
+                <Border BorderThickness="1" 
+                        Grid.Column="1">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="BorderBrush" 
+                                    Value="LightGray"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" 
+                                         Value="True">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect ShadowDepth="3" 
+                                                              BlurRadius="40" 
+                                                              Color="Aqua" 
+                                                              Opacity="0.8"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Image x:Name="SearchPic" 
+                           Source="Resources/Lupa.png"
+                           MouseDown="SearchPic_MouseDown"/>
+                </Border>
+                <Button Grid.Column="2"
+                        Content="Х"
+                        FontSize="24"
+                        Padding="0,-5,0,0"
+                        BorderBrush="LightGray"
+                        Background="Transparent"
+                        FontWeight="Bold"/>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

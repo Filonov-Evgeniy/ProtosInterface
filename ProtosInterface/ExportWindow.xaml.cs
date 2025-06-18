@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,25 +24,26 @@ namespace ProtosInterface
     {
         private List<MenuItem> products;
         private ListBox operations;
-        private ListBox equipments;
+        private MenuItem productsRoot;
 
-
-        public ExportWindow(List<MenuItem> products, ListBox operations, ListBox equipments)
+        public ExportWindow(List<MenuItem> products, ListBox operations, MenuItem productsRoot)
         {
             InitializeComponent();
             this.products = products;
             this.operations = operations;
-            this.equipments = equipments;
+            this.productsRoot = productsRoot;
         }
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                List<MenuItem> equipments = new List<MenuItem>();
+
                 var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                 {
                     Filter = "Excel Files|*.xlsx",
-                    FileName = "DynamicExport"
+                    FileName = $"Изделие {productsRoot.ShortName}"
                 };
 
                 if (saveFileDialog.ShowDialog() == true)
@@ -49,35 +51,57 @@ namespace ProtosInterface
                     using (var package = new ExcelPackage())
                     {
                         var worksheet = package.Workbook.Worksheets.Add("ExportedData");
-                        int currentColumn = 1;
 
-                        // Всегда экспортируем первый ListBox
-                        ExportListToExcel(worksheet, products, currentColumn++);
-                        worksheet.Cells[1, 1].Value = "Основные данные";
+                        ExportListToExcel(worksheet, products, 6, 2);
+                        worksheet.Cells[2, 2].Value = "Изделие";
+                        worksheet.Cells[3, 2].Value = productsRoot.Title.ToString();
+                        worksheet.Cells[5, 2].Value = "Список детали";
 
-                        // Проверяем чекбоксы
                         if (OperationCheck.IsChecked == true)
                         {
-                            ExportListBoxToColumn(worksheet, operations, currentColumn);
-                            worksheet.Cells[1, currentColumn].Value = "Доп. данные 1";
-                            currentColumn++;
+                            ExportListBoxToColumn(worksheet, operations, 6, 4);
+                            worksheet.Cells[5, 4].Value = "Операции";
                         }
 
                         if (EquipmentCheck.IsChecked == true)
                         {
-                            //ExportListBoxToColumn(worksheet, equipments, currentColumn);
-                            //worksheet.Cells[1, currentColumn].Value = "Доп. данные 2";
-                            currentColumn++;
+                            //foreach (var operation in operations.Items)
+                            //{
+                            //    var equipment = _context.EquipmentAdd
+                            //                            .Join(
+                            //                                _context.OperationVariantComponents,
+                            //                                e => e.Id,
+                            //                                ovc => ovc.EquipmentId,
+                            //                                (e, ovc) => new { Equipment = e, OVC = ovc }
+                            //                            )
+                            //                            .Join(
+                            //                                _context.OperationVariants,
+                            //                                combined => combined.OVC.OperationVariantId,
+                            //                                ov => ov.Id,
+                            //                                (combined, ov) => new { combined.Equipment, OV = ov }
+                            //                                )
+                            //                            .Where(x => x.OV.OperationId == operation.Id)
+                            //                            .Select(x => new {
+                            //                                x.Equipment.Id,
+                            //                                x.Equipment.Name,
+                            //                                x.OV.Duration,
+                            //                                x.OV.Description,
+                            //                            })
+                            //                            .Distinct()
+                            //                            .ToList();
+                            //}
+                           // ExportListBoxToColumn(worksheet, equipments, 6, 6);
+                            worksheet.Cells[5, 6].Value = "Оборудование";
                         }
 
-                        // Автоподбор ширины для всех использованных колонок
-                        for (int i = 1; i < currentColumn; i++)
+                        for (int j = 1; j < 10; j++)
                         {
-                            worksheet.Column(i).AutoFit();
+                            worksheet.Column(j).AutoFit();
                         }
 
                         package.SaveAs(new FileInfo(saveFileDialog.FileName));
                         MessageBox.Show("Экспорт завершен успешно!");
+                        this.Close();
                     }
                 }
             }
@@ -87,19 +111,23 @@ namespace ProtosInterface
             }
         }
 
-        private void ExportListBoxToColumn(ExcelWorksheet worksheet, ListBox listBox, int column)
+        private void ExportListBoxToColumn(ExcelWorksheet worksheet, ListBox listBox, int row, int column)
         {
             for (int i = 0; i < listBox.Items.Count; i++)
             {
-                worksheet.Cells[i + 2, column].Value = listBox.Items[i]?.ToString();
+                if (listBox.Items[i] == products[0])
+                {
+                    continue;
+                }
+                worksheet.Cells[i + row, column].Value = (listBox.Items[i] as MenuItem)!.Title.ToString();
             }
         }
 
-        private void ExportListToExcel(ExcelWorksheet worksheet, List<MenuItem> listBox, int column)
+        private void ExportListToExcel(ExcelWorksheet worksheet, List<MenuItem> listBox, int row, int column)
         {
             for (int i = 0; i < listBox.Count; i++)
             {
-                worksheet.Cells[i + 2, column].Value = listBox[i].Title;
+                worksheet.Cells[i + row, column].Value = listBox[i].Title;
             }
         }
 

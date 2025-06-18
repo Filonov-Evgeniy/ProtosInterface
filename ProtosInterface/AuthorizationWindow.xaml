@@ -63,7 +63,8 @@
                      PasswordChar="•"
                      VerticalContentAlignment="Center"
                      MaxLength="20"
-                     Margin="5"/>
+                     Margin="5">
+        </PasswordBox>
         <TextBox Grid.Row="6"
                  Grid.ColumnSpan="3"
                  Grid.Column="1"
@@ -72,7 +73,8 @@
                  FontSize="20"
                  MaxLength="20"
                  Visibility="Collapsed"
-                 x:Name="VisiblePassword"/>
+                 x:Name="VisiblePassword">
+        </TextBox>
 
         <Button x:Name="TogglePasswordButton"
                 Grid.Row="6" 

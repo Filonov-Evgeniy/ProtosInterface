@@ -69,9 +69,9 @@
                               Background="#e3e3e3">
 
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="1*"/>
-                                <RowDefinition Height="4.5*"/>
-                                <RowDefinition Height="4.5*"/>
+                                <RowDefinition Height="0.75*"/>
+                                <RowDefinition Height="5.25*"/>
+                                <RowDefinition Height="4*"/>
                             </Grid.RowDefinitions>
 
                             <Button x:Name="productSelect"
@@ -161,8 +161,8 @@
                                 <Grid>
 
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="2*"/>
-                                        <RowDefinition Height="8*"/>
+                                        <RowDefinition Height="1.5*"/>
+                                        <RowDefinition Height="8.5*"/>
                                     </Grid.RowDefinitions>
 
                                     <Grid Grid.Row="1">
@@ -287,9 +287,9 @@
                           Grid.Row="1">
 
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="4.5*"/>
-                            <RowDefinition Height="4.5*"/>
+                            <RowDefinition Height="0.75*"/>
+                            <RowDefinition Height="5.25*"/>
+                            <RowDefinition Height="4*"/>
                         </Grid.RowDefinitions>
 
                         <Border Grid.Row="0" 

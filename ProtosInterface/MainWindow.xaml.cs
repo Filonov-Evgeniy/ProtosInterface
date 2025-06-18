@@ -817,12 +817,12 @@ public partial class MainWindow : Window
         if (trvMenu.Items[0] is MenuItem)
         {
             productsList.Clear();
-            foreach (MenuItem item in trvMenu.Items)
+            foreach (MenuItem item in (trvMenu.Items[0] as MenuItem)!.Items)
             {
                 productsList.Add(item);
             }
 
-            ExportWindow export = new ExportWindow(productsList, OperationList, EquipmentList);
+            ExportWindow export = new ExportWindow(productsList, OperationList, (trvMenu.Items[0] as MenuItem)!);
             export.ShowDialog();
         }
         else
