@@ -389,7 +389,7 @@
 
                                             <TextBlock Text="{Binding Key.Title}"
                                                        Style="{StaticResource ScaledTextBlockStyle}"
-                                                       Width="295"
+                                                       Width="395"
                                                        Margin="1"/>
                                             <TextBlock Text="|"
                                                        Style="{StaticResource ScaledTextBlockStyle}"

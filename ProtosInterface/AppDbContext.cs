@@ -63,7 +63,7 @@ namespace ProtosInterface
                 entity.HasOne(pl => pl.ParentProduct)
                       .WithMany(p => p.ChildLinks)
                       .HasForeignKey(pl => pl.ParentProductId)
-                      .OnDelete(DeleteBehavior.Restrict); // Или Cascade по необходимости
+                      .OnDelete(DeleteBehavior.Restrict); 
 
                 // Настройка связи с включаемым продуктом
                 entity.HasOne(pl => pl.IncludedProduct)
@@ -150,7 +150,7 @@ namespace ProtosInterface
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .ValueGeneratedOnAdd(); // Для IDENTITY
+                    .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.InventoryNumber)
                     .IsRequired()
@@ -158,12 +158,12 @@ namespace ProtosInterface
                     .HasColumnName("inventory_number");
 
                 entity.Property(e => e.ShortName)
-                    .HasMaxLength(100) // Соответствует varchar(100) в БД
+                    .HasMaxLength(100)
                     .HasColumnName("short_name");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(250) // Соответствует varchar(250) в БД
+                    .HasMaxLength(250) 
                     .HasColumnName("name");
 
                 entity.Property(e => e.FunctionalAreaId)
@@ -177,7 +177,7 @@ namespace ProtosInterface
                 entity.Property(e => e.LoadFactor)
                     .IsRequired()
                     .HasColumnName("load_factor")
-                    .HasDefaultValue(1.0) // DEFAULT 1
+                    .HasDefaultValue(1.0)
                     .HasColumnType("float");
 
                 entity.Property(e => e.WorkShiftId)
@@ -185,11 +185,11 @@ namespace ProtosInterface
 
                 entity.Property(e => e.Overtime)
                     .HasColumnName("overtime")
-                    .HasDefaultValue(0.0) // DEFAULT 0
+                    .HasDefaultValue(0.0)
                     .HasColumnType("float");
 
                 entity.Property(e => e.Description)
-                    .HasMaxLength(4000) // varchar(4000)
+                    .HasMaxLength(4000)
                     .HasColumnName("description");
             }); modelBuilder.Entity<OperationVariantComponent>(entity =>
             {
