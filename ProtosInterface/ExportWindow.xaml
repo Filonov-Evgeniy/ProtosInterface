@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProtosInterface"
         mc:Ignorable="d"
-        Title="ExportWindow" Height="250" Width="250" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        Title="ExportWindow" Height="250" Width="250" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
         <Border BorderThickness="1"
                 Margin="5">
@@ -21,21 +21,31 @@
                         Foreground="#00406C"
                         x:Name="ExportButton"
                         Click="ExportButton_Click"/>
-                <StackPanel Grid.Row="0"
-                            Margin="5">
+                <Grid Grid.Row="0"
+                      Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
                     <TextBlock Text="Элементы для экспорта:"
-                               Margin="5"/>
-                    <CheckBox Content="Добавить Операции"
-                              Margin="10"
-                              Tag="OperationCheck"
-                              Checked="CheckOperation_Checked"
-                              x:Name="OperationCheck"/>
+                               Margin="5"
+                               Grid.Row="0"/>
                     <CheckBox Content="Добавить Оборудование"
                               Margin="10"
                               Tag="EquipmentCheck"
-                              Checked="CheckEquipment_Checked"
-                              x:Name="EquipmentCheck"/>
-                </StackPanel>
+                              x:Name="EquipmentCheck"
+                              IsChecked="True"
+                              Grid.Row="2"/>
+                    <CheckBox Content="Добавить Операции"
+                              Margin="10"
+                              Tag="OperationCheck"
+                              x:Name="OperationCheck"
+                              IsChecked="True"
+                              Grid.Row="1"
+                              Checked="OperationCheck_Checked" Unchecked="OperationCheck_Unchecked"/>
+                </Grid>
             </Grid>
         </Border>
     </Grid>

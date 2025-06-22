@@ -601,8 +601,14 @@ public partial class MainWindow : Window
             {
                 OperationList.Items.Add(new MenuItem { Title = "Операций нет" });
             }
-            FullName.Text = ((MenuItem)trvMenu.SelectedItem).Title.ToString();
-
+            if (selectedItem.Parent == null)
+            {
+                FullName.Text = selectedItem.Title.ToString();
+            }
+            else
+            {
+                FullName.Text = selectedItem.Title.ToString() + " | " + selectedItem.Amount.ToString() + " ед.";
+            }
         }
     }
 
@@ -837,6 +843,11 @@ public partial class MainWindow : Window
 
     private void ExportButton_Click(object sender, RoutedEventArgs e)
     {
+        if (trvMenu.Items.Count == 0)
+        {
+            MessageBox.Show("Выберите изделие для дерева");
+            return;
+        }
         if (trvMenu.Items[0] is MenuItem)
         {
             productsList.Clear();
@@ -845,7 +856,7 @@ public partial class MainWindow : Window
                 productsList.Add(item);
             }
 
-            ExportWindow export = new ExportWindow(productsList, OperationList, (trvMenu.Items[0] as MenuItem)!);
+            ExportWindow export = new ExportWindow((MenuItem)trvMenu.Items[0], productsList);
             export.ShowDialog();
         }
         else
