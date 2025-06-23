@@ -194,6 +194,51 @@ public partial class MainWindow : Window
                     });
                 }
 
+                List<Operation> operationsList = _context.Operations.Where(x=>x.ProductId == root.itemId).ToList();
+                
+                var treeContainer = GetTreeViewItem(trvMenu, trvMenu.Items[0]);
+                if (treeContainer != null)
+                {
+                    treeContainer.IsExpanded = true;
+                    treeContainer.BringIntoView();
+                    treeContainer.IsSelected = true;
+                    treeContainer.Focus();
+                }
+
+                List<Operation> operationsToAdd = new List<Operation>();
+
+                foreach (MenuItem operation in OperationList.Items)
+                {
+                    Operation operationOld = _context.Operations.Where(x => x.Id == operation.Id).FirstOrDefault();
+                    Operation newOperation = new Operation();
+                    if (operationOld == null)
+                    {
+                        int opId = _context.OperationTypes.Where(l => l.Name == operation.itemName).FirstOrDefault().Id;
+                        operationOld = _context.Operations.Where(x => x.TypeId == opId).FirstOrDefault();
+                        newOperation.Id = _context.Operations.GetLastId() + 1;
+                        newOperation.ProductId = root.Id;
+                        newOperation.Code = int.Parse(operation.Title.Split('|')[0].Trim());
+                        newOperation.OperationType = operationOld.OperationType;
+                        newOperation.CoopStatusId = operationOld.CoopStatusId;
+                        newOperation.TypeId = operationOld.TypeId;
+                        newOperation.Description = operationOld.Description;
+                    }
+                    else
+                    {
+                        newOperation.Id = operation.Id;
+                        newOperation.ProductId = root.Id;
+                        newOperation.Code = int.Parse(operation.Title.Split('|')[0].Trim());
+                        newOperation.OperationType = operationOld.OperationType;
+                        newOperation.CoopStatusId = operationOld.CoopStatusId;
+                        newOperation.TypeId = operationOld.TypeId;
+                        newOperation.Description = operationOld.Description;
+                    }
+                    operationsToAdd.Add(newOperation);
+                }
+
+
+
+
                 _context.Operations.Where(o => o.ProductId == root.Id).ExecuteDelete();
 
                 
@@ -235,7 +280,6 @@ public partial class MainWindow : Window
         {
             foreach (var dict in variants)
             {
-                MessageBox.Show(_context.OperationVariantComponents.Where(x => x.OperationVariantId == dict.Key.Id).Select(x => x.Id).FirstOrDefault().ToString());
                 List<OperationVariantComponent> oldComp = new List<OperationVariantComponent>();
                 oldComp = _context.OperationVariantComponents.Where(x => x.OperationVariantId == dict.Key.Id).Select(x => new OperationVariantComponent{ Id = x.Id, EquipmentId = x.EquipmentId }).ToList();
                 OperationVariantComponent newComp = new OperationVariantComponent();
