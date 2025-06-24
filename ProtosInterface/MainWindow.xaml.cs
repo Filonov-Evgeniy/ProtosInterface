@@ -716,6 +716,9 @@ public partial class MainWindow : Window
             if (item != null)
             {
                 trvMenu.Items.Clear();
+                OperationList.ItemsSource = null;
+                EquipmentList.ItemsSource = null;
+                EquipmentList.Items.Refresh();
                 trvMenu.Items.Add(Menu_Create(item.Id));
                 itemid = item.Id;
                 FullName.Text = ((MenuItem)trvMenu.Items[0]).Title.ToString();
