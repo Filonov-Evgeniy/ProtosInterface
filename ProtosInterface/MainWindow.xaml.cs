@@ -130,57 +130,60 @@ public partial class MainWindow : Window
                     container.Focus();
                 }
 
-                List<int> operationsTypeId = new List<int>();
-                List<int> operationsCode = new List<int>();
+                //List<int> operationsTypeId = new List<int>();
+                //List<int> operationsCode = new List<int>();
 
-                MenuItem firstOperation = OperationList.Items[0] as MenuItem;
-                if (firstOperation.Title != "Операций нет")
-                {
-                    foreach (MenuItem operation in OperationList.Items)
-                    {
-                        string[] operationSplitted = operation.Title.Split('|', StringSplitOptions.RemoveEmptyEntries);
-                        operationsCode.Add(Convert.ToInt32(operationSplitted[0].Trim()));
-                        operationsTypeId.Add(getOperationTypeIdByName(operationSplitted[1].Trim()));
-                    }
+                //MenuItem firstOperation = OperationList.Items[0] as MenuItem;
+                //if (firstOperation.Title != "Операций нет")
+                //{
+                //    foreach (MenuItem operation in OperationList.Items)
+                //    {
+                //        string[] operationSplitted = operation.Title.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                //        operationsCode.Add(Convert.ToInt32(operationSplitted[0].Trim()));
+                //        operationsTypeId.Add(getOperationTypeIdByName(operationSplitted[1].Trim()));
+                //    }
 
-                    int operationsId = _context.Operations.GetLastId();
-                    Dictionary<int, List<Operation>> originalCopyOperations = new Dictionary<int, List<Operation>>();
+                //    int operationsId = _context.Operations.GetLastId();
+                //    Dictionary<int, List<Operation>> originalCopyOperations = new Dictionary<int, List<Operation>>();
 
-                    for (int i = 0; i < operationsTypeId.Count; i++)
-                    {
-                        int operationId = getOperationByTypeId(operationsTypeId[i]);
-                        Operation newOperation = getOperationFromReference(operationId, operationsCode[i], operationsId);
+                //    for (int i = 0; i < operationsTypeId.Count; i++)
+                //    {
+                //        int operationId = getOperationByTypeId(operationsTypeId[i]);
+                //        Operation newOperation = getOperationFromReference(operationId, operationsCode[i], operationsId);
 
-                        if (originalCopyOperations.ContainsKey(operationId))
-                        {
-                            originalCopyOperations[operationId].Add(newOperation);
-                        }
-                        else
-                        {
-                            originalCopyOperations.Add(operationId, new List<Operation> { newOperation });
-                        }
+                //        if (originalCopyOperations.ContainsKey(operationId))
+                //        {
+                //            originalCopyOperations[operationId].Add(newOperation);
+                //        }
+                //        else
+                //        {
+                //            originalCopyOperations.Add(operationId, new List<Operation> { newOperation });
+                //        }
 
-                        operationsId++;
-                    }
+                //        operationsId++;
+                //    }
 
-                    foreach (var operation in originalCopyOperations.Values)
-                    {                        
-                        _context.Operations.AddRange(operation);
-                    }                  
+                //    foreach (var operation in originalCopyOperations.Values)
+                //    {                        
+                //        _context.Operations.AddRange(operation);
+                //    }                  
 
-                    Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
+                //    Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
 
-                    foreach (var outerPair in variantIdAndVariantForCopy)
-                    {
-                        foreach (var innerPair in outerPair.Value)
-                        {
-                            _context.OperationVariants.AddRange(innerPair.Value);
-                        }
-                    }
+                //    foreach (var outerPair in variantIdAndVariantForCopy)
+                //    {
+                //        foreach (var innerPair in outerPair.Value)
+                //        {
+                //            _context.OperationVariants.AddRange(innerPair.Value);
+                //        }
+                //    }
 
-                    List<OperationVariantComponent> newOpVarComp = getOperationVariantComponentFromReference(variantIdAndVariantForCopy);
-                    _context.OperationVariantComponents.AddRange(newOpVarComp);
-                }
+                //    List<OperationVariantComponent> newOpVarComp = getOperationVariantComponentFromReference(variantIdAndVariantForCopy);
+                //    _context.OperationVariantComponents.AddRange(newOpVarComp);
+                //}
+
+                SaveOperation(_context.Products.GetLastId() + 1);
+
                 _context.SaveChanges();
 
                 MessageBox.Show("Сохранение завершено!");
@@ -214,30 +217,21 @@ public partial class MainWindow : Window
 
                 for (int i = 0; i < operationsList.Count; i++)
                 {
+                                        
+                    operationVariantList.Add(operationsList[i].Id, _context.OperationVariants.Where(x => x.OperationId == operationsList[i].Id).ToList());
 
-                    if (operationVariantList.ContainsKey(operationsList[i].Id))
-                    {
-                        operationVariantList[operationsList[i].Id] ;
-                    }
-                    else
-                    {
-                        operationVariantList.Add(operationsList[i].Id, _context.OperationVariants.Where(x => x.OperationId == operationsList[i].Id).ToList());
-                    }
-
-                    operationVariantList[i] = _context.OperationVariants.Where(x => x.OperationId == operationsList[i].Id).ToList();
+                    //operationVariantList[i] = _context.OperationVariants.Where(x => x.OperationId == operationsList[i].Id).ToList();
                 }
-
-                
 
                 Dictionary<int, List<OperationVariantComponent>> operationVariantComponentList = new Dictionary<int, List<OperationVariantComponent>>();
 
-                for (int i = 0; i < operationVariantList.Count; i++)
+                foreach (var item in operationVariantList)
                 {
-                    foreach (var id in operationVariantList)
+                    for (int i = 0; i < item.Value.Count; i++)
                     {
-
+                        operationVariantComponentList.Add(item.Value[i].Id, _context.OperationVariantComponents.Where(x => x.OperationVariantId == item.Value[i].Id).ToList());
                     }
-                    operationVariantComponentList[i] = _context.OperationVariantComponents.Where(x => x.OperationVariantId == operationVariantList[i]).ToList();
+                    //operationVariantComponentList[i] = _context.OperationVariantComponents.Where(x => x.OperationVariantId == operationVariantList[i]).ToList();
                 }
 
                 var treeContainer = GetTreeViewItem(trvMenu, trvMenu.Items[0]);
@@ -312,6 +306,65 @@ public partial class MainWindow : Window
         }
     }
 
+    public void SaveOperation(int productId)
+    {
+        List<int> operationsTypeId = new List<int>();
+        List<int> operationsCode = new List<int>();
+
+        MenuItem firstOperation = OperationList.Items[0] as MenuItem;
+        if (firstOperation.Title != "Операций нет")
+        {
+            foreach (MenuItem operation in OperationList.Items)
+            {
+                if (operation.Id != null)
+                {
+
+                }
+                string[] operationSplitted = operation.Title.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                operationsCode.Add(Convert.ToInt32(operationSplitted[0].Trim()));
+                operationsTypeId.Add(getOperationTypeIdByName(operationSplitted[1].Trim()));
+            }
+
+            int operationsId = _context.Operations.GetLastId();
+            Dictionary<int, List<Operation>> originalCopyOperations = new Dictionary<int, List<Operation>>();
+
+            for (int i = 0; i < operationsTypeId.Count; i++)
+            {
+                int operationId = getOperationByTypeId(operationsTypeId[i]);
+                Operation newOperation = getOperationFromReference(operationId, operationsCode[i], operationsId, productId);
+
+                if (originalCopyOperations.ContainsKey(operationId))
+                {
+                    originalCopyOperations[operationId].Add(newOperation);
+                }
+                else
+                {
+                    originalCopyOperations.Add(operationId, new List<Operation> { newOperation });
+                }
+
+                operationsId++;
+            }
+
+            foreach (var operation in originalCopyOperations.Values)
+            {
+                _context.Operations.AddRange(operation);
+            }
+
+            Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
+
+            foreach (var outerPair in variantIdAndVariantForCopy)
+            {
+                foreach (var innerPair in outerPair.Value)
+                {
+                    _context.OperationVariants.AddRange(innerPair.Value);
+                }
+            }
+
+            List<OperationVariantComponent> newOpVarComp = getOperationVariantComponentFromReference(variantIdAndVariantForCopy);
+            _context.OperationVariantComponents.AddRange(newOpVarComp);
+        }
+    }
+
     private List<OperationVariantComponent> getOperationVariantComponentFromReference(Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> variantIdAndVariantForCopy)
     {
         int opVarCompId = _context.OperationVariantComponents.GetLastId();
@@ -383,14 +436,14 @@ public partial class MainWindow : Window
         return modifiedVariants;
     }
 
-    private Operation getOperationFromReference(int referenceId, int code, int id)
+    private Operation getOperationFromReference(int referenceId, int code, int id, int productId)
     {
         Operation operation = new Operation();
         Operation referenceOperation = _context.Operations.FirstOrDefault(x => x.Id == referenceId);
         operation.OperationType = referenceOperation.OperationType;
         operation.TypeId = referenceOperation.TypeId;
         operation.Code = code;
-        operation.ProductId = _context.Products.GetLastId() + 1;
+        operation.ProductId = productId;
         operation.CoopStatusId = referenceOperation.CoopStatusId;
         operation.Id = id + 1;
         return operation;
@@ -541,7 +594,7 @@ public partial class MainWindow : Window
 
                         if (!duplicatedCode)
                         {
-                            OperationList.Items.Add(new MenuItem { Title = code + " | " + item.Title, Id = item.Id });
+                            OperationList.Items.Add(new MenuItem { Title = code + " | " + item.Title, Id = 0 });
                             MessageBox.Show("Операции добавлены");
                         }
                         else
