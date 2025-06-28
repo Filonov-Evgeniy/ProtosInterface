@@ -144,23 +144,37 @@ public partial class MainWindow : Window
                     }
 
                     int operationsId = _context.Operations.GetLastId();
-                    Dictionary<int, Operation> originalCopyOperations = new Dictionary<int, Operation>();
+                    Dictionary<int, List<Operation>> originalCopyOperations = new Dictionary<int, List<Operation>>();
+
                     for (int i = 0; i < operationsTypeId.Count; i++)
                     {
                         int operationId = getOperationByTypeId(operationsTypeId[i]);
                         Operation newOperation = getOperationFromReference(operationId, operationsCode[i], operationsId);
-                        originalCopyOperations.Add(operationId, newOperation);
+
+                        if (originalCopyOperations.ContainsKey(operationId))
+                        {
+                            originalCopyOperations[operationId].Add(newOperation);
+                        }
+                        else
+                        {
+                            originalCopyOperations.Add(operationId, new List<Operation> { newOperation });
+                        }
+
                         operationsId++;
                     }
 
-                    _context.Operations.AddRange(originalCopyOperations.Values);
+                    foreach (var operation in originalCopyOperations.Values)
+                    {                        
+                        _context.Operations.AddRange(operation);
+                    }                  
 
-                    Dictionary<int, Dictionary<OperationVariant, OperationVariant>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
+                    Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
+
                     foreach (var outerPair in variantIdAndVariantForCopy)
                     {
                         foreach (var innerPair in outerPair.Value)
                         {
-                            _context.OperationVariants.Add(innerPair.Value);
+                            _context.OperationVariants.AddRange(innerPair.Value);
                         }
                     }
 
@@ -195,7 +209,37 @@ public partial class MainWindow : Window
                 }
 
                 List<Operation> operationsList = _context.Operations.Where(x=>x.ProductId == root.itemId).ToList();
+
+                Dictionary<int, List<OperationVariant>> operationVariantList = new Dictionary<int, List<OperationVariant>>();
+
+                for (int i = 0; i < operationsList.Count; i++)
+                {
+
+                    if (operationVariantList.ContainsKey(operationsList[i].Id))
+                    {
+                        operationVariantList[operationsList[i].Id] ;
+                    }
+                    else
+                    {
+                        operationVariantList.Add(operationsList[i].Id, _context.OperationVariants.Where(x => x.OperationId == operationsList[i].Id).ToList());
+                    }
+
+                    operationVariantList[i] = _context.OperationVariants.Where(x => x.OperationId == operationsList[i].Id).ToList();
+                }
+
                 
+
+                Dictionary<int, List<OperationVariantComponent>> operationVariantComponentList = new Dictionary<int, List<OperationVariantComponent>>();
+
+                for (int i = 0; i < operationVariantList.Count; i++)
+                {
+                    foreach (var id in operationVariantList)
+                    {
+
+                    }
+                    operationVariantComponentList[i] = _context.OperationVariantComponents.Where(x => x.OperationVariantId == operationVariantList[i]).ToList();
+                }
+
                 var treeContainer = GetTreeViewItem(trvMenu, trvMenu.Items[0]);
                 if (treeContainer != null)
                 {
@@ -211,6 +255,7 @@ public partial class MainWindow : Window
                 {
                     Operation operationOld = _context.Operations.Where(x => x.Id == operation.Id).FirstOrDefault();
                     Operation newOperation = new Operation();
+
                     if (operationOld == null)
                     {
                         int opId = _context.OperationTypes.Where(l => l.Name == operation.itemName).FirstOrDefault().Id;
@@ -236,11 +281,7 @@ public partial class MainWindow : Window
                     operationsToAdd.Add(newOperation);
                 }
 
-
-
-
                 _context.Operations.Where(o => o.ProductId == root.Id).ExecuteDelete();
-
                 
                 foreach (MenuItem operation in OperationList.Items)
                 {
@@ -271,28 +312,31 @@ public partial class MainWindow : Window
         }
     }
 
-    private List<OperationVariantComponent> getOperationVariantComponentFromReference(Dictionary<int, Dictionary<OperationVariant, OperationVariant>> variantIdAndVariantForCopy)
+    private List<OperationVariantComponent> getOperationVariantComponentFromReference(Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> variantIdAndVariantForCopy)
     {
         int opVarCompId = _context.OperationVariantComponents.GetLastId();
         List<OperationVariantComponent> operationVariantComponentsCopy = new List<OperationVariantComponent>();
 
-        foreach (Dictionary<OperationVariant, OperationVariant> variants in variantIdAndVariantForCopy.Values)
+        foreach (var variants in variantIdAndVariantForCopy.Values)
         {
             foreach (var dict in variants)
             {
                 List<OperationVariantComponent> oldComp = new List<OperationVariantComponent>();
-                oldComp = _context.OperationVariantComponents.Where(x => x.OperationVariantId == dict.Key.Id).Select(x => new OperationVariantComponent{ Id = x.Id, EquipmentId = x.EquipmentId }).ToList();
-                OperationVariantComponent newComp = new OperationVariantComponent();
+                oldComp = _context.OperationVariantComponents.Where(x => x.OperationVariantId == dict.Key.Id).Select(x => new OperationVariantComponent { Id = x.Id, EquipmentId = x.EquipmentId }).ToList();
                 foreach (OperationVariantComponent comp in oldComp)
                 {
-                    newComp.ProfessionId = comp.ProfessionId;
-                    newComp.EquipmentId = comp.EquipmentId;
-                    newComp.Equipment = comp.Equipment;
-                    newComp.OperationVariantId = dict.Value.Id;
-                    newComp.OperationVariant = dict.Value;
-                    operationVariantComponentsCopy.Add(newComp);
-                    newComp.Id = opVarCompId + 1;
-                    opVarCompId++;
+                    foreach (var item in dict.Value)
+                    {
+                        OperationVariantComponent newComp = new OperationVariantComponent();
+                        newComp.ProfessionId = comp.ProfessionId;
+                        newComp.EquipmentId = comp.EquipmentId;
+                        newComp.Equipment = comp.Equipment;
+                        newComp.OperationVariantId = item.Id;
+                        newComp.OperationVariant = item;
+                        operationVariantComponentsCopy.Add(newComp);
+                        newComp.Id = opVarCompId + 1;
+                        opVarCompId++;
+                    }
                 }
                 oldComp.Clear();
             }
@@ -301,25 +345,41 @@ public partial class MainWindow : Window
         return operationVariantComponentsCopy;
     }
 
-    private Dictionary<int, Dictionary<OperationVariant, OperationVariant>> getOperationVariantListFromReference(Dictionary<int, Operation> originalCopyOperations)
+    private Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> getOperationVariantListFromReference(Dictionary<int, List<Operation>> originalCopyOperations)
     {
         int opVarId = _context.OperationVariants.GetLastId();
-        Dictionary<int, Dictionary<OperationVariant, OperationVariant>> modifiedVariants = new Dictionary<int, Dictionary<OperationVariant, OperationVariant>>();
+        Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> modifiedVariants = new Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>>();
+
         foreach (int operationId in originalCopyOperations.Keys)
         {
             List<OperationVariant> variantForCopy = _context.OperationVariants.Where(x => x.OperationId == operationId).ToList();
-            Dictionary<OperationVariant, OperationVariant> oldNewOpVariants = new Dictionary<OperationVariant, OperationVariant>();
+            Dictionary<OperationVariant, List<OperationVariant>> oldNewOpVariants = new Dictionary<OperationVariant, List<OperationVariant>>();
+
             foreach (OperationVariant variant in variantForCopy)
             {
-                OperationVariant newVariant = new OperationVariant();
-                newVariant.Duration = variant.Duration;
-                newVariant.OperationId = originalCopyOperations[variant.OperationId].Id;
-                newVariant.Id = opVarId + 1;
-                oldNewOpVariants.Add(variant, newVariant);
-                opVarId++;
+                for (int i = 0; i < originalCopyOperations[operationId].Count; i++)
+                {
+                    OperationVariant newVariant = new OperationVariant();
+                    newVariant.Duration = variant.Duration;
+                    newVariant.OperationId = originalCopyOperations[variant.OperationId][i].Id;
+                    newVariant.Id = opVarId + 1;
+
+                    if (oldNewOpVariants.ContainsKey(variant))
+                    {
+                        oldNewOpVariants[variant].Add(newVariant);
+                    }
+                    else
+                    {
+                        oldNewOpVariants.Add(variant, new List<OperationVariant> { newVariant });
+                    }
+
+                    opVarId++;
+                }
             }
+
             modifiedVariants.Add(operationId, oldNewOpVariants);
         }
+
         return modifiedVariants;
     }
 
