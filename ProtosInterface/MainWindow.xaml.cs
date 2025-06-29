@@ -356,6 +356,19 @@ public partial class MainWindow : Window
             Dictionary<int, Dictionary<OperationVariant, List<OperationVariant>>> variantIdAndVariantForCopy = getOperationVariantListFromReference(originalCopyOperations);
             List<OperationVariantComponent> newOpVarComp = getOperationVariantComponentFromReference(variantIdAndVariantForCopy);
 
+            List<OperationVariant> oldOV = new List<OperationVariant>();
+            List<OperationVariantComponent> oldOVC = new List<OperationVariantComponent>();
+
+            foreach (var operation in writtenOperations)
+            {
+                oldOV.AddRange(_context.OperationVariants.Where(ov => ov.OperationId == operation.Id).ToList());
+            }
+
+            foreach (var variant in oldOV)
+            {
+                oldOVC.AddRange(_context.OperationVariantComponents.Where(ovc => ovc.OperationVariantId == variant.Id));
+            }
+
             DeleteOldDataFromDB();
 
             foreach (var operation in originalCopyOperations.Values)
@@ -373,7 +386,11 @@ public partial class MainWindow : Window
                 }
             }
 
+            _context.OperationVariants.AddRange(oldOV);
+
             _context.OperationVariantComponents.AddRange(newOpVarComp);
+
+            _context.OperationVariantComponents.AddRange(oldOVC);
         }
     }
 
