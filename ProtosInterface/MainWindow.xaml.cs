@@ -149,7 +149,7 @@ public partial class MainWindow : Window
                     for (int i = 0; i < operationsTypeId.Count; i++)
                     {
                         int operationId = getOperationByTypeId(operationsTypeId[i]);
-                        Operation newOperation = getOperationFromReference(operationId, operationsCode[i], operationsId);
+                        Operation newOperation = getOperationFromReference(operationId, operationsCode[i], operationsId, _context.Products.GetLastId() + 1);
 
                         if (originalCopyOperations.ContainsKey(operationId))
                         {
@@ -295,7 +295,7 @@ public partial class MainWindow : Window
 
                 _context.ProductLinks.AddRange(links);
 
-                SaveOperation();
+                SaveOperation(((MenuItem)trvMenu.Items[0]).Id);
 
                 //_context.Operations.AddRange(operations);
 
@@ -323,6 +323,7 @@ public partial class MainWindow : Window
                 if (operation.Id != 0)
                 {
                     Operation operationWritten = getWrittenOperation(operationSplitted[0], operation.Id);
+                    //вот тут список операций
                     writtenOperations.Add(operationWritten);
                 }
                 else
@@ -362,6 +363,7 @@ public partial class MainWindow : Window
                 _context.Operations.AddRange(operation);
             }
 
+            _context.Operations.AddRange(writtenOperations);
 
             foreach (var outerPair in variantIdAndVariantForCopy)
             {
@@ -372,7 +374,6 @@ public partial class MainWindow : Window
             }
 
             _context.OperationVariantComponents.AddRange(newOpVarComp);
-            _context.Operations.AddRange(writtenOperations);
         }
     }
 
@@ -386,6 +387,8 @@ public partial class MainWindow : Window
         _context.OperationVariantComponents.RemoveRange(operationVariantComponentsToDelete);
         _context.OperationVariants.RemoveRange(operationVariantsToDelete);
         _context.Operations.RemoveRange(operationsToDelete);
+
+        _context.SaveChanges();
     }
 
     private List<OperationVariantComponent> getOperationVariantComponentToDelete(List<OperationVariant> operationVariantComponentsToDelete)
@@ -410,7 +413,7 @@ public partial class MainWindow : Window
 
     private Operation getWrittenOperation(string code, int id)
     {
-        Operation operation = _context.Operations.Where(x=>x.Id==id) as Operation;
+        Operation operation = _context.Operations.Where(x=>x.Id==id).FirstOrDefault();
         if (int.TryParse(code, out int intCode))
         {
             operation.Code = intCode;
